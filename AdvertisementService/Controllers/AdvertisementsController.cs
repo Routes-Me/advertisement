@@ -23,14 +23,10 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("advertisements/{id=0}")]
-        public IActionResult Get(int id, int currentPage = 1, int pageSize = 10)
+        public IActionResult Get(int id, string include, [FromQuery] PageInfo pageInfo)
         {
-            AdvertisementsResponse response = new AdvertisementsResponse();
-            GetAdvertisementsModel model = new GetAdvertisementsModel();
-            model.AdvertisementId = id;
-            model.currentPage = currentPage;
-            model.pageSize = pageSize;
-            response = _advertisementsRepository.GetAdvertisements(model);
+            AdvertisementsGetResponse response = new AdvertisementsGetResponse();
+            response = _advertisementsRepository.GetAdvertisements(id, include, pageInfo);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
@@ -38,11 +34,10 @@ namespace AdvertisementService.Controllers
 
         [HttpPost]
         [Route("advertisements")]
-        public IActionResult Post(AdvertisementsModel model)
+        public IActionResult Post(PostAdvertisementsModel model)
         {
             AdvertisementsResponse response = new AdvertisementsResponse();
-            if (ModelState.IsValid)
-                response = _advertisementsRepository.InsertAdvertisements(model);
+            response = _advertisementsRepository.InsertAdvertisements(model);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
@@ -50,11 +45,10 @@ namespace AdvertisementService.Controllers
 
         [HttpPut]
         [Route("advertisements")]
-        public IActionResult Put(AdvertisementsModel model)
+        public IActionResult Put(PostAdvertisementsModel model)
         {
             AdvertisementsResponse response = new AdvertisementsResponse();
-            if (ModelState.IsValid)
-                response = _advertisementsRepository.UpdateAdvertisements(model);
+            response = _advertisementsRepository.UpdateAdvertisements(model);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
@@ -65,8 +59,7 @@ namespace AdvertisementService.Controllers
         public IActionResult Delete(int id)
         {
             AdvertisementsResponse response = new AdvertisementsResponse();
-            if (ModelState.IsValid)
-                response = _advertisementsRepository.DeleteAdvertisements(id);
+            response = _advertisementsRepository.DeleteAdvertisements(id);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);

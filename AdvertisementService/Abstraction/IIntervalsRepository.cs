@@ -9,7 +9,7 @@ namespace AdvertisementService.Abstraction
 {
     public interface IIntervalsRepository
     {
-        IntervalsResponse GetIntervals(GetIntervalsModel model);
+        IntervalsGetResponse GetIntervals(int intervalId, PageInfo pageInfo);
         IntervalsResponse UpdateIntervals(IntervalsModel model);
         IntervalsResponse DeleteIntervals(int id);
         IntervalsResponse InsertIntervals(IntervalsModel model);

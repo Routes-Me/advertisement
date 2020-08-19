@@ -1,8 +1,10 @@
 ﻿using AdvertisementService.Abstraction;
+using AdvertisementService.Helper.Abstraction;
 using AdvertisementService.Models;
 using AdvertisementService.Models.DBModels;
 using AdvertisementService.Models.ResponseModel;
 using Microsoft.CodeAnalysis;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +15,11 @@ namespace AdvertisementService.Repository
     public class AdvertisementsRepository : IAdvertisementsRepository
     {
         private readonly advertisementserviceContext _context;
-        public AdvertisementsRepository(advertisementserviceContext context)
+        private readonly IIncludeAdvertisements _includeAdvertisements;
+        public AdvertisementsRepository(advertisementserviceContext context, IIncludeAdvertisements includeAdvertisements)
         {
             _context = context;
+            _includeAdvertisements = includeAdvertisements;
         }
 
         public AdvertisementsResponse DeleteAdvertisements(int id)
@@ -28,7 +32,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Advertisement not found.";
-                    response.advertisementsDetails = null;
                     response.responseCode = ResponseCode.NotFound;
                     return response;
                 }
@@ -45,7 +48,6 @@ namespace AdvertisementService.Repository
                 _context.SaveChanges();
                 response.status = true;
                 response.message = "Advertisements deleted successfully.";
-                response.advertisementsDetails = null;
                 response.responseCode = ResponseCode.Success;
                 return response;
             }
@@ -53,141 +55,105 @@ namespace AdvertisementService.Repository
             {
                 response.status = false;
                 response.message = "Something went wrong while deleting Advertisement. Error Message - " + ex.Message;
-                response.advertisementsDetails = null;
                 response.responseCode = ResponseCode.InternalServerError;
                 return response;
             }
         }
 
-        public AdvertisementsResponse GetAdvertisements(GetAdvertisementsModel model)
+        public AdvertisementsGetResponse GetAdvertisements(int advertisementId, string includeType, PageInfo pageInfo)
         {
-            AdvertisementsResponse response = new AdvertisementsResponse();
-            AdvertisementsDetails objAdvertisementsDetails = new AdvertisementsDetails();
+            AdvertisementsGetResponse response = new AdvertisementsGetResponse();
+            AdvertisementsDetails advertisementsDetails = new AdvertisementsDetails();
             int totalCount = 0;
             try
             {
-                List<AdvertisementsModel> objAdvertisementsModelList = new List<AdvertisementsModel>();
-                AdvertisementsDetailsData AdvertisementsDetailsData = new AdvertisementsDetailsData();
-
-                if (model.AdvertisementId == 0)
+                List<AdvertisementsModel> advertisementsModelList = new List<AdvertisementsModel>();
+                
+                if (advertisementId == 0)
                 {
-                    objAdvertisementsModelList = (from advertisement in _context.Advertisements
-                                                  join media in _context.Medias on advertisement.MediaId equals media.MediaId
-                                                  join metadata in _context.Mediametadata on media.MediaMetadataId equals metadata.MediaMetadataId
-                                                  join adinterval in _context.Advertisementsintervals on advertisement.AdvertisementId equals adinterval.AdvertisementId
-                                                  join interval in _context.Intervals on adinterval.IntervalId equals interval.IntervalId
-                                                  select new AdvertisementsModel()
-                                                  {
-                                                      AdvertisementId = advertisement.AdvertisementId,
-                                                      CreatedAt = advertisement.CreatedAt,
-                                                      InstitutionId = advertisement.InstitutionId,
-                                                      MediaId = advertisement.MediaId,
-                                                      MediaType = media.MediaType,
-                                                      Url = media.Url,
-                                                      Size = metadata.Size,
-                                                      Duration = metadata.Duration,
-                                                      IntervalTitle = interval.Title
-                                                  }).OrderBy(a => a.AdvertisementId).Skip((model.currentPage - 1) * model.pageSize).Take(model.pageSize).ToList();
+                    advertisementsModelList = (from advertisement in _context.Advertisements
+                                               select new AdvertisementsModel()
+                                               {
+                                                   AdvertisementId = advertisement.AdvertisementId,
+                                                   CreatedAt = advertisement.CreatedAt,
+                                                   InstitutionId = advertisement.InstitutionId,
+                                                   MediaId = advertisement.MediaId,
+                                               }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
 
-                    totalCount = (from advertisement in _context.Advertisements
-                                  join media in _context.Medias on advertisement.MediaId equals media.MediaId
-                                  join metadata in _context.Mediametadata on media.MediaMetadataId equals metadata.MediaMetadataId
-                                  join adinterval in _context.Advertisementsintervals on advertisement.AdvertisementId equals adinterval.AdvertisementId
-                                  join interval in _context.Intervals on adinterval.IntervalId equals interval.IntervalId
-                                  select new AdvertisementsModel()
-                                  {
-                                      AdvertisementId = advertisement.AdvertisementId,
-                                      CreatedAt = advertisement.CreatedAt,
-                                      InstitutionId = advertisement.InstitutionId,
-                                      MediaId = advertisement.MediaId,
-                                      MediaType = media.MediaType,
-                                      Url = media.Url,
-                                      Size = metadata.Size,
-                                      Duration = metadata.Duration,
-                                      IntervalTitle = interval.Title
-                                  }).ToList().Count();
+                    totalCount = _context.Advertisements.ToList().Count();
                 }
                 else
                 {
-                    objAdvertisementsModelList = (from advertisement in _context.Advertisements
-                                                  join media in _context.Medias on advertisement.MediaId equals media.MediaId
-                                                  join metadata in _context.Mediametadata on media.MediaMetadataId equals metadata.MediaMetadataId
-                                                  join adinterval in _context.Advertisementsintervals on advertisement.AdvertisementId equals adinterval.AdvertisementId
-                                                  join interval in _context.Intervals on adinterval.IntervalId equals interval.IntervalId
-                                                  where advertisement.AdvertisementId == model.AdvertisementId
-                                                  select new AdvertisementsModel()
-                                                  {
-                                                      AdvertisementId = advertisement.AdvertisementId,
-                                                      CreatedAt = advertisement.CreatedAt,
-                                                      InstitutionId = advertisement.InstitutionId,
-                                                      MediaId = advertisement.MediaId,
-                                                      MediaType = media.MediaType,
-                                                      Url = media.Url,
-                                                      Size = metadata.Size,
-                                                      Duration = metadata.Duration,
-                                                      IntervalTitle = interval.Title
-                                                  }).OrderBy(a => a.AdvertisementId).Skip((model.currentPage - 1) * model.pageSize).Take(model.pageSize).ToList();
+                    advertisementsModelList = (from advertisement in _context.Advertisements
+                                               where advertisement.AdvertisementId == advertisementId
+                                               select new AdvertisementsModel()
+                                               {
+                                                   AdvertisementId = advertisement.AdvertisementId,
+                                                   CreatedAt = advertisement.CreatedAt,
+                                                   InstitutionId = advertisement.InstitutionId,
+                                                   MediaId = advertisement.MediaId,
+                                               }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
 
-                    totalCount = (from advertisement in _context.Advertisements
-                                  join media in _context.Medias on advertisement.MediaId equals media.MediaId
-                                  join metadata in _context.Mediametadata on media.MediaMetadataId equals metadata.MediaMetadataId
-                                  join adinterval in _context.Advertisementsintervals on advertisement.AdvertisementId equals adinterval.AdvertisementId
-                                  join interval in _context.Intervals on adinterval.IntervalId equals interval.IntervalId
-                                  where advertisement.AdvertisementId == model.AdvertisementId
-                                  select new AdvertisementsModel()
-                                  {
-                                      AdvertisementId = advertisement.AdvertisementId,
-                                      CreatedAt = advertisement.CreatedAt,
-                                      InstitutionId = advertisement.InstitutionId,
-                                      MediaId = advertisement.MediaId,
-                                      MediaType = media.MediaType,
-                                      Url = media.Url,
-                                      Size = metadata.Size,
-                                      Duration = metadata.Duration,
-                                      IntervalTitle = interval.Title
-                                  }).ToList().Count();
+                    totalCount = _context.Advertisements.Where(x => x.AdvertisementId == advertisementId).ToList().Count();
                 }
 
-                if (objAdvertisementsModelList == null || objAdvertisementsModelList.Count == 0)
+                if (advertisementsModelList == null || advertisementsModelList.Count == 0)
                 {
                     response.status = false;
-                    response.message = "Advertisement not found.";
-                    response.advertisementsDetails = null;
+                    response.message = "Advertisements not found.";
                     response.responseCode = ResponseCode.NotFound;
                     return response;
                 }
 
+                dynamic includeData = new JObject();
+                if (!string.IsNullOrEmpty(includeType))
+                {
+                    string[] includeArr = includeType.Split(',');
+                    if (includeArr.Length > 0)
+                    {
+                        foreach (var item in includeArr)
+                        {
+                            if (item.ToLower() == "institution")
+                            {
+                                includeData.institution = _includeAdvertisements.GetInstitutionsIncludedData(advertisementsModelList);
+                            }
+                            else if (item.ToLower() == "media")
+                            {
+                                includeData.media = _includeAdvertisements.GetMediasIncludedData(advertisementsModelList);
+                            }
+                        }
+                    }
+                }
+
+                if (((JContainer)includeData).Count == 0)
+                    includeData = null;
+
+                advertisementsDetails.advertisements = advertisementsModelList;
                 var page = new Pagination
                 {
-                    TotalCount = totalCount,
-                    CurrentPage = model.currentPage,
-                    PageSize = model.pageSize,
-                    TotalPages = (int)Math.Ceiling(decimal.Divide(totalCount, model.pageSize)),
-                    IndexOne = ((model.currentPage - 1) * model.pageSize + 1),
-                    IndexTwo = (((model.currentPage - 1) * model.pageSize + model.pageSize) <= totalCount ? ((model.currentPage - 1) * model.pageSize + model.pageSize) : totalCount)
+                    offset = pageInfo.currentPage,
+                    limit = pageInfo.pageSize,
+                    total = totalCount
                 };
 
-                AdvertisementsDetailsData.advertisements  = objAdvertisementsModelList;
-                objAdvertisementsDetails.data = AdvertisementsDetailsData;
-                objAdvertisementsDetails.pagination = page;
-
-                response.message = "Advertisements data retrived successfully.";
                 response.status = true;
-                response.advertisementsDetails = objAdvertisementsDetails;
+                response.message = "Campaign data retrived successfully.";
+                response.included = includeData;
+                response.pagination = page;
+                response.data = advertisementsDetails;
                 response.responseCode = ResponseCode.Success;
                 return response;
             }
             catch (Exception ex)
             {
                 response.status = false;
-                response.message = "Something went wrong while fetching data. Error Message - " + ex.Message;
-                response.advertisementsDetails = null;
+                response.message = "Something went wrong while fetching campaign. Error Message - " + ex.Message;
                 response.responseCode = ResponseCode.InternalServerError;
                 return response;
             }
         }
 
-        public AdvertisementsResponse InsertAdvertisements(AdvertisementsModel model)
+        public AdvertisementsResponse InsertAdvertisements(PostAdvertisementsModel model)
         {
             AdvertisementsResponse response = new AdvertisementsResponse();
             try
@@ -196,7 +162,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Pass valid data in model.";
-                    response.advertisementsDetails = null;
                     response.responseCode = ResponseCode.BadRequest;
                     return response;
                 }
@@ -206,7 +171,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Media not found.";
-                    response.advertisementsDetails = null;
                     response.responseCode = ResponseCode.NotFound;
                     return response;
                 }
@@ -216,7 +180,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Interval not found.";
-                    response.advertisementsDetails = null;
                     response.responseCode = ResponseCode.NotFound;
                     return response;
                 }
@@ -226,7 +189,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Campaign not found.";
-                    response.advertisementsDetails = null;
                     response.responseCode = ResponseCode.NotFound;
                     return response;
                 }
@@ -257,7 +219,6 @@ namespace AdvertisementService.Repository
 
                 response.status = true;
                 response.message = "Advertisements inserted successfully.";
-                response.advertisementsDetails = null;
                 response.responseCode = ResponseCode.Created;
                 return response;
             }
@@ -265,13 +226,12 @@ namespace AdvertisementService.Repository
             {
                 response.status = false;
                 response.message = "Something went wrong while inserting Advertisement. Error Message - " + ex.Message;
-                response.advertisementsDetails = null;
                 response.responseCode = ResponseCode.InternalServerError;
                 return response;
             }
         }
 
-        public AdvertisementsResponse UpdateAdvertisements(AdvertisementsModel model)
+        public AdvertisementsResponse UpdateAdvertisements(PostAdvertisementsModel model)
         {
             AdvertisementsResponse response = new AdvertisementsResponse();
             try
@@ -280,7 +240,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Pass valid data in model.";
-                    response.advertisementsDetails = null;
                     response.responseCode = ResponseCode.BadRequest;
                     return response;
                 }
@@ -290,7 +249,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Advertisement not found.";
-                    response.advertisementsDetails = null;
                     response.responseCode = ResponseCode.NotFound;
                     return response;
                 }
@@ -300,7 +258,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Media not found.";
-                    response.advertisementsDetails = null;
                     response.responseCode = ResponseCode.NotFound;
                     return response;
                 }
@@ -310,7 +267,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Interval not found.";
-                    response.advertisementsDetails = null;
                     response.responseCode = ResponseCode.NotFound;
                     return response;
                 }
@@ -320,7 +276,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Campaign not found.";
-                    response.advertisementsDetails = null;
                     response.responseCode = ResponseCode.NotFound;
                     return response;
                 }
@@ -366,7 +321,6 @@ namespace AdvertisementService.Repository
 
                 response.status = true;
                 response.message = "Advertisement updated successfully.";
-                response.advertisementsDetails = null;
                 response.responseCode = ResponseCode.Success;
                 return response;
             }
@@ -374,7 +328,6 @@ namespace AdvertisementService.Repository
             {
                 response.status = false;
                 response.message = "Something went wrong while updating Advertisement. Error Message - " + ex.Message;
-                response.advertisementsDetails = null;
                 response.responseCode = ResponseCode.InternalServerError;
                 return response;
             }

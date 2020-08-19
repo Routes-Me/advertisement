@@ -27,7 +27,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Interval not found.";
-                    response.intervalsDetails = null;
                     response.responseCode = ResponseCode.NotFound;
                     return response;
                 }
@@ -37,7 +36,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Interval is associated with advertisements.";
-                    response.intervalsDetails = null;
                     response.responseCode = ResponseCode.NotFound;
                     return response;
                 }
@@ -46,7 +44,6 @@ namespace AdvertisementService.Repository
                 _context.SaveChanges();
                 response.status = true;
                 response.message = "Interval deleted successfully.";
-                response.intervalsDetails = null;
                 response.responseCode = ResponseCode.Success;
                 return response;
             }
@@ -54,93 +51,73 @@ namespace AdvertisementService.Repository
             {
                 response.status = false;
                 response.message = "Something went wrong while deleting interval. Error Message - " + ex.Message;
-                response.intervalsDetails = null;
                 response.responseCode = ResponseCode.InternalServerError;
                 return response;
             }
         }
 
-        public IntervalsResponse GetIntervals(GetIntervalsModel model)
+        public IntervalsGetResponse GetIntervals(int intervalId, PageInfo pageInfo)
         {
-            IntervalsResponse Response = new IntervalsResponse();
-            IntervalsDetails objIntervalsDetails = new IntervalsDetails();
+            IntervalsGetResponse response = new IntervalsGetResponse();
+            IntervalsDetails intervalsDetails = new IntervalsDetails();
             int totalCount = 0;
             try
             {
-                List<IntervalsModel> objIntervalsModelList = new List<IntervalsModel>();
-                IntervalsDetailsData objIntervalsDetailsData = new IntervalsDetailsData();
+                List<IntervalsModel> intervalsModelList = new List<IntervalsModel>();
 
-                if (model.IntervalId == 0)
+                if (intervalId == 0)
                 {
-                    objIntervalsModelList = (from interval in _context.Intervals
+                    intervalsModelList = (from interval in _context.Intervals
                                              select new IntervalsModel()
                                              {
                                                  IntervalId = interval.IntervalId,
                                                  Title = interval.Title
-                                             }).OrderBy(a => a.IntervalId).Skip((model.currentPage - 1) * model.pageSize).Take(model.pageSize).ToList();
+                                             }).OrderBy(a => a.IntervalId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
 
-                    totalCount = (from interval in _context.Intervals
-                                  select new IntervalsModel()
-                                  {
-                                      IntervalId = interval.IntervalId,
-                                      Title = interval.Title
-                                  }).ToList().Count();
+                    totalCount = _context.Intervals.ToList().Count();
                 }
                 else
                 {
-                    objIntervalsModelList = (from interval in _context.Intervals
-                                             where interval.IntervalId == model.IntervalId
+                    intervalsModelList = (from interval in _context.Intervals
+                                             where interval.IntervalId == intervalId
                                              select new IntervalsModel()
                                              {
                                                  IntervalId = interval.IntervalId,
                                                  Title = interval.Title
-                                             }).OrderBy(a => a.IntervalId).Skip((model.currentPage - 1) * model.pageSize).Take(model.pageSize).ToList();
+                                             }).OrderBy(a => a.IntervalId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
 
-                    totalCount = (from interval in _context.Intervals
-                                  where interval.IntervalId == model.IntervalId
-                                  select new IntervalsModel()
-                                  {
-                                      IntervalId = interval.IntervalId,
-                                      Title = interval.Title
-                                  }).ToList().Count();
+                    totalCount = _context.Intervals.Where(x => x.IntervalId == intervalId).ToList().Count();
                 }
 
-                if (objIntervalsModelList == null || objIntervalsModelList.Count == 0)
+                if (intervalsModelList == null || intervalsModelList.Count == 0)
                 {
-                    Response.status = false;
-                    Response.message = "Interval not found.";
-                    Response.intervalsDetails = null;
-                    Response.responseCode = ResponseCode.NotFound;
-                    return Response;
+                    response.status = false;
+                    response.message = "Interval not found.";
+                    response.responseCode = ResponseCode.NotFound;
+                    return response;
                 }
 
+                intervalsDetails.intervals = intervalsModelList;
                 var page = new Pagination
                 {
-                    TotalCount = totalCount,
-                    CurrentPage = model.currentPage,
-                    PageSize = model.pageSize,
-                    TotalPages = (int)Math.Ceiling(decimal.Divide(totalCount, model.pageSize)),
-                    IndexOne = ((model.currentPage - 1) * model.pageSize + 1),
-                    IndexTwo = (((model.currentPage - 1) * model.pageSize + model.pageSize) <= totalCount ? ((model.currentPage - 1) * model.pageSize + model.pageSize) : totalCount)
+                    offset = pageInfo.currentPage,
+                    limit = pageInfo.pageSize,
+                    total = totalCount
                 };
 
-                objIntervalsDetailsData.intervals = objIntervalsModelList;
-                objIntervalsDetails.data = objIntervalsDetailsData;
-                objIntervalsDetails.pagination = page;
-
-                Response.message = "Interval data retrived successfully.";
-                Response.status = true;
-                Response.intervalsDetails = objIntervalsDetails;
-                Response.responseCode = ResponseCode.Success;
-                return Response;
+                response.status = true;
+                response.message = "Interval data retrived successfully.";
+                response.pagination = page;
+                response.data = intervalsDetails;
+                response.responseCode = ResponseCode.Success;
+                return response;
             }
             catch (Exception ex)
             {
-                Response.status = false;
-                Response.message = "Something went wrong while fetching data. Error Message - " + ex.Message;
-                Response.intervalsDetails = null;
-                Response.responseCode = ResponseCode.InternalServerError;
-                return Response;
+                response.status = false;
+                response.message = "Something went wrong while fetching data. Error Message - " + ex.Message;
+                response.responseCode = ResponseCode.InternalServerError;
+                return response;
             }
         }
 
@@ -153,7 +130,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Pass valid data in model.";
-                    response.intervalsDetails = null;
                     response.responseCode = ResponseCode.BadRequest;
                     return response;
                 }
@@ -167,15 +143,13 @@ namespace AdvertisementService.Repository
 
                 response.status = true;
                 response.message = "Interval inserted successfully.";
-                response.intervalsDetails = null;
-                response.responseCode = ResponseCode.Success;
+                response.responseCode = ResponseCode.Created;
                 return response;
             }
             catch (Exception ex)
             {
                 response.status = false;
                 response.message = "Something went wrong while inserting interval. Error Message - " + ex.Message;
-                response.intervalsDetails = null;
                 response.responseCode = ResponseCode.InternalServerError;
                 return response;
             }
@@ -190,7 +164,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Pass valid data in model.";
-                    response.intervalsDetails = null;
                     response.responseCode = ResponseCode.BadRequest;
                     return response;
                 }
@@ -200,7 +173,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Interval not found.";
-                    response.intervalsDetails = null;
                     response.responseCode = ResponseCode.NotFound;
                     return response;
                 }
@@ -211,7 +183,6 @@ namespace AdvertisementService.Repository
 
                 response.status = true;
                 response.message = "Interval updated successfully.";
-                response.intervalsDetails = null;
                 response.responseCode = ResponseCode.Success;
                 return response;
             }
@@ -219,7 +190,6 @@ namespace AdvertisementService.Repository
             {
                 response.status = false;
                 response.message = "Something went wrong while updating interval. Error Message - " + ex.Message;
-                response.intervalsDetails = null;
                 response.responseCode = ResponseCode.InternalServerError;
                 return response;
             }

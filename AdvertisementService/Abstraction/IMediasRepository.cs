@@ -10,7 +10,7 @@ namespace AdvertisementService.Abstraction
 {
     public interface IMediasRepository
     {
-        MediasResponse GetMedias(GetMediasModel model);
+        MediasGetResponse GetMedias(int mediaId, string include, PageInfo pageInfo);
         MediasResponse UpdateMedias(MediasModel model);
         MediasResponse DeleteMedias(int id);
         MediasResponse InsertMedias(MediasModel model);

@@ -9,9 +9,9 @@ namespace AdvertisementService.Abstraction
 {
     public interface IAdvertisementsRepository
     {
-        AdvertisementsResponse GetAdvertisements(GetAdvertisementsModel model);
-        AdvertisementsResponse UpdateAdvertisements(AdvertisementsModel model);
+        AdvertisementsGetResponse GetAdvertisements(int advertisementId, string includeType, PageInfo pageInfo);
+        AdvertisementsResponse UpdateAdvertisements(PostAdvertisementsModel model);
         AdvertisementsResponse DeleteAdvertisements(int id);
-        AdvertisementsResponse InsertAdvertisements(AdvertisementsModel model);
+        AdvertisementsResponse InsertAdvertisements(PostAdvertisementsModel model);
     }
 }

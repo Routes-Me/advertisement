@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,8 +12,8 @@ namespace AdvertisementService.Models
         public string Url { get; set; }
         public DateTime? CreatedAt { get; set; }
         public string MediaType { get; set; }
-        public int? MediaMetadataId { get; set; }
-        public int currentPage { get; set; }
-        public int pageSize { get; set; }
+        public float? Size { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public float? Duration { get; set; } = 0;
     }
 }

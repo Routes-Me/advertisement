@@ -1,7 +1,9 @@
 ﻿using AdvertisementService.Abstraction;
+using AdvertisementService.Helper.Abstraction;
 using AdvertisementService.Models;
 using AdvertisementService.Models.DBModels;
 using AdvertisementService.Models.ResponseModel;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +14,11 @@ namespace AdvertisementService.Repository
     public class CampaignsRepository : ICampaignsRepository
     {
         private readonly advertisementserviceContext _context;
-        public CampaignsRepository(advertisementserviceContext context)
+        private readonly IIncludeAdvertisements _includeAdvertisements;
+        public CampaignsRepository(advertisementserviceContext context, IIncludeAdvertisements includeAdvertisements)
         {
             _context = context;
+            _includeAdvertisements = includeAdvertisements;
         }
 
         public CampaignsResponse DeleteCampaigns(int id)
@@ -27,7 +31,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Campaign not found.";
-                    response.campaignsDetails = null;
                     response.responseCode = ResponseCode.NotFound;
                     return response;
                 }
@@ -40,7 +43,6 @@ namespace AdvertisementService.Repository
                 _context.SaveChanges();
                 response.status = true;
                 response.message = "Campaign deleted successfully.";
-                response.campaignsDetails = null;
                 response.responseCode = ResponseCode.Success;
                 return response;
             }
@@ -48,205 +50,215 @@ namespace AdvertisementService.Repository
             {
                 response.status = false;
                 response.message = "Something went wrong while deleting Campaigns. Error Message - " + ex.Message;
-                response.campaignsDetails = null;
                 response.responseCode = ResponseCode.InternalServerError;
                 return response;
             }
         }
 
-        public CampaignsResponse GetCampaigns(GetCampaignsModel model)
+        public AdvertisementsGetResponse GetAdvertisements(int campaignId, int advertisementsId, string includeType, PageInfo pageInfo)
         {
-            CampaignsResponse Response = new CampaignsResponse();
-            CampaignsDetails objCampaignsDetails = new CampaignsDetails();
-            int totalCampaignCount = 0, totalAdvertisementCount = 0, totalCount = 0;
+            AdvertisementsGetResponse response = new AdvertisementsGetResponse();
+            AdvertisementsDetails advertisementsDetails = new AdvertisementsDetails();
+            int totalCount = 0;
             try
             {
-                List<CampaignsModel> objCampaignsModelList = new List<CampaignsModel>();
-                List<AdvertisementsModel> objAdvertisementsModelList = new List<AdvertisementsModel>();
-                CampaignsDetailsData campaignsDetailsData = new CampaignsDetailsData();
-                if (model.isCampaign)
+                List<AdvertisementsModel> advertisementsModelList = new List<AdvertisementsModel>();
+                
+                if (campaignId == 0)
                 {
-                    if (model.CampaignId == 0)
-                    {
-                        objCampaignsModelList = (from campaign in _context.Campaigns
-                                                 select new CampaignsModel()
-                                                 {
-                                                     CampaignId = campaign.CampaignId,
-                                                     Title = campaign.Title,
-                                                     StartAt = campaign.StartAt,
-                                                     EndAt = campaign.EndAt,
-                                                     Status = campaign.Status
-                                                 }).OrderBy(a => a.CampaignId).Skip((model.currentPage - 1) * model.pageSize).Take(model.pageSize).ToList();
-
-                        totalCampaignCount = (from campaign in _context.Campaigns
-                                      select new CampaignsModel()
-                                      {
-                                          CampaignId = campaign.CampaignId,
-                                          Title = campaign.Title,
-                                          StartAt = campaign.StartAt,
-                                          EndAt = campaign.EndAt,
-                                          Status = campaign.Status
-                                      }).ToList().Count();
-                    }
-                    else
-                    {
-                        objCampaignsModelList = (from campaign in _context.Campaigns
-                                                 where campaign.CampaignId == model.CampaignId
-                                                 select new CampaignsModel()
-                                                 {
-                                                     CampaignId = campaign.CampaignId,
-                                                     Title = campaign.Title,
-                                                     StartAt = campaign.StartAt,
-                                                     EndAt = campaign.EndAt,
-                                                     Status = campaign.Status
-                                                 }).OrderBy(a => a.CampaignId).Skip((model.currentPage - 1) * model.pageSize).Take(model.pageSize).ToList();
-
-                        totalCampaignCount = (from campaign in _context.Campaigns
-                                      where campaign.CampaignId == model.CampaignId
-                                      select new CampaignsModel()
-                                      {
-                                          CampaignId = campaign.CampaignId,
-                                          Title = campaign.Title,
-                                          StartAt = campaign.StartAt,
-                                          EndAt = campaign.EndAt,
-                                          Status = campaign.Status
-                                      }).ToList().Count();
-                    }
+                    response.status = false;
+                    response.message = "Campaign not found.";
+                    response.responseCode = ResponseCode.NotFound;
+                    return response;
                 }
-                else if (model.isAdvertisement)
+
+                var campaignCount = _context.Campaigns.Where(x => x.CampaignId == campaignId).ToList().Count();
+                if (campaignCount == 0)
                 {
-                    if (model.CampaignId == 0)
+                    response.status = false;
+                    response.message = "Campaign not found.";
+                    response.responseCode = ResponseCode.NotFound;
+                    return response;
+                }
+
+                if (advertisementsId == 0)
+                {
+                    advertisementsModelList = (from campaign in _context.Campaigns
+                                               join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
+                                               join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
+                                               where campaign.CampaignId == campaignId
+                                               select new AdvertisementsModel()
+                                               {
+                                                   AdvertisementId = advertisement.AdvertisementId,
+                                                   CreatedAt = advertisement.CreatedAt,
+                                                   InstitutionId = advertisement.InstitutionId,
+                                                   MediaId = advertisement.MediaId
+                                               }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
+
+
+                    totalCount = (from campaign in _context.Campaigns
+                                  join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
+                                  join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
+                                  where campaign.CampaignId == campaignId
+                                  select new AdvertisementsModel()
+                                  {
+                                      AdvertisementId = advertisement.AdvertisementId,
+                                      CreatedAt = advertisement.CreatedAt,
+                                      InstitutionId = advertisement.InstitutionId,
+                                      MediaId = advertisement.MediaId
+                                  }).ToList().Count();
+                }
+                else
+                {
+                    advertisementsModelList = (from campaign in _context.Campaigns
+                                               join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
+                                               join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
+                                               where campaign.CampaignId == campaignId && advertisement.AdvertisementId == advertisementsId
+                                               select new AdvertisementsModel()
+                                               {
+                                                   AdvertisementId = advertisement.AdvertisementId,
+                                                   CreatedAt = advertisement.CreatedAt,
+                                                   InstitutionId = advertisement.InstitutionId,
+                                                   MediaId = advertisement.MediaId
+                                               }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
+
+
+                    totalCount = (from campaign in _context.Campaigns
+                                  join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
+                                  join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
+                                  where campaign.CampaignId == campaignId && advertisement.AdvertisementId == advertisementsId
+                                  select new AdvertisementsModel()
+                                  {
+                                      AdvertisementId = advertisement.AdvertisementId,
+                                      CreatedAt = advertisement.CreatedAt,
+                                      InstitutionId = advertisement.InstitutionId,
+                                      MediaId = advertisement.MediaId
+                                  }).ToList().Count();
+                }
+
+                if (advertisementsModelList == null || advertisementsModelList.Count == 0)
+                {
+                    response.status = false;
+                    response.message = "Advertisements not found.";
+                    response.responseCode = ResponseCode.NotFound;
+                    return response;
+                }
+
+                dynamic includeData = new JObject();
+                if (!string.IsNullOrEmpty(includeType))
+                {
+                    string[] includeArr = includeType.Split(',');
+                    if (includeArr.Length > 0)
                     {
-                        Response.status = false;
-                        Response.message = "Campaign not found.";
-                        Response.campaignsDetails = null;
-                        Response.responseCode = ResponseCode.NotFound;
-                        return Response;
-                    }
-                    else
-                    {
-                        var campaignCount = _context.Campaigns.Where(x => x.CampaignId == model.CampaignId).ToList().Count();
-                        if (campaignCount == 0)
+                        foreach (var item in includeArr)
                         {
-                            Response.status = false;
-                            Response.message = "Vehicle not found.";
-                            Response.campaignsDetails = null;
-                            Response.responseCode = ResponseCode.NotFound;
-                            return Response;
-                        }
-                        else
-                        {
-                            if (model.AdvertisementId == 0)
+                            if (item.ToLower() == "institution")
                             {
-                                objAdvertisementsModelList = (from campaign in _context.Campaigns
-                                                              join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
-                                                              join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
-                                                              where campaign.CampaignId == model.CampaignId
-                                                              select new AdvertisementsModel()
-                                                              {
-                                                                  AdvertisementId = advertisement.AdvertisementId,
-                                                                  CreatedAt = advertisement.CreatedAt,
-                                                                  InstitutionId = advertisement.InstitutionId,
-                                                                  MediaId = advertisement.MediaId
-                                                              }).OrderBy(a => a.AdvertisementId).Skip((model.currentPage - 1) * model.pageSize).Take(model.pageSize).ToList();
-
-
-                                totalAdvertisementCount = (from campaign in _context.Campaigns
-                                                          join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
-                                                          join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
-                                                          where campaign.CampaignId == model.CampaignId
-                                                          select new AdvertisementsModel()
-                                                          {
-                                                              AdvertisementId = advertisement.AdvertisementId,
-                                                              CreatedAt = advertisement.CreatedAt,
-                                                              InstitutionId = advertisement.InstitutionId,
-                                                              MediaId = advertisement.MediaId
-                                                          }).ToList().Count();
+                                includeData.institution = _includeAdvertisements.GetInstitutionsIncludedData(advertisementsModelList);
                             }
-                            else
+                            else if (item.ToLower() == "media")
                             {
-                                objAdvertisementsModelList = (from campaign in _context.Campaigns
-                                                              join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
-                                                              join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
-                                                              where campaign.CampaignId == model.CampaignId && advertisement.AdvertisementId == model.AdvertisementId
-                                                              select new AdvertisementsModel()
-                                                              {
-                                                                  AdvertisementId = advertisement.AdvertisementId,
-                                                                  CreatedAt = advertisement.CreatedAt,
-                                                                  InstitutionId = advertisement.InstitutionId,
-                                                                  MediaId = advertisement.MediaId
-                                                              }).OrderBy(a => a.AdvertisementId).Skip((model.currentPage - 1) * model.pageSize).Take(model.pageSize).ToList();
-
-
-                                totalAdvertisementCount = (from campaign in _context.Campaigns
-                                                           join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
-                                                           join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
-                                                           where campaign.CampaignId == model.CampaignId && advertisement.AdvertisementId == model.AdvertisementId
-                                                           select new AdvertisementsModel()
-                                                           {
-                                                               AdvertisementId = advertisement.AdvertisementId,
-                                                               CreatedAt = advertisement.CreatedAt,
-                                                               InstitutionId = advertisement.InstitutionId,
-                                                               MediaId = advertisement.MediaId
-                                                           }).ToList().Count();
+                                includeData.media = _includeAdvertisements.GetMediasIncludedData(advertisementsModelList);
                             }
                         }
                     }
                 }
 
-                if (model.isAdvertisement)
-                {
-                    if (objAdvertisementsModelList == null || objAdvertisementsModelList.Count == 0)
-                    {
-                        Response.status = false;
-                        Response.message = "Advertisements not found.";
-                        Response.campaignsDetails = null;
-                        Response.responseCode = ResponseCode.NotFound;
-                        return Response;
-                    }
+                if (((JContainer)includeData).Count == 0)
+                    includeData = null;
 
-                    Response.message = "Advertisement data retrived successfully.";
-                    campaignsDetailsData.advertisements = objAdvertisementsModelList;
-                    totalCount = totalAdvertisementCount;
-                }
-                else if (model.isCampaign)
-                {
-                    if (objCampaignsModelList == null || objCampaignsModelList.Count == 0)
-                    {
-                        Response.status = false;
-                        Response.message = "Campaigns not found.";
-                        Response.campaignsDetails = null;
-                        Response.responseCode = ResponseCode.NotFound;
-                        return Response;
-                    }
-                    Response.message = "Campaigns data retrived successfully.";
-                    campaignsDetailsData.campaigns = objCampaignsModelList;
-                    totalCount = totalCampaignCount;
-                }
+                advertisementsDetails.advertisements = advertisementsModelList;
                 var page = new Pagination
                 {
-                    TotalCount = totalCount,
-                    CurrentPage = model.currentPage,
-                    PageSize = model.pageSize,
-                    TotalPages = (int)Math.Ceiling(decimal.Divide(totalCount, model.pageSize)),
-                    IndexOne = ((model.currentPage - 1) * model.pageSize + 1),
-                    IndexTwo = (((model.currentPage - 1) * model.pageSize + model.pageSize) <= totalCount ? ((model.currentPage - 1) * model.pageSize + model.pageSize) : totalCount)
+                    offset = pageInfo.currentPage,
+                    limit = pageInfo.pageSize,
+                    total = totalCount
                 };
 
-                objCampaignsDetails.data = campaignsDetailsData;
-                objCampaignsDetails.pagination = page;
-                Response.status = true;
-                Response.campaignsDetails = objCampaignsDetails;
-                Response.responseCode = ResponseCode.Success;
-                return Response;
+                response.status = true;
+                response.message = "Campaign data retrived successfully.";
+                response.included = includeData;
+                response.pagination = page;
+                response.data = advertisementsDetails;
+                response.responseCode = ResponseCode.Success;
+                return response;
             }
             catch (Exception ex)
             {
-                Response.status = false;
-                Response.message = "Something went wrong while fetching data. Error Message - " + ex.Message;
-                Response.campaignsDetails = null;
-                Response.responseCode = ResponseCode.InternalServerError;
-                return Response;
+                response.status = false;
+                response.message = "Something went wrong while fetching campaign. Error Message - " + ex.Message;
+                response.responseCode = ResponseCode.InternalServerError;
+                return response;
+            }
+        }
+
+        public CampaignsGetResponse GetCampaigns(int campaignId, string includeType, PageInfo pageInfo)
+        {
+            CampaignsGetResponse response = new CampaignsGetResponse();
+            CampaignsDetails campaignsDetails = new CampaignsDetails();
+            int totalCount = 0;
+            try
+            {
+                List<CampaignsModel> campaignsModelList = new List<CampaignsModel>();
+                if (campaignId == 0)
+                {
+                    campaignsModelList = (from campaign in _context.Campaigns
+                                             select new CampaignsModel()
+                                             {
+                                                 CampaignId = campaign.CampaignId,
+                                                 Title = campaign.Title,
+                                                 StartAt = campaign.StartAt,
+                                                 EndAt = campaign.EndAt,
+                                                 Status = campaign.Status
+                                             }).OrderBy(a => a.CampaignId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
+
+                    totalCount = _context.Campaigns.ToList().Count();
+                }
+                else
+                {
+                    campaignsModelList = (from campaign in _context.Campaigns
+                                             where campaign.CampaignId == campaignId
+                                             select new CampaignsModel()
+                                             {
+                                                 CampaignId = campaign.CampaignId,
+                                                 Title = campaign.Title,
+                                                 StartAt = campaign.StartAt,
+                                                 EndAt = campaign.EndAt,
+                                                 Status = campaign.Status
+                                             }).OrderBy(a => a.CampaignId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
+
+                    totalCount = _context.Campaigns.Where(x => x.CampaignId == campaignId).ToList().Count();
+                }
+
+                if (campaignsModelList == null || campaignsModelList.Count == 0)
+                {
+                    response.status = false;
+                    response.message = "Campaign not found.";
+                    response.responseCode = ResponseCode.NotFound;
+                    return response;
+                }
+
+                campaignsDetails.campaigns = campaignsModelList;
+                var page = new Pagination
+                {
+                    offset = pageInfo.currentPage,
+                    limit = pageInfo.pageSize,
+                    total = totalCount
+                };
+
+                response.status = true;
+                response.message = "Campaign data retrived successfully.";
+                response.pagination = page;
+                response.data = campaignsDetails;
+                response.responseCode = ResponseCode.Success;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.status = false;
+                response.message = "Something went wrong while fetching data. Error Message - " + ex.Message;
+                response.responseCode = ResponseCode.InternalServerError;
+                return response;
             }
         }
 
@@ -259,7 +271,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Pass valid data in model.";
-                    response.campaignsDetails = null;
                     response.responseCode = ResponseCode.BadRequest;
                     return response;
                 }
@@ -273,10 +284,9 @@ namespace AdvertisementService.Repository
                 };
                 _context.Campaigns.Add(objCampaigns);
                 _context.SaveChanges();
-                
+
                 response.status = true;
                 response.message = "Campaign inserted successfully.";
-                response.campaignsDetails = null;
                 response.responseCode = ResponseCode.Success;
                 return response;
             }
@@ -284,7 +294,6 @@ namespace AdvertisementService.Repository
             {
                 response.status = false;
                 response.message = "Something went wrong while inserting Campaigns. Error Message - " + ex.Message;
-                response.campaignsDetails = null;
                 response.responseCode = ResponseCode.InternalServerError;
                 return response;
             }
@@ -299,7 +308,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Pass valid data in model.";
-                    response.campaignsDetails = null;
                     response.responseCode = ResponseCode.BadRequest;
                     return response;
                 }
@@ -309,7 +317,6 @@ namespace AdvertisementService.Repository
                 {
                     response.status = false;
                     response.message = "Campaign not found.";
-                    response.campaignsDetails = null;
                     response.responseCode = ResponseCode.NotFound;
                     return response;
                 }
@@ -320,10 +327,9 @@ namespace AdvertisementService.Repository
                 campaignData.Status = model.Status;
                 _context.Campaigns.Update(campaignData);
                 _context.SaveChanges();
-                
+
                 response.status = true;
                 response.message = "Campaign updated successfully.";
-                response.campaignsDetails = null;
                 response.responseCode = ResponseCode.Success;
                 return response;
             }
@@ -331,7 +337,6 @@ namespace AdvertisementService.Repository
             {
                 response.status = false;
                 response.message = "Something went wrong while updating Campaign. Error Message - " + ex.Message;
-                response.campaignsDetails = null;
                 response.responseCode = ResponseCode.InternalServerError;
                 return response;
             }

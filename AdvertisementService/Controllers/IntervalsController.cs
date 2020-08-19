@@ -22,14 +22,10 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("intervals/{id=0}")]
-        public IActionResult Get(int id, int currentPage = 1, int pageSize = 10)
+        public IActionResult Get(int id, [FromQuery] PageInfo pageInfo)
         {
-            IntervalsResponse response = new IntervalsResponse();
-            GetIntervalsModel model = new GetIntervalsModel();
-            model.IntervalId = id;
-            model.currentPage = currentPage;
-            model.pageSize = pageSize;
-            response = _intervalsRepository.GetIntervals(model);
+            IntervalsGetResponse response = new IntervalsGetResponse();
+            response = _intervalsRepository.GetIntervals(id, pageInfo);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
@@ -40,8 +36,7 @@ namespace AdvertisementService.Controllers
         public IActionResult Post(IntervalsModel model)
         {
             IntervalsResponse response = new IntervalsResponse();
-            if (ModelState.IsValid)
-                response = _intervalsRepository.InsertIntervals(model);
+            response = _intervalsRepository.InsertIntervals(model);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
@@ -52,8 +47,7 @@ namespace AdvertisementService.Controllers
         public IActionResult Put(IntervalsModel model)
         {
             IntervalsResponse response = new IntervalsResponse();
-            if (ModelState.IsValid)
-                response = _intervalsRepository.UpdateIntervals(model);
+            response = _intervalsRepository.UpdateIntervals(model);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
@@ -64,8 +58,7 @@ namespace AdvertisementService.Controllers
         public IActionResult Delete(int id)
         {
             IntervalsResponse response = new IntervalsResponse();
-            if (ModelState.IsValid)
-                response = _intervalsRepository.DeleteIntervals(id);
+            response = _intervalsRepository.DeleteIntervals(id);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);

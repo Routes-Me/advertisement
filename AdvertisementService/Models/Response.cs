@@ -1,4 +1,6 @@
 ﻿using AdvertisementService.Models.ResponseModel;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,75 +37,77 @@ namespace AdvertisementService.Models
     }
 
     #region Campaigns Response
-    public class CampaignsResponse : Response
+    public class CampaignsResponse : Response { }
+    public class CampaignsGetResponse : Response
     {
-        public CampaignsDetails campaignsDetails { get; set; }
+        public Pagination pagination { get; set; }
+        public CampaignsDetails data { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public JObject included { get; set; }
     }
 
     public class CampaignsDetails
     {
-        public Pagination pagination { get; set; }
-        public CampaignsDetailsData data { get; set; }
-    }
-
-    public class CampaignsDetailsData
-    {
         public List<CampaignsModel> campaigns { get; set; }
-        public List<AdvertisementsModel> advertisements { get; set; }
     }
     #endregion
 
     #region Advertisements Response
-    public class AdvertisementsResponse : Response
+    public class AdvertisementsResponse : Response { }
+    public class AdvertisementsGetResponse : Response
     {
-        public AdvertisementsDetails advertisementsDetails { get; set; }
+        public Pagination pagination { get; set; }
+        public AdvertisementsDetails data { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public JObject included { get; set; }
     }
 
     public class AdvertisementsDetails
-    {
-        public Pagination pagination { get; set; }
-        public AdvertisementsDetailsData data { get; set; }
-    }
-
-    public class AdvertisementsDetailsData
     {
         public List<AdvertisementsModel> advertisements { get; set; }
     }
     #endregion
 
     #region Medias Response
-    public class MediasResponse : Response
+    public class MediasResponse : Response { }
+    public class MediasGetResponse : Response
     {
-        public MediasDetails mediasDetails { get; set; }
+        public Pagination pagination { get; set; }
+        public MediasDetails data { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public JObject included { get; set; }
     }
 
     public class MediasDetails
     {
-        public Pagination pagination { get; set; }
-        public MediasDetailsData data { get; set; }
-    }
-
-    public class MediasDetailsData
-    {
-        public List<MediasModel> medias { get; set; }
+        public List<GetMediasModel> medias { get; set; }
     }
     #endregion
 
     #region Intervals Response
-    public class IntervalsResponse : Response
+
+    public class IntervalsResponse : Response { }
+    public class IntervalsGetResponse : Response
     {
-        public IntervalsDetails intervalsDetails { get; set; }
+        public Pagination pagination { get; set; }
+        public IntervalsDetails data { get; set; }
     }
 
     public class IntervalsDetails
     {
-        public Pagination pagination { get; set; }
-        public IntervalsDetailsData data { get; set; }
+        public List<IntervalsModel> intervals { get; set; }
+    }
+    #endregion
+
+    #region Institution Response
+    public class InstitutionGetResponse : Response
+    {
+        public InstitutionDetails data { get; set; }
     }
 
-    public class IntervalsDetailsData
+    public class InstitutionDetails
     {
-        public List<IntervalsModel> intervals { get; set; }
+        public List<InstitutionsModel> institution { get; set; }
     }
     #endregion
 }

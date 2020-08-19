@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 
 namespace AdvertisementService.Models.ResponseModel
 {
-    public class AdvertisementsModel
+    public class InstitutionsModel
     {
-        public int AdvertisementId { get; set; }
-        public int? InstitutionId { get; set; }
+        public int InstitutionId { get; set; }
+        public string Name { get; set; }
         public DateTime? CreatedAt { get; set; }
-        public int? MediaId { get; set; }
+        public int? PhoneNumber { get; set; }
+        public string CountryIso { get; set; }
     }
 }

@@ -22,14 +22,10 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("medias/{id=0}")]
-        public IActionResult Get(int id, int currentPage = 1, int pageSize = 10)
+        public IActionResult Get(int id, string include, [FromQuery] PageInfo pageInfo)
         {
-            MediasResponse response = new MediasResponse();
-            GetMediasModel model = new GetMediasModel();
-            model.MediaId = id;
-            model.currentPage = currentPage;
-            model.pageSize = pageSize;
-            response = _mediasRepository.GetMedias(model);
+            MediasGetResponse response = new MediasGetResponse();
+            response = _mediasRepository.GetMedias(id, include, pageInfo);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
@@ -37,11 +33,10 @@ namespace AdvertisementService.Controllers
 
         [HttpPost]
         [Route("medias")]
-        public IActionResult Post(MediasModel model)
+        public IActionResult Post([FromForm] MediasModel model)
         {
             MediasResponse response = new MediasResponse();
-            if (ModelState.IsValid)
-                response = _mediasRepository.InsertMedias(model);
+            response = _mediasRepository.InsertMedias(model);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
@@ -49,11 +44,10 @@ namespace AdvertisementService.Controllers
 
         [HttpPut]
         [Route("medias")]
-        public IActionResult Put(MediasModel model)
+        public IActionResult Put([FromForm] MediasModel model)
         {
             MediasResponse response = new MediasResponse();
-            if (ModelState.IsValid)
-                response = _mediasRepository.UpdateMedias(model);
+            response = _mediasRepository.UpdateMedias(model);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
@@ -64,8 +58,7 @@ namespace AdvertisementService.Controllers
         public IActionResult Delete(int id)
         {
             MediasResponse response = new MediasResponse();
-            if (ModelState.IsValid)
-                response = _mediasRepository.DeleteMedias(id);
+            response = _mediasRepository.DeleteMedias(id);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);

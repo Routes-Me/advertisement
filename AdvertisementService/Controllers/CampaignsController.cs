@@ -22,15 +22,10 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("campaigns/{id=0}")]
-        public IActionResult GetCampaigns(int id, int currentPage = 1, int pageSize = 10)
+        public IActionResult GetCampaigns(int id, string include, [FromQuery] PageInfo pageInfo)
         {
-            CampaignsResponse response = new CampaignsResponse();
-            GetCampaignsModel Model = new GetCampaignsModel();
-            Model.CampaignId = id;
-            Model.isCampaign = true;
-            Model.currentPage = currentPage;
-            Model.pageSize = pageSize;
-            response = _campaignsRepository.GetCampaigns(Model);
+            CampaignsGetResponse response = new CampaignsGetResponse();
+            response = _campaignsRepository.GetCampaigns(id, include, pageInfo);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
@@ -38,15 +33,10 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("campaigns/{id=0}/advertisements/{advertisementsId=0}")]
-        public IActionResult GetCampaignsById(int id, int advertisementsId, int currentPage = 1, int pageSize = 10)
+        public IActionResult GetAdvertisementsById(int id, int advertisementsId, string include, [FromQuery] PageInfo pageInfo)
         {
-            CampaignsResponse response = new CampaignsResponse();
-            GetCampaignsModel Model = new GetCampaignsModel();
-            Model.CampaignId = id;
-            Model.isAdvertisement = true;
-            Model.currentPage = currentPage;
-            Model.pageSize = pageSize;
-            response = _campaignsRepository.GetCampaigns(Model);
+            AdvertisementsGetResponse response = new AdvertisementsGetResponse();
+            response = _campaignsRepository.GetAdvertisements(id, advertisementsId, include, pageInfo);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
@@ -57,8 +47,7 @@ namespace AdvertisementService.Controllers
         public IActionResult Post(CampaignsModel model)
         {
             CampaignsResponse response = new CampaignsResponse();
-            if (ModelState.IsValid)
-                response = _campaignsRepository.InsertCampaigns(model);
+            response = _campaignsRepository.InsertCampaigns(model);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
@@ -69,8 +58,7 @@ namespace AdvertisementService.Controllers
         public IActionResult Put(CampaignsModel model)
         {
             CampaignsResponse response = new CampaignsResponse();
-            if (ModelState.IsValid)
-                response = _campaignsRepository.UpdateCampaigns(model);
+            response = _campaignsRepository.UpdateCampaigns(model);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
@@ -81,8 +69,7 @@ namespace AdvertisementService.Controllers
         public IActionResult Delete(int id)
         {
             CampaignsResponse response = new CampaignsResponse();
-            if (ModelState.IsValid)
-                response = _campaignsRepository.DeleteCampaigns(id);
+            response = _campaignsRepository.DeleteCampaigns(id);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);

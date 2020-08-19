@@ -9,7 +9,8 @@ namespace AdvertisementService.Abstraction
 {
     public interface ICampaignsRepository
     {
-        CampaignsResponse GetCampaigns(GetCampaignsModel model);
+        AdvertisementsGetResponse GetAdvertisements(int campaignId, int advertisementsId, string includeType, PageInfo pageInfo);
+        CampaignsGetResponse GetCampaigns(int campaignId, string includeType, PageInfo pageInfo);
         CampaignsResponse UpdateCampaigns(CampaignsModel model);
         CampaignsResponse DeleteCampaigns(int id);
         CampaignsResponse InsertCampaigns(CampaignsModel model);
