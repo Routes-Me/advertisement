@@ -22,7 +22,7 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("intervals/{id=0}")]
-        public IActionResult Get(int id, [FromQuery] PageInfo pageInfo)
+        public IActionResult Get(int id, [FromQuery] Pagination pageInfo)
         {
             IntervalsGetResponse response = new IntervalsGetResponse();
             response = _intervalsRepository.GetIntervals(id, pageInfo);

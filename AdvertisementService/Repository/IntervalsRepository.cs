@@ -56,10 +56,9 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public IntervalsGetResponse GetIntervals(int intervalId, PageInfo pageInfo)
+        public IntervalsGetResponse GetIntervals(int intervalId, Pagination pageInfo)
         {
             IntervalsGetResponse response = new IntervalsGetResponse();
-            IntervalsDetails intervalsDetails = new IntervalsDetails();
             int totalCount = 0;
             try
             {
@@ -72,7 +71,7 @@ namespace AdvertisementService.Repository
                                              {
                                                  IntervalId = interval.IntervalId,
                                                  Title = interval.Title
-                                             }).OrderBy(a => a.IntervalId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
+                                             }).OrderBy(a => a.IntervalId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = _context.Intervals.ToList().Count();
                 }
@@ -84,7 +83,7 @@ namespace AdvertisementService.Repository
                                              {
                                                  IntervalId = interval.IntervalId,
                                                  Title = interval.Title
-                                             }).OrderBy(a => a.IntervalId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
+                                             }).OrderBy(a => a.IntervalId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = _context.Intervals.Where(x => x.IntervalId == intervalId).ToList().Count();
                 }
@@ -97,18 +96,17 @@ namespace AdvertisementService.Repository
                     return response;
                 }
 
-                intervalsDetails.intervals = intervalsModelList;
                 var page = new Pagination
                 {
-                    offset = pageInfo.currentPage,
-                    limit = pageInfo.pageSize,
+                    offset = pageInfo.offset,
+                    limit = pageInfo.limit,
                     total = totalCount
                 };
 
                 response.status = true;
                 response.message = "Interval data retrived successfully.";
                 response.pagination = page;
-                response.data = intervalsDetails;
+                response.data = intervalsModelList;
                 response.responseCode = ResponseCode.Success;
                 return response;
             }

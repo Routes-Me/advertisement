@@ -9,10 +9,11 @@ namespace AdvertisementService.Abstraction
 {
     public interface ICampaignsRepository
     {
-        AdvertisementsGetResponse GetAdvertisements(int campaignId, int advertisementsId, string includeType, PageInfo pageInfo);
-        CampaignsGetResponse GetCampaigns(int campaignId, string includeType, PageInfo pageInfo);
+        AdvertisementsGetResponse GetAdvertisements(int campaignId, int advertisementsId, string includeType, Pagination pageInfo);
+        CampaignsGetResponse GetCampaigns(int campaignId, string includeType, Pagination pageInfo);
         CampaignsResponse UpdateCampaigns(CampaignsModel model);
         CampaignsResponse DeleteCampaigns(int id);
         CampaignsResponse InsertCampaigns(CampaignsModel model);
+        ActiveCampAdWithQRGetResponse GetAdvertisementsofActiveCampaign(string include, Pagination pageInfo);
     }
 }

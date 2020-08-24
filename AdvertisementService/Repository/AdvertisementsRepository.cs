@@ -60,10 +60,9 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public AdvertisementsGetResponse GetAdvertisements(int advertisementId, string includeType, PageInfo pageInfo)
+        public AdvertisementsGetResponse GetAdvertisements(int advertisementId, string includeType, Pagination pageInfo)
         {
             AdvertisementsGetResponse response = new AdvertisementsGetResponse();
-            AdvertisementsDetails advertisementsDetails = new AdvertisementsDetails();
             int totalCount = 0;
             try
             {
@@ -78,7 +77,7 @@ namespace AdvertisementService.Repository
                                                    CreatedAt = advertisement.CreatedAt,
                                                    InstitutionId = advertisement.InstitutionId,
                                                    MediaId = advertisement.MediaId,
-                                               }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
+                                               }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = _context.Advertisements.ToList().Count();
                 }
@@ -92,7 +91,7 @@ namespace AdvertisementService.Repository
                                                    CreatedAt = advertisement.CreatedAt,
                                                    InstitutionId = advertisement.InstitutionId,
                                                    MediaId = advertisement.MediaId,
-                                               }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
+                                               }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = _context.Advertisements.Where(x => x.AdvertisementId == advertisementId).ToList().Count();
                 }
@@ -128,11 +127,10 @@ namespace AdvertisementService.Repository
                 if (((JContainer)includeData).Count == 0)
                     includeData = null;
 
-                advertisementsDetails.advertisements = advertisementsModelList;
                 var page = new Pagination
                 {
-                    offset = pageInfo.currentPage,
-                    limit = pageInfo.pageSize,
+                    offset = pageInfo.offset,
+                    limit = pageInfo.limit,
                     total = totalCount
                 };
 
@@ -140,7 +138,7 @@ namespace AdvertisementService.Repository
                 response.message = "Campaign data retrived successfully.";
                 response.included = includeData;
                 response.pagination = page;
-                response.data = advertisementsDetails;
+                response.data = advertisementsModelList;
                 response.responseCode = ResponseCode.Success;
                 return response;
             }
@@ -195,7 +193,7 @@ namespace AdvertisementService.Repository
 
                 Advertisements objAdvertisements = new Advertisements()
                 {
-                    CreatedAt = model.CreatedAt,
+                    CreatedAt = DateTime.UtcNow,
                     InstitutionId = model.InstitutionId,
                     MediaId = model.MediaId
                 };

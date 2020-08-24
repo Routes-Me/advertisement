@@ -22,7 +22,7 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("medias/{id=0}")]
-        public IActionResult Get(int id, string include, [FromQuery] PageInfo pageInfo)
+        public IActionResult Get(int id, string include, [FromQuery] Pagination pageInfo)
         {
             MediasGetResponse response = new MediasGetResponse();
             response = _mediasRepository.GetMedias(id, include, pageInfo);
@@ -33,10 +33,10 @@ namespace AdvertisementService.Controllers
 
         [HttpPost]
         [Route("medias")]
-        public IActionResult Post([FromForm] MediasModel model)
+        public async Task<IActionResult> Post([FromForm] MediasModel model)
         {
             MediasResponse response = new MediasResponse();
-            response = _mediasRepository.InsertMedias(model);
+            response = await _mediasRepository.InsertMedias(model);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
@@ -44,10 +44,10 @@ namespace AdvertisementService.Controllers
 
         [HttpPut]
         [Route("medias")]
-        public IActionResult Put([FromForm] MediasModel model)
+        public async Task<IActionResult> Put([FromForm] MediasModel model)
         {
             MediasResponse response = new MediasResponse();
-            response = _mediasRepository.UpdateMedias(model);
+            response = await _mediasRepository.UpdateMedias(model);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
@@ -55,10 +55,10 @@ namespace AdvertisementService.Controllers
 
         [HttpDelete]
         [Route("medias/{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             MediasResponse response = new MediasResponse();
-            response = _mediasRepository.DeleteMedias(id);
+            response = await _mediasRepository.DeleteMedias(id);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);

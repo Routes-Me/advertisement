@@ -23,7 +23,7 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("advertisements/{id=0}")]
-        public IActionResult Get(int id, string include, [FromQuery] PageInfo pageInfo)
+        public IActionResult Get(int id, string include, [FromQuery] Pagination pageInfo)
         {
             AdvertisementsGetResponse response = new AdvertisementsGetResponse();
             response = _advertisementsRepository.GetAdvertisements(id, include, pageInfo);

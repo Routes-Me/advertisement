@@ -1,11 +1,18 @@
 ﻿using AdvertisementService.Abstraction;
 using AdvertisementService.Models;
+using AdvertisementService.Models.Common;
 using AdvertisementService.Models.DBModels;
 using AdvertisementService.Models.ResponseModel;
+using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Blob;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,12 +21,14 @@ namespace AdvertisementService.Repository
     public class MediasRepository : IMediasRepository
     {
         private readonly advertisementserviceContext _context;
-        public MediasRepository(advertisementserviceContext context)
+        private readonly AzureStorageBlobConfig _config;
+        public MediasRepository(IOptions<AzureStorageBlobConfig> config, advertisementserviceContext context)
         {
+            _config = config.Value;
             _context = context;
         }
 
-        public MediasResponse DeleteMedias(int id)
+        public async Task<MediasResponse> DeleteMedias(int id)
         {
             MediasResponse response = new MediasResponse();
             try
@@ -42,6 +51,19 @@ namespace AdvertisementService.Repository
                     return response;
                 }
 
+                var mediaReferenceName = medias.Url.Split('/');
+                if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
+                {
+                    CloudBlobClient BlobClient = storageAccount.CreateCloudBlobClient();
+                    CloudBlobContainer container = BlobClient.GetContainerReference(_config.Container);
+                    if (await container.ExistsAsync())
+                    {
+                        CloudBlob file = container.GetBlobReference(mediaReferenceName.LastOrDefault());
+                        if (await file.ExistsAsync())
+                            await file.DeleteAsync();
+                    }
+                }
+
                 var metaData = _context.Mediametadata.Where(x => x.MediaMetadataId == medias.MediaMetadataId).FirstOrDefault();
                 if (metaData != null)
                     _context.Mediametadata.Remove(metaData);
@@ -62,10 +84,9 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public MediasGetResponse GetMedias(int mediaId, string includeType, PageInfo pageInfo)
+        public MediasGetResponse GetMedias(int mediaId, string includeType, Pagination pageInfo)
         {
             MediasGetResponse response = new MediasGetResponse();
-            MediasDetails mediasDetails = new MediasDetails();
             int totalCount = 0;
             try
             {
@@ -82,7 +103,7 @@ namespace AdvertisementService.Repository
                                            MediaType = media.MediaType,
                                            Duration = metadata.Duration,
                                            Size = metadata.Size
-                                       }).OrderBy(a => a.MediaId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
+                                       }).OrderBy(a => a.MediaId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = (from media in _context.Medias
                                   join metadata in _context.Mediametadata on media.MediaMetadataId equals metadata.MediaMetadataId
@@ -109,7 +130,7 @@ namespace AdvertisementService.Repository
                                            MediaType = media.MediaType,
                                            Duration = metadata.Duration,
                                            Size = metadata.Size
-                                       }).OrderBy(a => a.MediaId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
+                                       }).OrderBy(a => a.MediaId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = (from media in _context.Medias
                                   join metadata in _context.Mediametadata on media.MediaMetadataId equals metadata.MediaMetadataId
@@ -133,18 +154,17 @@ namespace AdvertisementService.Repository
                     return response;
                 }
 
-                mediasDetails.medias = mediasModelList;
                 var page = new Pagination
                 {
-                    offset = pageInfo.currentPage,
-                    limit = pageInfo.pageSize,
+                    offset = pageInfo.offset,
+                    limit = pageInfo.limit,
                     total = totalCount
                 };
 
                 response.status = true;
                 response.message = "Media data retrived successfully.";
                 response.pagination = page;
-                response.data = mediasDetails;
+                response.data = mediasModelList;
                 response.responseCode = ResponseCode.Success;
                 return response;
             }
@@ -157,9 +177,10 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public MediasResponse InsertMedias(MediasModel model)
+        public async Task<MediasResponse> InsertMedias(MediasModel model)
         {
             MediasResponse response = new MediasResponse();
+            string blobUrl = string.Empty;
             try
             {
                 if (model == null)
@@ -168,6 +189,16 @@ namespace AdvertisementService.Repository
                     response.message = "Pass valid data in model.";
                     response.responseCode = ResponseCode.BadRequest;
                     return response;
+                }
+
+                string mediaReferenceName = model.media.FileName.Split('.')[0] + "_" + DateTime.UtcNow.Ticks + "." + model.media.FileName.Split('.')[1];
+                if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
+                {
+                    CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+                    CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
+                    CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
+                    await blockBlob.UploadFromStreamAsync(model.media.OpenReadStream());
+                    blobUrl = blockBlob.Uri.AbsoluteUri;
                 }
 
                 Mediametadata mediaMetadata = new Mediametadata()
@@ -180,8 +211,7 @@ namespace AdvertisementService.Repository
 
                 Medias objMedia = new Medias()
                 {
-                    Url = "http://localhost:56411/uploads/" + model.media.FileName,
-                    //Url = "http://localhost:56411/uploads/" + model.Url,
+                    Url = blobUrl,
                     CreatedAt = model.CreatedAt,
                     MediaType = model.MediaType,
                     MediaMetadataId = mediaMetadata.MediaMetadataId
@@ -203,9 +233,10 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public MediasResponse UpdateMedias(MediasModel model)
+        public async Task<MediasResponse> UpdateMedias(MediasModel model)
         {
             MediasResponse response = new MediasResponse();
+            string blobUrl = string.Empty, mediaReferenceName = string.Empty;
             try
             {
                 if (model == null)
@@ -223,6 +254,39 @@ namespace AdvertisementService.Repository
                     response.message = "Media not found.";
                     response.responseCode = ResponseCode.NotFound;
                     return response;
+                }
+
+                if (!string.IsNullOrEmpty(mediaData.Url))
+                {
+                    var existingMediaReferenceName = mediaData.Url.Split('/');
+                    if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
+                    {
+                        CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+                        CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
+                        if (await container.ExistsAsync())
+                        {
+                            CloudBlob file = container.GetBlobReference(existingMediaReferenceName.LastOrDefault());
+                            if (await file.ExistsAsync())
+                                await file.DeleteAsync();
+                        }
+
+                        mediaReferenceName = model.media.FileName.Split('.')[0] + "_" + DateTime.UtcNow.Ticks + "." + model.media.FileName.Split('.')[1];
+                        CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
+                        await blockBlob.UploadFromStreamAsync(model.media.OpenReadStream());
+                        blobUrl = blockBlob.Uri.AbsoluteUri;
+                    }
+                }
+                else
+                {
+                    mediaReferenceName = model.media.FileName.Split('.')[0] + "_" + DateTime.UtcNow.Ticks + "." + model.media.FileName.Split('.')[1];
+                    if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
+                    {
+                        CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+                        CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
+                        CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
+                        await blockBlob.UploadFromStreamAsync(model.media.OpenReadStream());
+                        blobUrl = blockBlob.Uri.AbsoluteUri;
+                    }
                 }
 
                 var metadata = _context.Mediametadata.Where(x => x.MediaMetadataId == mediaData.MediaMetadataId).FirstOrDefault();
@@ -245,7 +309,7 @@ namespace AdvertisementService.Repository
                     _context.SaveChanges();
                 }
 
-                mediaData.Url = model.Url;
+                mediaData.Url = blobUrl;
                 mediaData.CreatedAt = model.CreatedAt;
                 mediaData.MediaType = model.MediaType;
                 _context.Medias.Update(mediaData);

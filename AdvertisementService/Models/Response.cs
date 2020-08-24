@@ -41,14 +41,9 @@ namespace AdvertisementService.Models
     public class CampaignsGetResponse : Response
     {
         public Pagination pagination { get; set; }
-        public CampaignsDetails data { get; set; }
+        public List<CampaignsModel> data { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public JObject included { get; set; }
-    }
-
-    public class CampaignsDetails
-    {
-        public List<CampaignsModel> campaigns { get; set; }
     }
     #endregion
 
@@ -57,14 +52,30 @@ namespace AdvertisementService.Models
     public class AdvertisementsGetResponse : Response
     {
         public Pagination pagination { get; set; }
-        public AdvertisementsDetails data { get; set; }
+        public List<AdvertisementsModel> data { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public JObject included { get; set; }
     }
 
-    public class AdvertisementsDetails
+    public class ActiveCampAdWithQRGetResponse : Response
     {
-        public List<AdvertisementsModel> advertisements { get; set; }
+        public Pagination pagination { get; set; }
+        public List<GetActiveCampAdWithQRCodeModel> data { get; set; }
+    }
+
+    public class GetQrcodesModel
+    {
+        public int? AdvertisementId { get; set; }
+        public string Details { get; set; }
+        public string ImageUrl { get; set; }
+    }
+    #endregion
+
+    #region QRCode Response
+    public class GetQRCodeResponse : Response
+    {
+        public Pagination pagination { get; set; }
+        public List<GetQrcodesModel> data { get; set; }
     }
     #endregion
 
@@ -73,14 +84,9 @@ namespace AdvertisementService.Models
     public class MediasGetResponse : Response
     {
         public Pagination pagination { get; set; }
-        public MediasDetails data { get; set; }
+        public List<GetMediasModel> data { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public JObject included { get; set; }
-    }
-
-    public class MediasDetails
-    {
-        public List<GetMediasModel> medias { get; set; }
     }
     #endregion
 
@@ -90,24 +96,14 @@ namespace AdvertisementService.Models
     public class IntervalsGetResponse : Response
     {
         public Pagination pagination { get; set; }
-        public IntervalsDetails data { get; set; }
-    }
-
-    public class IntervalsDetails
-    {
-        public List<IntervalsModel> intervals { get; set; }
+        public List<IntervalsModel> data { get; set; }
     }
     #endregion
 
     #region Institution Response
     public class InstitutionGetResponse : Response
     {
-        public InstitutionDetails data { get; set; }
-    }
-
-    public class InstitutionDetails
-    {
-        public List<InstitutionsModel> institution { get; set; }
+        public List<InstitutionsModel> data { get; set; }
     }
     #endregion
 }

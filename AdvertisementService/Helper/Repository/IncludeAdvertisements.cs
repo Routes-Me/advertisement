@@ -1,6 +1,6 @@
 ﻿using AdvertisementService.Helper.Abstraction;
-using AdvertisementService.Helper.Models;
 using AdvertisementService.Models;
+using AdvertisementService.Models.Common;
 using AdvertisementService.Models.DBModels;
 using AdvertisementService.Models.ResponseModel;
 using Microsoft.Extensions.Options;
@@ -37,7 +37,7 @@ namespace AdvertisementService.Helper.Repository
                 {
                     var result = response.Content;
                     var institutionsData = JsonConvert.DeserializeObject<InstitutionGetResponse>(result);
-                    institutions.AddRange(institutionsData.data.institution);
+                    institutions.AddRange(institutionsData.data);
                 }
             }
             var usersJson = JsonConvert.SerializeObject(institutions,

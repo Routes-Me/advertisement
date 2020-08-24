@@ -3,6 +3,7 @@ using AdvertisementService.Helper.Abstraction;
 using AdvertisementService.Models;
 using AdvertisementService.Models.DBModels;
 using AdvertisementService.Models.ResponseModel;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,12 @@ namespace AdvertisementService.Repository
     {
         private readonly advertisementserviceContext _context;
         private readonly IIncludeAdvertisements _includeAdvertisements;
-        public CampaignsRepository(advertisementserviceContext context, IIncludeAdvertisements includeAdvertisements)
+        private readonly IIncludeQRCodeRepository _includeQRCodeRepository;
+        public CampaignsRepository(advertisementserviceContext context, IIncludeAdvertisements includeAdvertisements, IIncludeQRCodeRepository includeQRCodeRepository)
         {
             _context = context;
             _includeAdvertisements = includeAdvertisements;
+            _includeQRCodeRepository = includeQRCodeRepository;
         }
 
         public CampaignsResponse DeleteCampaigns(int id)
@@ -55,15 +58,14 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public AdvertisementsGetResponse GetAdvertisements(int campaignId, int advertisementsId, string includeType, PageInfo pageInfo)
+        public AdvertisementsGetResponse GetAdvertisements(int campaignId, int advertisementsId, string includeType, Pagination pageInfo)
         {
             AdvertisementsGetResponse response = new AdvertisementsGetResponse();
-            AdvertisementsDetails advertisementsDetails = new AdvertisementsDetails();
             int totalCount = 0;
             try
             {
                 List<AdvertisementsModel> advertisementsModelList = new List<AdvertisementsModel>();
-                
+
                 if (campaignId == 0)
                 {
                     response.status = false;
@@ -93,7 +95,7 @@ namespace AdvertisementService.Repository
                                                    CreatedAt = advertisement.CreatedAt,
                                                    InstitutionId = advertisement.InstitutionId,
                                                    MediaId = advertisement.MediaId
-                                               }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
+                                               }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
 
                     totalCount = (from campaign in _context.Campaigns
@@ -120,7 +122,7 @@ namespace AdvertisementService.Repository
                                                    CreatedAt = advertisement.CreatedAt,
                                                    InstitutionId = advertisement.InstitutionId,
                                                    MediaId = advertisement.MediaId
-                                               }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
+                                               }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
 
                     totalCount = (from campaign in _context.Campaigns
@@ -167,11 +169,10 @@ namespace AdvertisementService.Repository
                 if (((JContainer)includeData).Count == 0)
                     includeData = null;
 
-                advertisementsDetails.advertisements = advertisementsModelList;
                 var page = new Pagination
                 {
-                    offset = pageInfo.currentPage,
-                    limit = pageInfo.pageSize,
+                    offset = pageInfo.offset,
+                    limit = pageInfo.limit,
                     total = totalCount
                 };
 
@@ -179,7 +180,7 @@ namespace AdvertisementService.Repository
                 response.message = "Campaign data retrived successfully.";
                 response.included = includeData;
                 response.pagination = page;
-                response.data = advertisementsDetails;
+                response.data = advertisementsModelList;
                 response.responseCode = ResponseCode.Success;
                 return response;
             }
@@ -192,10 +193,128 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public CampaignsGetResponse GetCampaigns(int campaignId, string includeType, PageInfo pageInfo)
+        public ActiveCampAdWithQRGetResponse GetAdvertisementsofActiveCampaign(string includeType, Pagination pageInfo)
+        {
+            ActiveCampAdWithQRGetResponse response = new ActiveCampAdWithQRGetResponse();
+            GetQrcodesModel qrdata = new GetQrcodesModel();
+            int totalCount = 0;
+            try
+            {
+                List<GetActiveCampAdModel> advertisementsModelList = new List<GetActiveCampAdModel>();
+                List<GetQrcodesModel> qrCodeDetails = new List<GetQrcodesModel>();
+                List<GetActiveCampAdWithQRCodeModel> activeCampaignsAdvertisementsWithQRCodeModelList = new List<GetActiveCampAdWithQRCodeModel>();
+
+                advertisementsModelList = (from campaign in _context.Campaigns
+                                           join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
+                                           join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
+                                           join media in _context.Medias on advertisement.MediaId equals media.MediaId
+                                           where campaign.Status.Equals("active")
+                                           select new GetActiveCampAdModel()
+                                           {
+                                               ContentId = advertisement.AdvertisementId,
+                                               Type = media.MediaType,
+                                               Url = media.Url
+                                           }).OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+
+                totalCount = (from campaign in _context.Campaigns
+                              join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
+                              join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
+                              join media in _context.Medias on advertisement.MediaId equals media.MediaId
+                              where campaign.Status.Equals("active")
+                              select new GetActiveCampAdModel()
+                              {
+                                  ContentId = advertisement.AdvertisementId,
+                                  Type = media.MediaType,
+                                  Url = media.Url
+                              }).ToList().Count();
+
+                if (advertisementsModelList == null || advertisementsModelList.Count == 0)
+                {
+                    response.status = false;
+                    response.message = "Advertisements not found.";
+                    response.responseCode = ResponseCode.NotFound;
+                    return response;
+                }
+
+                if (includeType == "qrcode")
+                {
+                    var result = _includeQRCodeRepository.GetQRCodeIncludedData(advertisementsModelList);
+                    if (result != null)
+                        qrCodeDetails.AddRange(result);
+
+                    foreach (var advertisement in advertisementsModelList)
+                    {
+                        if (qrCodeDetails != null)
+                            qrdata = qrCodeDetails.Where(x => x.AdvertisementId == advertisement.ContentId).FirstOrDefault();
+
+                        if (qrdata != null)
+                        {
+                            activeCampaignsAdvertisementsWithQRCodeModelList.Add(new GetActiveCampAdWithQRCodeModel()
+                            {
+                                ContentId = advertisement.ContentId,
+                                Type = advertisement.Type,
+                                Url = advertisement.Url,
+                                qrCode = new QRCodeModel()
+                                {
+                                    Details = qrdata.Details,
+                                    Url = qrdata.ImageUrl
+                                }
+
+                            });
+                        }
+                        else
+                        {
+                            activeCampaignsAdvertisementsWithQRCodeModelList.Add(new GetActiveCampAdWithQRCodeModel()
+                            {
+                                ContentId = advertisement.ContentId,
+                                Type = advertisement.Type,
+                                Url = advertisement.Url,
+                                qrCode = null
+                            });
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var advertisement in advertisementsModelList)
+                    {
+
+                        activeCampaignsAdvertisementsWithQRCodeModelList.Add(new GetActiveCampAdWithQRCodeModel()
+                        {
+                            ContentId = advertisement.ContentId,
+                            Type = advertisement.Type,
+                            Url = advertisement.Url,
+                            qrCode = null
+                        });
+                    }
+                }
+
+                var page = new Pagination
+                {
+                    offset = pageInfo.offset,
+                    limit = pageInfo.limit,
+                    total = totalCount
+                };
+
+                response.status = true;
+                response.message = "Advertisements data retrived successfully.";
+                response.pagination = page;
+                response.data = activeCampaignsAdvertisementsWithQRCodeModelList;
+                response.responseCode = ResponseCode.Success;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.status = false;
+                response.message = "Something went wrong while fetching advertisements. Error Message - " + ex.Message;
+                response.responseCode = ResponseCode.InternalServerError;
+                return response;
+            }
+        }
+
+        public CampaignsGetResponse GetCampaigns(int campaignId, string includeType, Pagination pageInfo)
         {
             CampaignsGetResponse response = new CampaignsGetResponse();
-            CampaignsDetails campaignsDetails = new CampaignsDetails();
             int totalCount = 0;
             try
             {
@@ -203,29 +322,29 @@ namespace AdvertisementService.Repository
                 if (campaignId == 0)
                 {
                     campaignsModelList = (from campaign in _context.Campaigns
-                                             select new CampaignsModel()
-                                             {
-                                                 CampaignId = campaign.CampaignId,
-                                                 Title = campaign.Title,
-                                                 StartAt = campaign.StartAt,
-                                                 EndAt = campaign.EndAt,
-                                                 Status = campaign.Status
-                                             }).OrderBy(a => a.CampaignId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
+                                          select new CampaignsModel()
+                                          {
+                                              CampaignId = campaign.CampaignId,
+                                              Title = campaign.Title,
+                                              StartAt = campaign.StartAt,
+                                              EndAt = campaign.EndAt,
+                                              Status = campaign.Status
+                                          }).OrderBy(a => a.CampaignId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = _context.Campaigns.ToList().Count();
                 }
                 else
                 {
                     campaignsModelList = (from campaign in _context.Campaigns
-                                             where campaign.CampaignId == campaignId
-                                             select new CampaignsModel()
-                                             {
-                                                 CampaignId = campaign.CampaignId,
-                                                 Title = campaign.Title,
-                                                 StartAt = campaign.StartAt,
-                                                 EndAt = campaign.EndAt,
-                                                 Status = campaign.Status
-                                             }).OrderBy(a => a.CampaignId).Skip((pageInfo.currentPage - 1) * pageInfo.pageSize).Take(pageInfo.pageSize).ToList();
+                                          where campaign.CampaignId == campaignId
+                                          select new CampaignsModel()
+                                          {
+                                              CampaignId = campaign.CampaignId,
+                                              Title = campaign.Title,
+                                              StartAt = campaign.StartAt,
+                                              EndAt = campaign.EndAt,
+                                              Status = campaign.Status
+                                          }).OrderBy(a => a.CampaignId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = _context.Campaigns.Where(x => x.CampaignId == campaignId).ToList().Count();
                 }
@@ -238,18 +357,17 @@ namespace AdvertisementService.Repository
                     return response;
                 }
 
-                campaignsDetails.campaigns = campaignsModelList;
                 var page = new Pagination
                 {
-                    offset = pageInfo.currentPage,
-                    limit = pageInfo.pageSize,
+                    offset = pageInfo.offset,
+                    limit = pageInfo.limit,
                     total = totalCount
                 };
 
                 response.status = true;
                 response.message = "Campaign data retrived successfully.";
                 response.pagination = page;
-                response.data = campaignsDetails;
+                response.data = campaignsModelList;
                 response.responseCode = ResponseCode.Success;
                 return response;
             }
@@ -287,7 +405,7 @@ namespace AdvertisementService.Repository
 
                 response.status = true;
                 response.message = "Campaign inserted successfully.";
-                response.responseCode = ResponseCode.Success;
+                response.responseCode = ResponseCode.Created;
                 return response;
             }
             catch (Exception ex)

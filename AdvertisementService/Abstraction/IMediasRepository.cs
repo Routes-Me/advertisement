@@ -10,9 +10,9 @@ namespace AdvertisementService.Abstraction
 {
     public interface IMediasRepository
     {
-        MediasGetResponse GetMedias(int mediaId, string include, PageInfo pageInfo);
-        MediasResponse UpdateMedias(MediasModel model);
-        MediasResponse DeleteMedias(int id);
-        MediasResponse InsertMedias(MediasModel model);
+        MediasGetResponse GetMedias(int mediaId, string include, Pagination pageInfo);
+        Task<MediasResponse> UpdateMedias(MediasModel model);
+        Task<MediasResponse> DeleteMedias(int id);
+        Task<MediasResponse> InsertMedias(MediasModel model);
     }
 }

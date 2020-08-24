@@ -7,14 +7,8 @@ namespace AdvertisementService.Models
 {
     public class Pagination
     {
-        public int offset { get; set; }
-        public int limit { get; set; }
+        public int offset { get; set; } = 1;
+        public int limit { get; set; } = 10;
         public int total { get; set; }
-    }
-
-    public class PageInfo
-    {
-        public int currentPage { get; set; } = 1;
-        public int pageSize { get; set; } = 10;
     }
 }

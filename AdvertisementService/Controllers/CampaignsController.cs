@@ -22,7 +22,7 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("campaigns/{id=0}")]
-        public IActionResult GetCampaigns(int id, string include, [FromQuery] PageInfo pageInfo)
+        public IActionResult GetCampaigns(int id, string include, [FromQuery] Pagination pageInfo)
         {
             CampaignsGetResponse response = new CampaignsGetResponse();
             response = _campaignsRepository.GetCampaigns(id, include, pageInfo);
@@ -33,10 +33,21 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("campaigns/{id=0}/advertisements/{advertisementsId=0}")]
-        public IActionResult GetAdvertisementsById(int id, int advertisementsId, string include, [FromQuery] PageInfo pageInfo)
+        public IActionResult GetAdvertisementsById(int id, int advertisementsId, string include, [FromQuery] Pagination pageInfo)
         {
             AdvertisementsGetResponse response = new AdvertisementsGetResponse();
             response = _campaignsRepository.GetAdvertisements(id, advertisementsId, include, pageInfo);
+            if (response.responseCode != ResponseCode.Success)
+                return GetActionResult(response);
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("campaigns/advertisementsqr")]
+        public IActionResult GetAdvertisementsOfActiveCampaign(string include, [FromQuery] Pagination pageInfo)
+        {
+            ActiveCampAdWithQRGetResponse response = new ActiveCampAdWithQRGetResponse();
+            response = _campaignsRepository.GetAdvertisementsofActiveCampaign(include, pageInfo);
             if (response.responseCode != ResponseCode.Success)
                 return GetActionResult(response);
             return Ok(response);
