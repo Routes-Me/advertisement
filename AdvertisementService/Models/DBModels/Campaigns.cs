@@ -7,7 +7,7 @@ namespace AdvertisementService.Models.DBModels
     {
         public Campaigns()
         {
-            Advertisementscampaigns = new HashSet<Advertisementscampaigns>();
+            AdvertisementsCampaigns = new HashSet<AdvertisementsCampaigns>();
         }
 
         public int CampaignId { get; set; }
@@ -16,6 +16,6 @@ namespace AdvertisementService.Models.DBModels
         public DateTime? EndAt { get; set; }
         public string Status { get; set; }
 
-        public virtual ICollection<Advertisementscampaigns> Advertisementscampaigns { get; set; }
+        public virtual ICollection<AdvertisementsCampaigns> AdvertisementsCampaigns { get; set; }
     }
 }

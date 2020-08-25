@@ -7,12 +7,12 @@ namespace AdvertisementService.Models.DBModels
     {
         public Intervals()
         {
-            Advertisementsintervals = new HashSet<Advertisementsintervals>();
+            AdvertisementsIntervals = new HashSet<AdvertisementsIntervals>();
         }
 
         public int IntervalId { get; set; }
         public string Title { get; set; }
 
-        public virtual ICollection<Advertisementsintervals> Advertisementsintervals { get; set; }
+        public virtual ICollection<AdvertisementsIntervals> AdvertisementsIntervals { get; set; }
     }
 }

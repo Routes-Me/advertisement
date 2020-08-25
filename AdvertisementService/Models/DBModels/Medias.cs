@@ -16,7 +16,7 @@ namespace AdvertisementService.Models.DBModels
         public string MediaType { get; set; }
         public int? MediaMetadataId { get; set; }
 
-        public virtual Mediametadata MediaMetadata { get; set; }
+        public virtual MediaMetadata MediaMetadata { get; set; }
         public virtual ICollection<Advertisements> Advertisements { get; set; }
     }
 }

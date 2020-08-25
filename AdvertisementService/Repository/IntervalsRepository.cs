@@ -31,7 +31,7 @@ namespace AdvertisementService.Repository
                     return response;
                 }
 
-                var advertisementsIntervals = _context.Advertisementsintervals.Where(x => x.IntervalId == id).FirstOrDefault();
+                var advertisementsIntervals = _context.AdvertisementsIntervals.Where(x => x.IntervalId == id).FirstOrDefault();
                 if (intervalsData == null)
                 {
                     response.status = false;

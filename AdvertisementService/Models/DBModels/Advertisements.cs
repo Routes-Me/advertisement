@@ -7,8 +7,8 @@ namespace AdvertisementService.Models.DBModels
     {
         public Advertisements()
         {
-            Advertisementscampaigns = new HashSet<Advertisementscampaigns>();
-            Advertisementsintervals = new HashSet<Advertisementsintervals>();
+            AdvertisementsCampaigns = new HashSet<AdvertisementsCampaigns>();
+            AdvertisementsIntervals = new HashSet<AdvertisementsIntervals>();
         }
 
         public int AdvertisementId { get; set; }
@@ -17,7 +17,7 @@ namespace AdvertisementService.Models.DBModels
         public int? MediaId { get; set; }
 
         public virtual Medias Media { get; set; }
-        public virtual ICollection<Advertisementscampaigns> Advertisementscampaigns { get; set; }
-        public virtual ICollection<Advertisementsintervals> Advertisementsintervals { get; set; }
+        public virtual ICollection<AdvertisementsCampaigns> AdvertisementsCampaigns { get; set; }
+        public virtual ICollection<AdvertisementsIntervals> AdvertisementsIntervals { get; set; }
     }
 }

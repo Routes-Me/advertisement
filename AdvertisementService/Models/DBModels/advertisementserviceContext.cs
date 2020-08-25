@@ -16,11 +16,11 @@ namespace AdvertisementService.Models.DBModels
         }
 
         public virtual DbSet<Advertisements> Advertisements { get; set; }
-        public virtual DbSet<Advertisementscampaigns> Advertisementscampaigns { get; set; }
-        public virtual DbSet<Advertisementsintervals> Advertisementsintervals { get; set; }
+        public virtual DbSet<AdvertisementsCampaigns> AdvertisementsCampaigns { get; set; }
+        public virtual DbSet<AdvertisementsIntervals> AdvertisementsIntervals { get; set; }
         public virtual DbSet<Campaigns> Campaigns { get; set; }
         public virtual DbSet<Intervals> Intervals { get; set; }
-        public virtual DbSet<Mediametadata> Mediametadata { get; set; }
+        public virtual DbSet<MediaMetadata> MediaMetadata { get; set; }
         public virtual DbSet<Medias> Medias { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -28,7 +28,7 @@ namespace AdvertisementService.Models.DBModels
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=MySQL@123;database=advertisementservice", x => x.ServerVersion("8.0.20-mysql"));
+                optionsBuilder.UseMySql("server=localhost;port=3306;user=nirmal;password=NirmalTheOne@123;database=advertisementservice", x => x.ServerVersion("8.0.20-mysql"));
             }
         }
 
@@ -42,17 +42,17 @@ namespace AdvertisementService.Models.DBModels
                 entity.ToTable("advertisements");
 
                 entity.HasIndex(e => e.MediaId)
-                    .HasName("mediaId");
+                    .HasName("media_id");
 
-                entity.Property(e => e.AdvertisementId).HasColumnName("advertisementId");
+                entity.Property(e => e.AdvertisementId).HasColumnName("advertisement_id");
 
                 entity.Property(e => e.CreatedAt)
-                    .HasColumnName("createdAt")
+                    .HasColumnName("created_at")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.InstitutionId).HasColumnName("institutionId");
+                entity.Property(e => e.InstitutionId).HasColumnName("institution_id");
 
-                entity.Property(e => e.MediaId).HasColumnName("mediaId");
+                entity.Property(e => e.MediaId).HasColumnName("media_id");
 
                 entity.HasOne(d => d.Media)
                     .WithMany(p => p.Advertisements)
@@ -60,58 +60,58 @@ namespace AdvertisementService.Models.DBModels
                     .HasConstraintName("advertisements_ibfk_1");
             });
 
-            modelBuilder.Entity<Advertisementscampaigns>(entity =>
+            modelBuilder.Entity<AdvertisementsCampaigns>(entity =>
             {
-                entity.ToTable("advertisementscampaigns");
+                entity.HasKey(e => new { e.AdvertisementId, e.CampaignId })
+                    .HasName("PRIMARY");
 
-                entity.HasIndex(e => e.AdvertisementId)
-                    .HasName("advertisementId");
+                entity.ToTable("advertisements_campaigns");
 
                 entity.HasIndex(e => e.CampaignId)
-                    .HasName("campaignId");
+                    .HasName("campaign_id");
 
-                entity.Property(e => e.AdvertisementsCampaignsId).HasColumnName("advertisementsCampaignsId");
+                entity.Property(e => e.AdvertisementId).HasColumnName("advertisement_id");
 
-                entity.Property(e => e.AdvertisementId).HasColumnName("advertisementId");
-
-                entity.Property(e => e.CampaignId).HasColumnName("campaignId");
+                entity.Property(e => e.CampaignId).HasColumnName("campaign_id");
 
                 entity.HasOne(d => d.Advertisement)
-                    .WithMany(p => p.Advertisementscampaigns)
+                    .WithMany(p => p.AdvertisementsCampaigns)
                     .HasForeignKey(d => d.AdvertisementId)
-                    .HasConstraintName("advertisementscampaigns_ibfk_2");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("advertisements_campaigns_ibfk_2");
 
                 entity.HasOne(d => d.Campaign)
-                    .WithMany(p => p.Advertisementscampaigns)
+                    .WithMany(p => p.AdvertisementsCampaigns)
                     .HasForeignKey(d => d.CampaignId)
-                    .HasConstraintName("advertisementscampaigns_ibfk_1");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("advertisements_campaigns_ibfk_1");
             });
 
-            modelBuilder.Entity<Advertisementsintervals>(entity =>
+            modelBuilder.Entity<AdvertisementsIntervals>(entity =>
             {
-                entity.ToTable("advertisementsintervals");
+                entity.HasKey(e => new { e.IntervalId, e.AdvertisementId })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("advertisements_intervals");
 
                 entity.HasIndex(e => e.AdvertisementId)
-                    .HasName("advertisementId");
+                    .HasName("advertisement_id");
 
-                entity.HasIndex(e => e.IntervalId)
-                    .HasName("intervalId");
+                entity.Property(e => e.IntervalId).HasColumnName("interval_id");
 
-                entity.Property(e => e.AdvertisementsIntervalsId).HasColumnName("advertisementsIntervalsId");
-
-                entity.Property(e => e.AdvertisementId).HasColumnName("advertisementId");
-
-                entity.Property(e => e.IntervalId).HasColumnName("intervalId");
+                entity.Property(e => e.AdvertisementId).HasColumnName("advertisement_id");
 
                 entity.HasOne(d => d.Advertisement)
-                    .WithMany(p => p.Advertisementsintervals)
+                    .WithMany(p => p.AdvertisementsIntervals)
                     .HasForeignKey(d => d.AdvertisementId)
-                    .HasConstraintName("advertisementsintervals_ibfk_2");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("advertisements_intervals_ibfk_2");
 
                 entity.HasOne(d => d.Interval)
-                    .WithMany(p => p.Advertisementsintervals)
+                    .WithMany(p => p.AdvertisementsIntervals)
                     .HasForeignKey(d => d.IntervalId)
-                    .HasConstraintName("advertisementsintervals_ibfk_1");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("advertisements_intervals_ibfk_1");
             });
 
             modelBuilder.Entity<Campaigns>(entity =>
@@ -121,14 +121,14 @@ namespace AdvertisementService.Models.DBModels
 
                 entity.ToTable("campaigns");
 
-                entity.Property(e => e.CampaignId).HasColumnName("campaignId");
+                entity.Property(e => e.CampaignId).HasColumnName("campaign_id");
 
                 entity.Property(e => e.EndAt)
-                    .HasColumnName("endAt")
+                    .HasColumnName("end_at")
                     .HasColumnType("datetime");
 
                 entity.Property(e => e.StartAt)
-                    .HasColumnName("startAt")
+                    .HasColumnName("start_at")
                     .HasColumnType("datetime");
 
                 entity.Property(e => e.Status)
@@ -139,9 +139,9 @@ namespace AdvertisementService.Models.DBModels
 
                 entity.Property(e => e.Title)
                     .HasColumnName("title")
-                    .HasColumnType("varchar(500)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
+                    .HasColumnType("varchar(30)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
             });
 
             modelBuilder.Entity<Intervals>(entity =>
@@ -151,20 +151,20 @@ namespace AdvertisementService.Models.DBModels
 
                 entity.ToTable("intervals");
 
-                entity.Property(e => e.IntervalId).HasColumnName("intervalId");
+                entity.Property(e => e.IntervalId).HasColumnName("interval_id");
 
                 entity.Property(e => e.Title)
                     .HasColumnName("title")
-                    .HasColumnType("varchar(255)")
+                    .HasColumnType("varchar(30)")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
             });
 
-            modelBuilder.Entity<Mediametadata>(entity =>
+            modelBuilder.Entity<MediaMetadata>(entity =>
             {
-                entity.ToTable("mediametadata");
+                entity.ToTable("media_metadata");
 
-                entity.Property(e => e.MediaMetadataId).HasColumnName("mediaMetadataId");
+                entity.Property(e => e.MediaMetadataId).HasColumnName("media_metadata_id");
 
                 entity.Property(e => e.Duration).HasColumnName("duration");
 
@@ -179,18 +179,18 @@ namespace AdvertisementService.Models.DBModels
                 entity.ToTable("medias");
 
                 entity.HasIndex(e => e.MediaMetadataId)
-                    .HasName("mediaMetadataId");
+                    .HasName("media_metadata_id");
 
-                entity.Property(e => e.MediaId).HasColumnName("mediaId");
+                entity.Property(e => e.MediaId).HasColumnName("media_id");
 
                 entity.Property(e => e.CreatedAt)
-                    .HasColumnName("createdAt")
+                    .HasColumnName("created_at")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.MediaMetadataId).HasColumnName("mediaMetadataId");
+                entity.Property(e => e.MediaMetadataId).HasColumnName("media_metadata_id");
 
                 entity.Property(e => e.MediaType)
-                    .HasColumnName("mediaType")
+                    .HasColumnName("media_type")
                     .HasColumnType("enum('video','image')")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");

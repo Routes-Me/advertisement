@@ -64,9 +64,9 @@ namespace AdvertisementService.Repository
                     }
                 }
 
-                var metaData = _context.Mediametadata.Where(x => x.MediaMetadataId == medias.MediaMetadataId).FirstOrDefault();
+                var metaData = _context.MediaMetadata.Where(x => x.MediaMetadataId == medias.MediaMetadataId).FirstOrDefault();
                 if (metaData != null)
-                    _context.Mediametadata.Remove(metaData);
+                    _context.MediaMetadata.Remove(metaData);
 
                 _context.Medias.Remove(medias);
                 _context.SaveChanges();
@@ -94,7 +94,7 @@ namespace AdvertisementService.Repository
                 if (mediaId == 0)
                 {
                     mediasModelList = (from media in _context.Medias
-                                       join metadata in _context.Mediametadata on media.MediaMetadataId equals metadata.MediaMetadataId
+                                       join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
                                        select new GetMediasModel()
                                        {
                                            MediaId = media.MediaId,
@@ -106,7 +106,7 @@ namespace AdvertisementService.Repository
                                        }).OrderBy(a => a.MediaId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = (from media in _context.Medias
-                                  join metadata in _context.Mediametadata on media.MediaMetadataId equals metadata.MediaMetadataId
+                                  join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
                                   select new GetMediasModel()
                                   {
                                       MediaId = media.MediaId,
@@ -120,7 +120,7 @@ namespace AdvertisementService.Repository
                 else
                 {
                     mediasModelList = (from media in _context.Medias
-                                       join metadata in _context.Mediametadata on media.MediaMetadataId equals metadata.MediaMetadataId
+                                       join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
                                        where media.MediaId == mediaId
                                        select new GetMediasModel()
                                        {
@@ -133,7 +133,7 @@ namespace AdvertisementService.Repository
                                        }).OrderBy(a => a.MediaId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = (from media in _context.Medias
-                                  join metadata in _context.Mediametadata on media.MediaMetadataId equals metadata.MediaMetadataId
+                                  join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
                                   where media.MediaId == mediaId
                                   select new GetMediasModel()
                                   {
@@ -201,12 +201,12 @@ namespace AdvertisementService.Repository
                     blobUrl = blockBlob.Uri.AbsoluteUri;
                 }
 
-                Mediametadata mediaMetadata = new Mediametadata()
+                MediaMetadata mediaMetadata = new MediaMetadata()
                 {
                     Duration = model.Duration,
                     Size = model.Size
                 };
-                _context.Mediametadata.Add(mediaMetadata);
+                _context.MediaMetadata.Add(mediaMetadata);
                 _context.SaveChanges();
 
                 Medias objMedia = new Medias()
@@ -289,15 +289,15 @@ namespace AdvertisementService.Repository
                     }
                 }
 
-                var metadata = _context.Mediametadata.Where(x => x.MediaMetadataId == mediaData.MediaMetadataId).FirstOrDefault();
+                var metadata = _context.MediaMetadata.Where(x => x.MediaMetadataId == mediaData.MediaMetadataId).FirstOrDefault();
                 if (metadata == null)
                 {
-                    Mediametadata mediaMetadata = new Mediametadata()
+                    MediaMetadata mediaMetadata = new MediaMetadata()
                     {
                         Duration = model.Duration,
                         Size = model.Size
                     };
-                    _context.Mediametadata.Add(mediaMetadata);
+                    _context.MediaMetadata.Add(mediaMetadata);
                     _context.SaveChanges();
                     mediaData.MediaMetadataId = mediaMetadata.MediaMetadataId;
                 }
@@ -305,7 +305,7 @@ namespace AdvertisementService.Repository
                 {
                     metadata.Duration = model.Duration;
                     metadata.Size = model.Size;
-                    _context.Mediametadata.Update(metadata);
+                    _context.MediaMetadata.Update(metadata);
                     _context.SaveChanges();
                 }
 

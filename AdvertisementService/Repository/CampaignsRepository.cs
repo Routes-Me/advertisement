@@ -38,9 +38,9 @@ namespace AdvertisementService.Repository
                     return response;
                 }
 
-                var advertisementscampaigns = _context.Advertisementscampaigns.Where(x => x.AdvertisementId == id).FirstOrDefault();
+                var advertisementscampaigns = _context.AdvertisementsCampaigns.Where(x => x.AdvertisementId == id).FirstOrDefault();
                 if (advertisementscampaigns != null)
-                    _context.Advertisementscampaigns.Remove(advertisementscampaigns);
+                    _context.AdvertisementsCampaigns.Remove(advertisementscampaigns);
 
                 _context.Campaigns.Remove(CampaignData);
                 _context.SaveChanges();
@@ -86,7 +86,7 @@ namespace AdvertisementService.Repository
                 if (advertisementsId == 0)
                 {
                     advertisementsModelList = (from campaign in _context.Campaigns
-                                               join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
+                                               join advertiseincampaign in _context.AdvertisementsCampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
                                                join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
                                                where campaign.CampaignId == campaignId
                                                select new AdvertisementsModel()
@@ -99,7 +99,7 @@ namespace AdvertisementService.Repository
 
 
                     totalCount = (from campaign in _context.Campaigns
-                                  join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
+                                  join advertiseincampaign in _context.AdvertisementsCampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
                                   join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
                                   where campaign.CampaignId == campaignId
                                   select new AdvertisementsModel()
@@ -113,7 +113,7 @@ namespace AdvertisementService.Repository
                 else
                 {
                     advertisementsModelList = (from campaign in _context.Campaigns
-                                               join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
+                                               join advertiseincampaign in _context.AdvertisementsCampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
                                                join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
                                                where campaign.CampaignId == campaignId && advertisement.AdvertisementId == advertisementsId
                                                select new AdvertisementsModel()
@@ -126,7 +126,7 @@ namespace AdvertisementService.Repository
 
 
                     totalCount = (from campaign in _context.Campaigns
-                                  join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
+                                  join advertiseincampaign in _context.AdvertisementsCampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
                                   join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
                                   where campaign.CampaignId == campaignId && advertisement.AdvertisementId == advertisementsId
                                   select new AdvertisementsModel()
@@ -205,7 +205,7 @@ namespace AdvertisementService.Repository
                 List<GetActiveCampAdWithQRCodeModel> activeCampaignsAdvertisementsWithQRCodeModelList = new List<GetActiveCampAdWithQRCodeModel>();
 
                 advertisementsModelList = (from campaign in _context.Campaigns
-                                           join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
+                                           join advertiseincampaign in _context.AdvertisementsCampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
                                            join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
                                            join media in _context.Medias on advertisement.MediaId equals media.MediaId
                                            where campaign.Status.Equals("active")
@@ -217,7 +217,7 @@ namespace AdvertisementService.Repository
                                            }).OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                 totalCount = (from campaign in _context.Campaigns
-                              join advertiseincampaign in _context.Advertisementscampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
+                              join advertiseincampaign in _context.AdvertisementsCampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
                               join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
                               join media in _context.Medias on advertisement.MediaId equals media.MediaId
                               where campaign.Status.Equals("active")

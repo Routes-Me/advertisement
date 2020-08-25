@@ -55,7 +55,7 @@ namespace AdvertisementService.Helper.Repository
             foreach (var item in advertisementsModel)
             {
                 var mediasDetails = (from media in _context.Medias
-                                     join metadata in _context.Mediametadata on media.MediaMetadataId equals metadata.MediaMetadataId
+                                     join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
                                      where media.MediaId == item.MediaId
                                      select new GetMediasModel()
                                      {

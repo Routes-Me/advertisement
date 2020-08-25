@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace AdvertisementService.Models.DBModels
 {
-    public partial class Mediametadata
+    public partial class MediaMetadata
     {
-        public Mediametadata()
+        public MediaMetadata()
         {
             Medias = new HashSet<Medias>();
         }
