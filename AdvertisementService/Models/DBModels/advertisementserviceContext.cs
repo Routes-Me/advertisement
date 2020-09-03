@@ -54,6 +54,12 @@ namespace AdvertisementService.Models.DBModels
 
                 entity.Property(e => e.MediaId).HasColumnName("media_id");
 
+                entity.Property(e => e.ResourceName)
+                    .HasColumnName("resource_name")
+                    .HasColumnType("varchar(25)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+
                 entity.HasOne(d => d.Media)
                     .WithMany(p => p.Advertisements)
                     .HasForeignKey(d => d.MediaId)
@@ -91,6 +97,8 @@ namespace AdvertisementService.Models.DBModels
             {
                 entity.HasKey(e => new { e.IntervalId, e.AdvertisementId })
                     .HasName("PRIMARY");
+
+                entity.ToTable("advertisements_intervals");
 
                 entity.ToTable("advertisements_intervals");
 

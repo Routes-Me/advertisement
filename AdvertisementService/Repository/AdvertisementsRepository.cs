@@ -77,6 +77,7 @@ namespace AdvertisementService.Repository
                                                    CreatedAt = advertisement.CreatedAt,
                                                    InstitutionId = advertisement.InstitutionId,
                                                    MediaId = advertisement.MediaId,
+                                                   ResourceName = advertisement.ResourceName
                                                }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = _context.Advertisements.ToList().Count();
@@ -91,6 +92,7 @@ namespace AdvertisementService.Repository
                                                    CreatedAt = advertisement.CreatedAt,
                                                    InstitutionId = advertisement.InstitutionId,
                                                    MediaId = advertisement.MediaId,
+                                                   ResourceName = advertisement.ResourceName
                                                }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = _context.Advertisements.Where(x => x.AdvertisementId == advertisementId).ToList().Count();
@@ -119,6 +121,124 @@ namespace AdvertisementService.Repository
                             else if (item.ToLower() == "media")
                             {
                                 includeData.media = _includeAdvertisements.GetMediasIncludedData(advertisementsModelList);
+                            }
+                            else if (item.ToLower() == "campaign")
+                            {
+                                includeData.campaign = _includeAdvertisements.GetCampaignIncludedData(advertisementsModelList);
+                            }
+                            else if (item.ToLower() == "interval")
+                            {
+                                includeData.interval = _includeAdvertisements.GetIntervalIncludedData(advertisementsModelList);
+                            }
+                        }
+                    }
+                }
+
+                if (((JContainer)includeData).Count == 0)
+                    includeData = null;
+
+                var page = new Pagination
+                {
+                    offset = pageInfo.offset,
+                    limit = pageInfo.limit,
+                    total = totalCount
+                };
+
+                response.status = true;
+                response.message = "Campaign data retrived successfully.";
+                response.included = includeData;
+                response.pagination = page;
+                response.data = advertisementsModelList;
+                response.responseCode = ResponseCode.Success;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.status = false;
+                response.message = "Something went wrong while fetching campaign. Error Message - " + ex.Message;
+                response.responseCode = ResponseCode.InternalServerError;
+                return response;
+            }
+        }
+
+        public AdvertisementsGetResponse GetAdvertisementsByInstitutionId(int id, int advertisementId, string includeType, Pagination pageInfo)
+        {
+            AdvertisementsGetResponse response = new AdvertisementsGetResponse();
+            int totalCount = 0;
+            try
+            {
+                List<AdvertisementsModel> advertisementsModelList = new List<AdvertisementsModel>();
+
+                if (id == 0)
+                {
+                    response.status = false;
+                    response.message = "Advertisements not found.";
+                    response.responseCode = ResponseCode.NotFound;
+                    return response;
+                }
+
+                if (advertisementId == 0)
+                {
+                    advertisementsModelList = (from advertisement in _context.Advertisements
+                                               where advertisement.InstitutionId == id
+                                               select new AdvertisementsModel()
+                                               {
+                                                   AdvertisementId = advertisement.AdvertisementId,
+                                                   CreatedAt = advertisement.CreatedAt,
+                                                   InstitutionId = advertisement.InstitutionId,
+                                                   MediaId = advertisement.MediaId,
+                                                   ResourceName = advertisement.ResourceName
+                                               }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+
+                    totalCount = _context.Advertisements.Where(x => x.InstitutionId == id).ToList().Count();
+                }
+                else
+                {
+                    advertisementsModelList = (from advertisement in _context.Advertisements
+                                               where advertisement.AdvertisementId == advertisementId && advertisement.InstitutionId == id
+                                               select new AdvertisementsModel()
+                                               {
+                                                   AdvertisementId = advertisement.AdvertisementId,
+                                                   CreatedAt = advertisement.CreatedAt,
+                                                   InstitutionId = advertisement.InstitutionId,
+                                                   MediaId = advertisement.MediaId,
+                                                   ResourceName = advertisement.ResourceName
+                                               }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+
+                    totalCount = _context.Advertisements.Where(x => x.AdvertisementId == advertisementId && x.InstitutionId == id).ToList().Count();
+                }
+
+                if (advertisementsModelList == null || advertisementsModelList.Count == 0)
+                {
+                    response.status = false;
+                    response.message = "Advertisements not found.";
+                    response.responseCode = ResponseCode.NotFound;
+                    return response;
+                }
+
+                dynamic includeData = new JObject();
+                if (!string.IsNullOrEmpty(includeType))
+                {
+                    string[] includeArr = includeType.Split(',');
+                    if (includeArr.Length > 0)
+                    {
+                        foreach (var item in includeArr)
+                        {
+                            if (item.ToLower() == "institution")
+                            {
+                                includeData.institution = _includeAdvertisements.GetInstitutionsIncludedData(advertisementsModelList);
+                            }
+                            else if (item.ToLower() == "media")
+                            {
+                                includeData.media = _includeAdvertisements.GetMediasIncludedData(advertisementsModelList);
+                            }
+                            else if (item.ToLower() == "campaign")
+                            {
+                                includeData.campaign = _includeAdvertisements.GetCampaignIncludedData(advertisementsModelList);
+                            }
+                            else if (item.ToLower() == "interval")
+                            {
+                                includeData.interval = _includeAdvertisements.GetIntervalIncludedData(advertisementsModelList);
                             }
                         }
                     }
@@ -191,25 +311,26 @@ namespace AdvertisementService.Repository
                     return response;
                 }
 
-                Advertisements objAdvertisements = new Advertisements()
+                Advertisements advertisements = new Advertisements()
                 {
                     CreatedAt = DateTime.UtcNow,
                     InstitutionId = model.InstitutionId,
-                    MediaId = model.MediaId
+                    MediaId = model.MediaId,
+                    ResourceName = model.ResourceName
                 };
-                _context.Advertisements.Add(objAdvertisements);
+                _context.Advertisements.Add(advertisements);
                 _context.SaveChanges();
 
                 AdvertisementsIntervals advertisementsintervals = new AdvertisementsIntervals()
                 {
-                    AdvertisementId = objAdvertisements.AdvertisementId,
+                    AdvertisementId = advertisements.AdvertisementId,
                     IntervalId = interval.IntervalId
                 };
                 _context.AdvertisementsIntervals.Add(advertisementsintervals);
 
                 AdvertisementsCampaigns objAdvertisementscampaigns = new AdvertisementsCampaigns()
                 {
-                    AdvertisementId = objAdvertisements.AdvertisementId,
+                    AdvertisementId = advertisements.AdvertisementId,
                     CampaignId = campaign.CampaignId
                 };
                 _context.AdvertisementsCampaigns.Add(objAdvertisementscampaigns);
@@ -314,6 +435,7 @@ namespace AdvertisementService.Repository
 
                 advertisement.InstitutionId = model.InstitutionId;
                 advertisement.MediaId = model.MediaId;
+                advertisement.ResourceName = model.ResourceName;
                 _context.Advertisements.Update(advertisement);
                 _context.SaveChanges();
 

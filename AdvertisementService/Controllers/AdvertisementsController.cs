@@ -64,5 +64,16 @@ namespace AdvertisementService.Controllers
                 return GetActionResult(response);
             return Ok(response);
         }
+
+        [HttpGet]
+        [Route("institutions/{id}/advertisements/{advertisementsId=0}")]
+        public IActionResult GetAdvertisementsByInstitutionsId(int id, int advertisementsId, string include, [FromQuery] Pagination pageInfo)
+        {
+            AdvertisementsGetResponse response = new AdvertisementsGetResponse();
+            response = _advertisementsRepository.GetAdvertisementsByInstitutionId(id, advertisementsId, include, pageInfo);
+            if (response.responseCode != ResponseCode.Success)
+                return GetActionResult(response);
+            return Ok(response);
+        }
     }
 }

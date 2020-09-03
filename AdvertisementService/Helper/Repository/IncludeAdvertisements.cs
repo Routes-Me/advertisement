@@ -25,6 +25,38 @@ namespace AdvertisementService.Helper.Repository
             _context = context;
         }
 
+        public dynamic GetCampaignIncludedData(List<AdvertisementsModel> advertisementsModel)
+        {
+            List<CampaignsModel> campaigns = new List<CampaignsModel>();
+            foreach (var item in advertisementsModel)
+            {
+                var campaignsDetails = (from campaign in _context.Campaigns
+                                     join campadvt in _context.AdvertisementsCampaigns on campaign.CampaignId equals campadvt.CampaignId
+                                     join advt in _context.Advertisements on campadvt.AdvertisementId equals advt.AdvertisementId
+                                     where advt.AdvertisementId == item.AdvertisementId
+                                     select new CampaignsModel()
+                                     {
+                                         CampaignId = campaign.CampaignId,
+                                         StartAt = campaign.StartAt,
+                                         EndAt = campaign.EndAt,
+                                         Status = campaign.Status,
+                                         Title = campaign.Title
+                                     }).ToList().FirstOrDefault();
+
+                if (campaignsDetails != null)
+                    if (campaigns.Where(x => x.CampaignId == campaignsDetails.CampaignId).FirstOrDefault() == null)
+                        campaigns.Add(campaignsDetails);
+
+            }
+            var modelsJson = JsonConvert.SerializeObject(campaigns,
+                                  new JsonSerializerSettings
+                                  {
+                                      NullValueHandling = NullValueHandling.Ignore,
+                                  });
+
+            return JArray.Parse(modelsJson);
+        }
+
         public dynamic GetInstitutionsIncludedData(List<AdvertisementsModel> advertisementsModel)
         {
             List<InstitutionsModel> institutions = new List<InstitutionsModel>();
@@ -47,6 +79,35 @@ namespace AdvertisementService.Helper.Repository
                                    });
 
             return JArray.Parse(usersJson);
+        }
+
+        public dynamic GetIntervalIncludedData(List<AdvertisementsModel> advertisementsModel)
+        {
+            List<IntervalsModel> intervals = new List<IntervalsModel>();
+            foreach (var item in advertisementsModel)
+            {
+                var intervalsDetails = (from interval in _context.Intervals
+                                        join advtInterval in _context.AdvertisementsIntervals on interval.IntervalId equals advtInterval.IntervalId
+                                        join advt in _context.Advertisements on advtInterval.AdvertisementId equals advt.AdvertisementId
+                                        where advt.AdvertisementId == item.AdvertisementId
+                                        select new IntervalsModel()
+                                        {
+                                            IntervalId = interval.IntervalId,
+                                            Title = interval.Title
+                                        }).ToList().FirstOrDefault();
+
+                if (intervalsDetails != null)
+                    if (intervals.Where(x => x.IntervalId == intervalsDetails.IntervalId).FirstOrDefault() == null)
+                        intervals.Add(intervalsDetails);
+
+            }
+            var modelsJson = JsonConvert.SerializeObject(intervals,
+                                  new JsonSerializerSettings
+                                  {
+                                      NullValueHandling = NullValueHandling.Ignore,
+                                  });
+
+            return JArray.Parse(modelsJson);
         }
 
         public dynamic GetMediasIncludedData(List<AdvertisementsModel> advertisementsModel)

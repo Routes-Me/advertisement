@@ -10,5 +10,7 @@ namespace AdvertisementService.Helper.Abstraction
     {
         dynamic GetInstitutionsIncludedData(List<AdvertisementsModel> advertisementsModelList);
         dynamic GetMediasIncludedData(List<AdvertisementsModel> advertisementsModelList);
+        dynamic GetCampaignIncludedData(List<AdvertisementsModel> advertisementsModelList);
+        dynamic GetIntervalIncludedData(List<AdvertisementsModel> advertisementsModelList);
     }
 }

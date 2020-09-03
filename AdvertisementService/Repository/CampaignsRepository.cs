@@ -69,7 +69,7 @@ namespace AdvertisementService.Repository
                 if (campaignId == 0)
                 {
                     response.status = false;
-                    response.message = "Campaign not found.";
+                    response.message = "Advertisement not found.";
                     response.responseCode = ResponseCode.NotFound;
                     return response;
                 }
@@ -94,7 +94,8 @@ namespace AdvertisementService.Repository
                                                    AdvertisementId = advertisement.AdvertisementId,
                                                    CreatedAt = advertisement.CreatedAt,
                                                    InstitutionId = advertisement.InstitutionId,
-                                                   MediaId = advertisement.MediaId
+                                                   MediaId = advertisement.MediaId,
+                                                   ResourceName = advertisement.ResourceName
                                                }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
 
@@ -107,7 +108,8 @@ namespace AdvertisementService.Repository
                                       AdvertisementId = advertisement.AdvertisementId,
                                       CreatedAt = advertisement.CreatedAt,
                                       InstitutionId = advertisement.InstitutionId,
-                                      MediaId = advertisement.MediaId
+                                      MediaId = advertisement.MediaId,
+                                      ResourceName = advertisement.ResourceName
                                   }).ToList().Count();
                 }
                 else
@@ -121,7 +123,8 @@ namespace AdvertisementService.Repository
                                                    AdvertisementId = advertisement.AdvertisementId,
                                                    CreatedAt = advertisement.CreatedAt,
                                                    InstitutionId = advertisement.InstitutionId,
-                                                   MediaId = advertisement.MediaId
+                                                   MediaId = advertisement.MediaId,
+                                                   ResourceName = advertisement.ResourceName
                                                }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
 
@@ -134,7 +137,8 @@ namespace AdvertisementService.Repository
                                       AdvertisementId = advertisement.AdvertisementId,
                                       CreatedAt = advertisement.CreatedAt,
                                       InstitutionId = advertisement.InstitutionId,
-                                      MediaId = advertisement.MediaId
+                                      MediaId = advertisement.MediaId,
+                                      ResourceName = advertisement.ResourceName
                                   }).ToList().Count();
                 }
 
@@ -162,6 +166,14 @@ namespace AdvertisementService.Repository
                             {
                                 includeData.media = _includeAdvertisements.GetMediasIncludedData(advertisementsModelList);
                             }
+                            else if (item.ToLower() == "campaign")
+                            {
+                                includeData.campaign = _includeAdvertisements.GetCampaignIncludedData(advertisementsModelList);
+                            }
+                            else if (item.ToLower() == "interval")
+                            {
+                                includeData.interval = _includeAdvertisements.GetIntervalIncludedData(advertisementsModelList);
+                            }
                         }
                     }
                 }
@@ -177,7 +189,7 @@ namespace AdvertisementService.Repository
                 };
 
                 response.status = true;
-                response.message = "Campaign data retrived successfully.";
+                response.message = "Advertisement data retrived successfully.";
                 response.included = includeData;
                 response.pagination = page;
                 response.data = advertisementsModelList;
@@ -187,7 +199,7 @@ namespace AdvertisementService.Repository
             catch (Exception ex)
             {
                 response.status = false;
-                response.message = "Something went wrong while fetching campaign. Error Message - " + ex.Message;
+                response.message = "Something went wrong while fetching advertisement. Error Message - " + ex.Message;
                 response.responseCode = ResponseCode.InternalServerError;
                 return response;
             }
