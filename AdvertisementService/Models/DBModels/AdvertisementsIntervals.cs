@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace AdvertisementService.Models.DBModels
+﻿namespace AdvertisementService.Models.DBModels
 {
     public partial class AdvertisementsIntervals
     {

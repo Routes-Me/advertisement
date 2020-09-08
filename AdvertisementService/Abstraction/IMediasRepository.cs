@@ -1,18 +1,14 @@
 ﻿using AdvertisementService.Models;
-using AdvertisementService.Models.DBModels;
 using AdvertisementService.Models.ResponseModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AdvertisementService.Abstraction
 {
     public interface IMediasRepository
     {
-        MediasGetResponse GetMedias(int mediaId, string include, Pagination pageInfo);
-        Task<MediasResponse> UpdateMedias(MediasModel model);
-        Task<MediasResponse> DeleteMedias(int id);
-        Task<MediasResponse> InsertMedias(MediasModel model);
+        dynamic GetMedias(int mediaId, string include, Pagination pageInfo);
+        Task<dynamic> UpdateMedias(MediasModel model);
+        Task<dynamic> DeleteMedias(int id);
+        Task<dynamic> InsertMedias(MediasModel model);
     }
 }

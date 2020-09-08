@@ -2,10 +2,11 @@
 using AdvertisementService.Models;
 using AdvertisementService.Models.DBModels;
 using AdvertisementService.Models.ResponseModel;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AdvertisementService.Repository
 {
@@ -17,53 +18,34 @@ namespace AdvertisementService.Repository
             _context = context;
         }
 
-        public IntervalsResponse DeleteIntervals(int id)
+        public dynamic DeleteIntervals(int id)
         {
-            IntervalsResponse response = new IntervalsResponse();
             try
             {
-                var intervalsData = _context.Intervals.Where(x => x.IntervalId == id).FirstOrDefault();
-                if (intervalsData == null)
-                {
-                    response.status = false;
-                    response.message = "Interval not found.";
-                    response.responseCode = ResponseCode.NotFound;
-                    return response;
-                }
+                var intervals = _context.Intervals.Include(x => x.AdvertisementsIntervals).Where(x => x.IntervalId == id).FirstOrDefault();
+                if (intervals == null)
+                    return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
 
-                var advertisementsIntervals = _context.AdvertisementsIntervals.Where(x => x.IntervalId == id).FirstOrDefault();
-                if (intervalsData == null)
-                {
-                    response.status = false;
-                    response.message = "Interval is associated with advertisements.";
-                    response.responseCode = ResponseCode.NotFound;
-                    return response;
-                }
+                if (intervals.AdvertisementsIntervals != null)
+                    _context.AdvertisementsIntervals.RemoveRange(intervals.AdvertisementsIntervals);
 
-                _context.Intervals.Remove(intervalsData);
+                _context.Intervals.Remove(intervals);
                 _context.SaveChanges();
-                response.status = true;
-                response.message = "Interval deleted successfully.";
-                response.responseCode = ResponseCode.Success;
-                return response;
+                return ReturnResponse.SuccessResponse(CommonMessage.IntervalDelete, false);
             }
             catch (Exception ex)
             {
-                response.status = false;
-                response.message = "Something went wrong while deleting interval. Error Message - " + ex.Message;
-                response.responseCode = ResponseCode.InternalServerError;
-                return response;
+                return ReturnResponse.ExceptionResponse(ex);
             }
         }
 
-        public IntervalsGetResponse GetIntervals(int intervalId, Pagination pageInfo)
+        public dynamic GetIntervals(int intervalId, Pagination pageInfo)
         {
-            IntervalsGetResponse response = new IntervalsGetResponse();
             int totalCount = 0;
             try
             {
+                IntervalsGetResponse response = new IntervalsGetResponse();
                 List<IntervalsModel> intervalsModelList = new List<IntervalsModel>();
-
                 if (intervalId == 0)
                 {
                     intervalsModelList = (from interval in _context.Intervals
@@ -89,12 +71,7 @@ namespace AdvertisementService.Repository
                 }
 
                 if (intervalsModelList == null || intervalsModelList.Count == 0)
-                {
-                    response.status = false;
-                    response.message = "Interval not found.";
-                    response.responseCode = ResponseCode.NotFound;
-                    return response;
-                }
+                    return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
 
                 var page = new Pagination
                 {
@@ -104,92 +81,52 @@ namespace AdvertisementService.Repository
                 };
 
                 response.status = true;
-                response.message = "Interval data retrived successfully.";
+                response.message = CommonMessage.IntervalRetrived;
                 response.pagination = page;
                 response.data = intervalsModelList;
-                response.responseCode = ResponseCode.Success;
+                response.statusCode = StatusCodes.Status200OK;
                 return response;
             }
             catch (Exception ex)
             {
-                response.status = false;
-                response.message = "Something went wrong while fetching data. Error Message - " + ex.Message;
-                response.responseCode = ResponseCode.InternalServerError;
-                return response;
+                return ReturnResponse.ExceptionResponse(ex);
             }
         }
 
-        public IntervalsResponse InsertIntervals(IntervalsModel model)
+        public dynamic InsertIntervals(IntervalsModel model)
         {
-            IntervalsResponse response = new IntervalsResponse();
             try
             {
-                if (model == null)
-                {
-                    response.status = false;
-                    response.message = "Pass valid data in model.";
-                    response.responseCode = ResponseCode.BadRequest;
-                    return response;
-                }
-
                 Intervals objIntervals = new Intervals()
                 {
                     Title = model.Title
                 };
                 _context.Intervals.Add(objIntervals);
                 _context.SaveChanges();
-
-                response.status = true;
-                response.message = "Interval inserted successfully.";
-                response.responseCode = ResponseCode.Created;
-                return response;
+                return ReturnResponse.SuccessResponse(CommonMessage.IntervalInsert, true);
             }
             catch (Exception ex)
             {
-                response.status = false;
-                response.message = "Something went wrong while inserting interval. Error Message - " + ex.Message;
-                response.responseCode = ResponseCode.InternalServerError;
-                return response;
+                return ReturnResponse.ExceptionResponse(ex);
             }
         }
 
-        public IntervalsResponse UpdateIntervals(IntervalsModel model)
+        public dynamic UpdateIntervals(IntervalsModel model)
         {
-            IntervalsResponse response = new IntervalsResponse();
             try
             {
-                if (model == null)
-                {
-                    response.status = false;
-                    response.message = "Pass valid data in model.";
-                    response.responseCode = ResponseCode.BadRequest;
-                    return response;
-                }
-
                 var intervalData = _context.Intervals.Where(x => x.IntervalId == model.IntervalId).FirstOrDefault();
                 if (intervalData == null)
-                {
-                    response.status = false;
-                    response.message = "Interval not found.";
-                    response.responseCode = ResponseCode.NotFound;
-                    return response;
-                }
+                    return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
 
                 intervalData.Title = model.Title;
                 _context.Intervals.Update(intervalData);
                 _context.SaveChanges();
-
-                response.status = true;
-                response.message = "Interval updated successfully.";
-                response.responseCode = ResponseCode.Success;
-                return response;
+                return ReturnResponse.SuccessResponse(CommonMessage.IntervalUpdate, false);
             }
             catch (Exception ex)
             {
-                response.status = false;
-                response.message = "Something went wrong while updating interval. Error Message - " + ex.Message;
-                response.responseCode = ResponseCode.InternalServerError;
-                return response;
+                return ReturnResponse.ExceptionResponse(ex);
             }
         }
     }

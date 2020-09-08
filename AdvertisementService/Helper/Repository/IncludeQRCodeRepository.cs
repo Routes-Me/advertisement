@@ -4,13 +4,9 @@ using AdvertisementService.Models.Common;
 using AdvertisementService.Models.ResponseModel;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using RestSharp;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace AdvertisementService.Helper.Repository
 {
@@ -37,7 +33,6 @@ namespace AdvertisementService.Helper.Repository
                     qrcodesDetails.AddRange(qrcodes.data);
                 }
             }
-
             return qrcodesDetails;
         }
     }
