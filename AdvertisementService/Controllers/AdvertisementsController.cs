@@ -61,5 +61,13 @@ namespace AdvertisementService.Controllers
             dynamic response = _advertisementsRepository.GetAdvertisements(institutionId, advertisementsId, include, pageInfo);
             return StatusCode((int)response.statusCode, response);
         }
+
+        [HttpGet]
+        [Route("contents/{id=0}")]
+        public IActionResult GetAdvertisementsByPromotions(int id, [FromQuery] Pagination pageInfo)
+        {
+            dynamic response = _advertisementsRepository.GetContents(id, pageInfo);
+            return StatusCode((int)response.statusCode, response);
+        }
     }
 }

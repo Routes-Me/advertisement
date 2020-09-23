@@ -111,5 +111,24 @@ namespace AdvertisementService.Helper.Repository
             var mediaList = medias.GroupBy(x => x.MediaId).Select(a => a.First()).ToList();
             return Common.SerializeJsonForIncludedRepo(mediaList.Cast<dynamic>().ToList());
         }
+
+        public dynamic GetPromotionsIncludedData(List<AdvertisementsForContentModel> advertisementsModelList)
+        {
+            List<PromotionsModel> promotions = new List<PromotionsModel>();
+            foreach (var item in advertisementsModelList)
+            {
+                var client = new RestClient(_appSettings.CouponsEndpointUrl + item.ContentId);
+                var request = new RestRequest(Method.GET);
+                IRestResponse response = client.Execute(request);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var result = response.Content;
+                    var promotionData = JsonConvert.DeserializeObject<PromotionsGetResponse>(result);
+                    promotions.AddRange(promotionData.data);
+                }
+            }
+            //return Common.SerializeJsonForIncludedRepo(promotions.Cast<dynamic>().ToList());
+            return promotions;
+        }
     }
 }

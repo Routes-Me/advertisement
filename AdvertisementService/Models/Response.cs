@@ -65,6 +65,17 @@ namespace AdvertisementService.Models
         public JObject included { get; set; }
     }
 
+    public class ContentsGetResponse : Response
+    {
+        public Pagination pagination { get; set; }
+        public List<ContentsModel> data { get; set; }
+    }
+
+    public class AdvertisementsPostResponse : Response
+    {
+        public int AdvertisementId { get; set; }
+    }
+
     public class ActiveCampAdWithQRGetResponse : Response
     {
         public Pagination pagination { get; set; }
@@ -95,6 +106,12 @@ namespace AdvertisementService.Models
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public JObject included { get; set; }
     }
+
+    public class MediasInsertResponse : Response
+    {
+        public int mediaId { get; set; }
+        public string url { get; set; }
+    }
     #endregion
 
     #region Intervals Response
@@ -112,4 +129,8 @@ namespace AdvertisementService.Models
         public List<InstitutionsModel> data { get; set; }
     }
     #endregion
+    public class PromotionsGetResponse : Response
+    {
+        public List<PromotionsModel> data { get; set; }
+    }
 }

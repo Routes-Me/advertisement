@@ -11,6 +11,13 @@ namespace AdvertisementService.Models.ResponseModel
         public int? MediaId { get; set; }
     }
 
+    public class AdvertisementsForContentModel
+    {
+        public int ContentId { get; set; }
+        public string Type { get; set; }
+        public string Url { get; set; }
+    }
+
     public class PostAdvertisementsModel
     {
         public int AdvertisementId { get; set; }
@@ -40,5 +47,14 @@ namespace AdvertisementService.Models.ResponseModel
     {
         public string Details { get; set; }
         public string Url { get; set; }
+    }
+
+    public class ContentsModel
+    {
+        public int ContentId { get; set; }
+        public string Type { get; set; }
+        public string Url { get; set; }
+        public PromotionsModel promotion { get; set; }
+
     }
 }

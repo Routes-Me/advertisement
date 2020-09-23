@@ -176,8 +176,99 @@ namespace AdvertisementService.Repository
             }
         }
 
+        public dynamic GetContents(int advertisementId, Pagination pageInfo)
+        {
+            int totalCount = 0;
+            try
+            {
+                ContentsGetResponse response = new ContentsGetResponse();
+                List<AdvertisementsForContentModel> contentsModelList = new List<AdvertisementsForContentModel>();
+                MediasModel medias = new MediasModel();
+                List<ContentsModel> contents = new List<ContentsModel>();
+
+                if (advertisementId == 0)
+                {
+                    contentsModelList = (from advertisement in _context.Advertisements
+                                         join media in _context.Medias on advertisement.MediaId equals media.MediaId
+                                         select new AdvertisementsForContentModel()
+                                         {
+                                             ContentId = advertisement.AdvertisementId,
+                                             Type = media.MediaType,
+                                             Url = media.Url
+                                         }).OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+
+                    totalCount = _context.Advertisements.ToList().Count();
+                }
+                else
+                {
+                    contentsModelList = (from advertisement in _context.Advertisements
+                                         join media in _context.Medias on advertisement.MediaId equals media.MediaId
+                                         where advertisement.AdvertisementId == advertisementId
+                                         select new AdvertisementsForContentModel()
+                                         {
+                                             ContentId = advertisement.AdvertisementId,
+                                             Type = media.MediaType,
+                                             Url = media.Url
+                                         }).OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+
+                    totalCount = _context.Advertisements.Where(x => x.AdvertisementId == advertisementId).ToList().Count();
+                }
+
+                if (contentsModelList == null || contentsModelList.Count == 0)
+                    return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
+
+                List<PromotionsModel> promotions = _includeAdvertisements.GetPromotionsIncludedData(contentsModelList);
+
+                if (promotions != null)
+                {
+                    foreach (var promotion in promotions)
+                    {
+                        foreach (var content in contentsModelList)
+                        {
+                            if (content.ContentId == promotion.PromotionId)
+                            {
+                                ContentsModel contentsModel = new ContentsModel()
+                                {
+                                    ContentId = content.ContentId,
+                                    Type = content.Type,
+                                    Url = content.Url,
+                                    promotion = new PromotionsModel()
+                                    {
+                                        Title = promotion.Title,
+                                        Subtitle = promotion.Subtitle,
+                                        PromotionId = promotion.PromotionId,
+                                        LogoUrl = promotion.LogoUrl
+                                    }
+                                };
+                                contents.Add(contentsModel);
+                            }
+                        }
+                    }
+                }
+
+                var page = new Pagination
+                {
+                    offset = pageInfo.offset,
+                    limit = pageInfo.limit,
+                    total = totalCount
+                };
+
+                response.status = true;
+                response.message = CommonMessage.ContentsRetrive;
+                response.pagination = page;
+                response.data = contents;
+                response.statusCode = StatusCodes.Status200OK;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ReturnResponse.ExceptionResponse(ex);
+            }
+        }
+
         public dynamic InsertAdvertisements(PostAdvertisementsModel model)
         {
+            AdvertisementsPostResponse response = new AdvertisementsPostResponse();
             try
             {
                 var media = _context.Medias.Where(x => x.MediaId == model.MediaId).FirstOrDefault();
@@ -216,7 +307,12 @@ namespace AdvertisementService.Repository
                 };
                 _context.AdvertisementsCampaigns.Add(objAdvertisementscampaigns);
                 _context.SaveChanges();
-                return ReturnResponse.SuccessResponse(CommonMessage.AdvertisementInsert, true);
+
+                response.status = true;
+                response.statusCode = StatusCodes.Status201Created;
+                response.message = CommonMessage.AdvertisementInsert;
+                response.AdvertisementId = advertisements.AdvertisementId;
+                return response;
             }
             catch (Exception ex)
             {

@@ -7,6 +7,7 @@
         public static string AdvertisementInsert = "Advertisement inserted successfully.";
         public static string AdvertisementUpdate = "Advertisement updated successfully.";
         public static string AdvertisementDelete = "Advertisements deleted successfully.";
+        public static string ContentsRetrive = "Contents retrived successfully.";
 
         public static string MediaRetrived = "Media Retrived successfully.";
         public static string MediaNotFound = "Media not found.";

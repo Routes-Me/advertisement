@@ -134,6 +134,7 @@ namespace AdvertisementService.Repository
         public async Task<dynamic> InsertMedias(MediasModel model)
         {
             string blobUrl = string.Empty;
+            MediasInsertResponse response = new MediasInsertResponse();
             try
             {
                 string mediaReferenceName = model.media.FileName.Split('.')[0] + "_" + DateTime.UtcNow.Ticks + "." + model.media.FileName.Split('.')[1];
@@ -163,7 +164,13 @@ namespace AdvertisementService.Repository
                 };
                 _context.Medias.Add(media);
                 _context.SaveChanges();
-                return ReturnResponse.SuccessResponse(CommonMessage.MediaInsert, true);
+
+                response.status = true;
+                response.statusCode = StatusCodes.Status201Created;
+                response.message = CommonMessage.MediaInsert;
+                response.mediaId = media.MediaId;
+                response.url = media.Url;
+                return response;
             }
             catch (Exception ex)
             {
