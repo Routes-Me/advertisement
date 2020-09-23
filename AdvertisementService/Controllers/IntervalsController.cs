@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AdvertisementService.Abstraction;
+﻿using AdvertisementService.Abstraction;
 using AdvertisementService.Models;
 using AdvertisementService.Models.ResponseModel;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdvertisementService.Controllers
 {
     [Route("api")]
     [ApiController]
-    public class IntervalsController : BaseController
+    public class IntervalsController : ControllerBase
     {
         private readonly IIntervalsRepository _intervalsRepository;
         public IntervalsController(IIntervalsRepository intervalsRepository)
@@ -24,45 +19,32 @@ namespace AdvertisementService.Controllers
         [Route("intervals/{id=0}")]
         public IActionResult Get(int id, [FromQuery] Pagination pageInfo)
         {
-            IntervalsGetResponse response = new IntervalsGetResponse();
-            response = _intervalsRepository.GetIntervals(id, pageInfo);
-            if (response.responseCode != ResponseCode.Success)
-                return GetActionResult(response);
-            return Ok(response);
+            dynamic response = _intervalsRepository.GetIntervals(id, pageInfo);
+            return StatusCode((int)response.statusCode, response);
         }
 
         [HttpPost]
         [Route("intervals")]
         public IActionResult Post(IntervalsModel model)
         {
-            IntervalsResponse response = new IntervalsResponse();
-            response = _intervalsRepository.InsertIntervals(model);
-            if (response.responseCode != ResponseCode.Success)
-                return GetActionResult(response);
-            return Ok(response);
+            dynamic response = _intervalsRepository.InsertIntervals(model);
+            return StatusCode((int)response.statusCode, response);
         }
 
         [HttpPut]
         [Route("intervals")]
         public IActionResult Put(IntervalsModel model)
         {
-            IntervalsResponse response = new IntervalsResponse();
-            response = _intervalsRepository.UpdateIntervals(model);
-            if (response.responseCode != ResponseCode.Success)
-                return GetActionResult(response);
-            return Ok(response);
+            dynamic response = _intervalsRepository.UpdateIntervals(model);
+            return StatusCode((int)response.statusCode, response);
         }
 
         [HttpDelete]
         [Route("intervals/{id}")]
         public IActionResult Delete(int id)
         {
-            IntervalsResponse response = new IntervalsResponse();
-            response = _intervalsRepository.DeleteIntervals(id);
-            if (response.responseCode != ResponseCode.Success)
-                return GetActionResult(response);
-            return Ok(response);
+            dynamic response = _intervalsRepository.DeleteIntervals(id);
+            return StatusCode((int)response.statusCode, response);
         }
-
     }
 }

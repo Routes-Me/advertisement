@@ -48,7 +48,7 @@ namespace AdvertisementService
             services.AddScoped<ICampaignsRepository, CampaignsRepository>();
             services.AddScoped<IMediasRepository, MediasRepository>();
             services.AddScoped<IIntervalsRepository, IntervalsRepository>();
-            services.AddScoped<IIncludeAdvertisements, IncludeAdvertisements>();
+            services.AddScoped<IIncludeAdvertisementsRepository, IncludeAdvertisementsRepository>();
             services.AddScoped<IIncludeQRCodeRepository, IncludeQRCodeRepository>();
 
             var appSettingsSection = Configuration.GetSection("AppSettings");

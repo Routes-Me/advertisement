@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace AdvertisementService.Models.ResponseModel
+﻿namespace AdvertisementService.Models.ResponseModel
 {
     public class IntervalsModel
     {

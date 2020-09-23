@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AdvertisementService.Abstraction;
+﻿using AdvertisementService.Abstraction;
 using AdvertisementService.Models;
-using AdvertisementService.Models.DBModels;
 using AdvertisementService.Models.ResponseModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +8,7 @@ namespace AdvertisementService.Controllers
 {
     [Route("api")]
     [ApiController]
-    public class AdvertisementsController : BaseController
+    public class AdvertisementsController : ControllerBase
     {
         private readonly IAdvertisementsRepository _advertisementsRepository;
         public AdvertisementsController(IAdvertisementsRepository advertisementsRepository)
@@ -22,58 +17,49 @@ namespace AdvertisementService.Controllers
         }
 
         [HttpGet]
-        [Route("advertisements/{id=0}")]
-        public IActionResult Get(int id, string include, [FromQuery] Pagination pageInfo)
+        [Route("advertisements/{advertisementsId=0}")]
+        public IActionResult Get(int advertisementsId, string include, [FromQuery] Pagination pageInfo)
         {
-            AdvertisementsGetResponse response = new AdvertisementsGetResponse();
-            response = _advertisementsRepository.GetAdvertisements(id, include, pageInfo);
-            if (response.responseCode != ResponseCode.Success)
-                return GetActionResult(response);
-            return Ok(response);
+            int institutionId = 0;
+            dynamic response = _advertisementsRepository.GetAdvertisements(institutionId, advertisementsId, include, pageInfo);
+            return StatusCode((int)response.statusCode, response);
         }
 
         [HttpPost]
         [Route("advertisements")]
         public IActionResult Post(PostAdvertisementsModel model)
         {
-            AdvertisementsResponse response = new AdvertisementsResponse();
-            response = _advertisementsRepository.InsertAdvertisements(model);
-            if (response.responseCode != ResponseCode.Success)
-                return GetActionResult(response);
-            return Ok(response);
+            dynamic response = _advertisementsRepository.InsertAdvertisements(model);
+            return StatusCode((int)response.statusCode, response);
         }
 
         [HttpPut]
         [Route("advertisements")]
         public IActionResult Put(PostAdvertisementsModel model)
         {
-            AdvertisementsResponse response = new AdvertisementsResponse();
-            response = _advertisementsRepository.UpdateAdvertisements(model);
-            if (response.responseCode != ResponseCode.Success)
-                return GetActionResult(response);
-            return Ok(response);
+            dynamic response = _advertisementsRepository.UpdateAdvertisements(model);
+            return StatusCode((int)response.statusCode, response);
         }
 
         [HttpDelete]
         [Route("advertisements/{id}")]
         public IActionResult Delete(int id)
         {
-            AdvertisementsResponse response = new AdvertisementsResponse();
-            response = _advertisementsRepository.DeleteAdvertisements(id);
-            if (response.responseCode != ResponseCode.Success)
-                return GetActionResult(response);
-            return Ok(response);
+            dynamic response = _advertisementsRepository.DeleteAdvertisements(id);
+            return StatusCode((int)response.statusCode, response);
         }
 
         [HttpGet]
-        [Route("institutions/{id}/advertisements/{advertisementsId=0}")]
-        public IActionResult GetAdvertisementsByInstitutionsId(int id, int advertisementsId, string include, [FromQuery] Pagination pageInfo)
+        [Route("institutions/{institutionId}/advertisements/{advertisementsId=0}")]
+        public IActionResult GetAdvertisementsByInstitutionsId(int institutionId, int advertisementsId, string include, [FromQuery] Pagination pageInfo)
         {
-            AdvertisementsGetResponse response = new AdvertisementsGetResponse();
-            response = _advertisementsRepository.GetAdvertisementsByInstitutionId(id, advertisementsId, include, pageInfo);
-            if (response.responseCode != ResponseCode.Success)
-                return GetActionResult(response);
-            return Ok(response);
+            if (institutionId <= 0)
+            {
+                dynamic resp = ReturnResponse.ErrorResponse(CommonMessage.InstitutionNotFound, StatusCodes.Status404NotFound);
+                return StatusCode((int)resp.statusCode, resp);
+            }
+            dynamic response = _advertisementsRepository.GetAdvertisements(institutionId, advertisementsId, include, pageInfo);
+            return StatusCode((int)response.statusCode, response);
         }
     }
 }

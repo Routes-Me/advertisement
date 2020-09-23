@@ -3,85 +3,61 @@ using AdvertisementService.Helper.Abstraction;
 using AdvertisementService.Models;
 using AdvertisementService.Models.DBModels;
 using AdvertisementService.Models.ResponseModel;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AdvertisementService.Repository
 {
     public class CampaignsRepository : ICampaignsRepository
     {
         private readonly advertisementserviceContext _context;
-        private readonly IIncludeAdvertisements _includeAdvertisements;
+        private readonly IIncludeAdvertisementsRepository _includeAdvertisements;
         private readonly IIncludeQRCodeRepository _includeQRCodeRepository;
-        public CampaignsRepository(advertisementserviceContext context, IIncludeAdvertisements includeAdvertisements, IIncludeQRCodeRepository includeQRCodeRepository)
+        public CampaignsRepository(advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements, IIncludeQRCodeRepository includeQRCodeRepository)
         {
             _context = context;
             _includeAdvertisements = includeAdvertisements;
             _includeQRCodeRepository = includeQRCodeRepository;
         }
 
-        public CampaignsResponse DeleteCampaigns(int id)
+        public dynamic DeleteCampaigns(int id)
         {
-            CampaignsResponse response = new CampaignsResponse();
             try
             {
-                var CampaignData = _context.Campaigns.Where(x => x.CampaignId == id).FirstOrDefault();
-                if (CampaignData == null)
-                {
-                    response.status = false;
-                    response.message = "Campaign not found.";
-                    response.responseCode = ResponseCode.NotFound;
-                    return response;
-                }
+                var campaigns = _context.Campaigns.Include(x => x.AdvertisementsCampaigns).Where(x => x.CampaignId == id).FirstOrDefault();
+                if (campaigns == null)
+                    return ReturnResponse.ErrorResponse(CommonMessage.CampaignNotFound, StatusCodes.Status404NotFound);
 
-                var advertisementscampaigns = _context.AdvertisementsCampaigns.Where(x => x.AdvertisementId == id).FirstOrDefault();
-                if (advertisementscampaigns != null)
-                    _context.AdvertisementsCampaigns.Remove(advertisementscampaigns);
+                if (campaigns.AdvertisementsCampaigns != null)
+                    _context.AdvertisementsCampaigns.RemoveRange(campaigns.AdvertisementsCampaigns);
 
-                _context.Campaigns.Remove(CampaignData);
+                _context.Campaigns.Remove(campaigns);
                 _context.SaveChanges();
-                response.status = true;
-                response.message = "Campaign deleted successfully.";
-                response.responseCode = ResponseCode.Success;
-                return response;
+                return ReturnResponse.SuccessResponse(CommonMessage.CampaignDelete, false);
             }
             catch (Exception ex)
             {
-                response.status = false;
-                response.message = "Something went wrong while deleting Campaigns. Error Message - " + ex.Message;
-                response.responseCode = ResponseCode.InternalServerError;
-                return response;
+                return ReturnResponse.ExceptionResponse(ex);
             }
         }
 
-        public AdvertisementsGetResponse GetAdvertisements(int campaignId, int advertisementsId, string includeType, Pagination pageInfo)
+        public dynamic GetAdvertisements(int campaignId, int advertisementsId, string includeType, Pagination pageInfo)
         {
             AdvertisementsGetResponse response = new AdvertisementsGetResponse();
             int totalCount = 0;
             try
             {
                 List<AdvertisementsModel> advertisementsModelList = new List<AdvertisementsModel>();
-
                 if (campaignId == 0)
-                {
-                    response.status = false;
-                    response.message = "Advertisement not found.";
-                    response.responseCode = ResponseCode.NotFound;
-                    return response;
-                }
+                    return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
 
                 var campaignCount = _context.Campaigns.Where(x => x.CampaignId == campaignId).ToList().Count();
                 if (campaignCount == 0)
-                {
-                    response.status = false;
-                    response.message = "Campaign not found.";
-                    response.responseCode = ResponseCode.NotFound;
-                    return response;
-                }
+                    return ReturnResponse.ErrorResponse(CommonMessage.CampaignNotFound, StatusCodes.Status404NotFound);
 
                 if (advertisementsId == 0)
                 {
@@ -143,12 +119,7 @@ namespace AdvertisementService.Repository
                 }
 
                 if (advertisementsModelList == null || advertisementsModelList.Count == 0)
-                {
-                    response.status = false;
-                    response.message = "Advertisements not found.";
-                    response.responseCode = ResponseCode.NotFound;
-                    return response;
-                }
+                    return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
 
                 dynamic includeData = new JObject();
                 if (!string.IsNullOrEmpty(includeType))
@@ -189,29 +160,26 @@ namespace AdvertisementService.Repository
                 };
 
                 response.status = true;
-                response.message = "Advertisement data retrived successfully.";
+                response.message = CommonMessage.AdvertisementRetrived;
                 response.included = includeData;
                 response.pagination = page;
                 response.data = advertisementsModelList;
-                response.responseCode = ResponseCode.Success;
+                response.statusCode = StatusCodes.Status200OK;
                 return response;
             }
             catch (Exception ex)
             {
-                response.status = false;
-                response.message = "Something went wrong while fetching advertisement. Error Message - " + ex.Message;
-                response.responseCode = ResponseCode.InternalServerError;
-                return response;
+                return ReturnResponse.ExceptionResponse(ex);
             }
         }
 
-        public ActiveCampAdWithQRGetResponse GetAdvertisementsofActiveCampaign(string includeType, Pagination pageInfo)
+        public dynamic GetAdvertisementsofActiveCampaign(string includeType, Pagination pageInfo)
         {
-            ActiveCampAdWithQRGetResponse response = new ActiveCampAdWithQRGetResponse();
-            GetQrcodesModel qrdata = new GetQrcodesModel();
             int totalCount = 0;
             try
             {
+                ActiveCampAdWithQRGetResponse response = new ActiveCampAdWithQRGetResponse();
+                GetQrcodesModel qrdata = new GetQrcodesModel();
                 List<GetActiveCampAdModel> advertisementsModelList = new List<GetActiveCampAdModel>();
                 List<GetQrcodesModel> qrCodeDetails = new List<GetQrcodesModel>();
                 List<GetActiveCampAdWithQRCodeModel> activeCampaignsAdvertisementsWithQRCodeModelList = new List<GetActiveCampAdWithQRCodeModel>();
@@ -241,12 +209,7 @@ namespace AdvertisementService.Repository
                               }).ToList().Count();
 
                 if (advertisementsModelList == null || advertisementsModelList.Count == 0)
-                {
-                    response.status = false;
-                    response.message = "Advertisements not found.";
-                    response.responseCode = ResponseCode.NotFound;
-                    return response;
-                }
+                    return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
 
                 if (includeType == "qrcode")
                 {
@@ -271,7 +234,6 @@ namespace AdvertisementService.Repository
                                     Details = qrdata.Details,
                                     Url = qrdata.ImageUrl
                                 }
-
                             });
                         }
                         else
@@ -290,7 +252,6 @@ namespace AdvertisementService.Repository
                 {
                     foreach (var advertisement in advertisementsModelList)
                     {
-
                         activeCampaignsAdvertisementsWithQRCodeModelList.Add(new GetActiveCampAdWithQRCodeModel()
                         {
                             ContentId = advertisement.ContentId,
@@ -309,27 +270,24 @@ namespace AdvertisementService.Repository
                 };
 
                 response.status = true;
-                response.message = "Advertisements data retrived successfully.";
+                response.message = CommonMessage.AdvertisementRetrived;
                 response.pagination = page;
                 response.data = activeCampaignsAdvertisementsWithQRCodeModelList;
-                response.responseCode = ResponseCode.Success;
+                response.statusCode = StatusCodes.Status200OK;
                 return response;
             }
             catch (Exception ex)
             {
-                response.status = false;
-                response.message = "Something went wrong while fetching advertisements. Error Message - " + ex.Message;
-                response.responseCode = ResponseCode.InternalServerError;
-                return response;
+                return ReturnResponse.ExceptionResponse(ex);
             }
         }
 
-        public CampaignsGetResponse GetCampaigns(int campaignId, string includeType, Pagination pageInfo)
+        public dynamic GetCampaigns(int campaignId, string includeType, Pagination pageInfo)
         {
-            CampaignsGetResponse response = new CampaignsGetResponse();
             int totalCount = 0;
             try
             {
+                CampaignsGetResponse response = new CampaignsGetResponse();
                 List<CampaignsModel> campaignsModelList = new List<CampaignsModel>();
                 if (campaignId == 0)
                 {
@@ -362,12 +320,7 @@ namespace AdvertisementService.Repository
                 }
 
                 if (campaignsModelList == null || campaignsModelList.Count == 0)
-                {
-                    response.status = false;
-                    response.message = "Campaign not found.";
-                    response.responseCode = ResponseCode.NotFound;
-                    return response;
-                }
+                    return ReturnResponse.ErrorResponse(CommonMessage.CampaignNotFound, StatusCodes.Status404NotFound);
 
                 var page = new Pagination
                 {
@@ -377,79 +330,46 @@ namespace AdvertisementService.Repository
                 };
 
                 response.status = true;
-                response.message = "Campaign data retrived successfully.";
+                response.message = CommonMessage.CampaignRetrived;
                 response.pagination = page;
                 response.data = campaignsModelList;
-                response.responseCode = ResponseCode.Success;
+                response.statusCode = StatusCodes.Status200OK;
                 return response;
             }
             catch (Exception ex)
             {
-                response.status = false;
-                response.message = "Something went wrong while fetching data. Error Message - " + ex.Message;
-                response.responseCode = ResponseCode.InternalServerError;
-                return response;
+                return ReturnResponse.ExceptionResponse(ex);
             }
         }
 
-        public CampaignsResponse InsertCampaigns(CampaignsModel model)
+        public dynamic InsertCampaigns(CampaignsModel model)
         {
-            CampaignsResponse response = new CampaignsResponse();
             try
             {
-                if (model == null)
-                {
-                    response.status = false;
-                    response.message = "Pass valid data in model.";
-                    response.responseCode = ResponseCode.BadRequest;
-                    return response;
-                }
-
-                Campaigns objCampaigns = new Campaigns()
+                Campaigns campaigns = new Campaigns()
                 {
                     Title = model.Title,
                     StartAt = model.StartAt,
                     EndAt = model.EndAt,
                     Status = model.Status
                 };
-                _context.Campaigns.Add(objCampaigns);
+                _context.Campaigns.Add(campaigns);
                 _context.SaveChanges();
-
-                response.status = true;
-                response.message = "Campaign inserted successfully.";
-                response.responseCode = ResponseCode.Created;
-                return response;
+                return ReturnResponse.SuccessResponse(CommonMessage.CampaignInsert, true);
             }
             catch (Exception ex)
             {
-                response.status = false;
-                response.message = "Something went wrong while inserting Campaigns. Error Message - " + ex.Message;
-                response.responseCode = ResponseCode.InternalServerError;
-                return response;
+                return ReturnResponse.ExceptionResponse(ex);
             }
         }
 
-        public CampaignsResponse UpdateCampaigns(CampaignsModel model)
+        public dynamic UpdateCampaigns(CampaignsModel model)
         {
-            CampaignsResponse response = new CampaignsResponse();
             try
             {
-                if (model == null)
-                {
-                    response.status = false;
-                    response.message = "Pass valid data in model.";
-                    response.responseCode = ResponseCode.BadRequest;
-                    return response;
-                }
-
                 var campaignData = _context.Campaigns.Where(x => x.CampaignId == model.CampaignId).FirstOrDefault();
                 if (campaignData == null)
-                {
-                    response.status = false;
-                    response.message = "Campaign not found.";
-                    response.responseCode = ResponseCode.NotFound;
-                    return response;
-                }
+                    return ReturnResponse.ErrorResponse(CommonMessage.CampaignNotFound, StatusCodes.Status404NotFound);
 
                 campaignData.StartAt = model.StartAt;
                 campaignData.EndAt = model.EndAt;
@@ -457,18 +377,11 @@ namespace AdvertisementService.Repository
                 campaignData.Status = model.Status;
                 _context.Campaigns.Update(campaignData);
                 _context.SaveChanges();
-
-                response.status = true;
-                response.message = "Campaign updated successfully.";
-                response.responseCode = ResponseCode.Success;
-                return response;
+                return ReturnResponse.SuccessResponse(CommonMessage.CampaignUpdate, false);
             }
             catch (Exception ex)
             {
-                response.status = false;
-                response.message = "Something went wrong while updating Campaign. Error Message - " + ex.Message;
-                response.responseCode = ResponseCode.InternalServerError;
-                return response;
+                return ReturnResponse.ExceptionResponse(ex);
             }
         }
     }

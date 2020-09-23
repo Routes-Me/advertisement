@@ -3,16 +3,14 @@ using AdvertisementService.Models;
 using AdvertisementService.Models.Common;
 using AdvertisementService.Models.DBModels;
 using AdvertisementService.Models.ResponseModel;
-using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
 using Microsoft.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -28,28 +26,17 @@ namespace AdvertisementService.Repository
             _context = context;
         }
 
-        public async Task<MediasResponse> DeleteMedias(int id)
+        public async Task<dynamic> DeleteMedias(int id)
         {
-            MediasResponse response = new MediasResponse();
             try
             {
-                var medias = _context.Medias.Where(x => x.MediaId == id).FirstOrDefault();
+                var medias = _context.Medias.Include(x => x.Advertisements).Include(x => x.MediaMetadata).Where(x => x.MediaId == id).FirstOrDefault();
                 if (medias == null)
-                {
-                    response.status = false;
-                    response.message = "Media not found.";
-                    response.responseCode = ResponseCode.NotFound;
-                    return response;
-                }
+                    return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
 
-                var advertisementData = _context.Advertisements.Where(x => x.MediaId == id).FirstOrDefault();
+                var advertisementData = medias.Advertisements.Where(x => x.MediaId == id).FirstOrDefault();
                 if (advertisementData != null)
-                {
-                    response.status = false;
-                    response.message = "Media is associated with other advertisemnts.";
-                    response.responseCode = ResponseCode.Conflict;
-                    return response;
-                }
+                    return ReturnResponse.ErrorResponse(CommonMessage.MediaAssociatedWithAdvertisement, StatusCodes.Status409Conflict);
 
                 var mediaReferenceName = medias.Url.Split('/');
                 if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
@@ -64,27 +51,18 @@ namespace AdvertisementService.Repository
                     }
                 }
 
-                var metaData = _context.MediaMetadata.Where(x => x.MediaMetadataId == medias.MediaMetadataId).FirstOrDefault();
-                if (metaData != null)
-                    _context.MediaMetadata.Remove(metaData);
-
+                _context.MediaMetadata.Remove(medias.MediaMetadata);
                 _context.Medias.Remove(medias);
                 _context.SaveChanges();
-                response.status = true;
-                response.message = "Media deleted successfully.";
-                response.responseCode = ResponseCode.Success;
-                return response;
+                return ReturnResponse.SuccessResponse(CommonMessage.MediaDelete, false);
             }
             catch (Exception ex)
             {
-                response.status = false;
-                response.message = "Something went wrong while deleting Media. Error Message - " + ex.Message;
-                response.responseCode = ResponseCode.InternalServerError;
-                return response;
+                return ReturnResponse.ExceptionResponse(ex);
             }
         }
 
-        public MediasGetResponse GetMedias(int mediaId, string includeType, Pagination pageInfo)
+        public dynamic GetMedias(int mediaId, string includeType, Pagination pageInfo)
         {
             MediasGetResponse response = new MediasGetResponse();
             int totalCount = 0;
@@ -107,15 +85,7 @@ namespace AdvertisementService.Repository
 
                     totalCount = (from media in _context.Medias
                                   join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
-                                  select new GetMediasModel()
-                                  {
-                                      MediaId = media.MediaId,
-                                      CreatedAt = media.CreatedAt,
-                                      Url = media.Url,
-                                      MediaType = media.MediaType,
-                                      Duration = metadata.Duration,
-                                      Size = metadata.Size
-                                  }).ToList().Count();
+                                  select new GetMediasModel() { }).ToList().Count();
                 }
                 else
                 {
@@ -135,24 +105,11 @@ namespace AdvertisementService.Repository
                     totalCount = (from media in _context.Medias
                                   join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
                                   where media.MediaId == mediaId
-                                  select new GetMediasModel()
-                                  {
-                                      MediaId = media.MediaId,
-                                      CreatedAt = media.CreatedAt,
-                                      Url = media.Url,
-                                      MediaType = media.MediaType,
-                                      Duration = metadata.Duration,
-                                      Size = metadata.Size
-                                  }).ToList().Count();
+                                  select new GetMediasModel() { }).ToList().Count();
                 }
 
                 if (mediasModelList == null || mediasModelList.Count == 0)
-                {
-                    response.status = false;
-                    response.message = "Media not found.";
-                    response.responseCode = ResponseCode.NotFound;
-                    return response;
-                }
+                    return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
 
                 var page = new Pagination
                 {
@@ -162,35 +119,23 @@ namespace AdvertisementService.Repository
                 };
 
                 response.status = true;
-                response.message = "Media data retrived successfully.";
+                response.message = CommonMessage.MediaRetrived;
                 response.pagination = page;
                 response.data = mediasModelList;
-                response.responseCode = ResponseCode.Success;
+                response.statusCode = StatusCodes.Status200OK;
                 return response;
             }
             catch (Exception ex)
             {
-                response.status = false;
-                response.message = "Something went wrong while fetching medias. Error Message - " + ex.Message;
-                response.responseCode = ResponseCode.InternalServerError;
-                return response;
+                return ReturnResponse.ExceptionResponse(ex);
             }
         }
 
-        public async Task<MediasResponse> InsertMedias(MediasModel model)
+        public async Task<dynamic> InsertMedias(MediasModel model)
         {
-            MediasResponse response = new MediasResponse();
             string blobUrl = string.Empty;
             try
             {
-                if (model == null)
-                {
-                    response.status = false;
-                    response.message = "Pass valid data in model.";
-                    response.responseCode = ResponseCode.BadRequest;
-                    return response;
-                }
-
                 string mediaReferenceName = model.media.FileName.Split('.')[0] + "_" + DateTime.UtcNow.Ticks + "." + model.media.FileName.Split('.')[1];
                 if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
                 {
@@ -209,52 +154,31 @@ namespace AdvertisementService.Repository
                 _context.MediaMetadata.Add(mediaMetadata);
                 _context.SaveChanges();
 
-                Medias objMedia = new Medias()
+                Medias media = new Medias()
                 {
                     Url = blobUrl,
                     CreatedAt = model.CreatedAt,
                     MediaType = model.MediaType,
                     MediaMetadataId = mediaMetadata.MediaMetadataId
                 };
-                _context.Medias.Add(objMedia);
+                _context.Medias.Add(media);
                 _context.SaveChanges();
-
-                response.status = true;
-                response.message = "Media inserted successfully.";
-                response.responseCode = ResponseCode.Created;
-                return response;
+                return ReturnResponse.SuccessResponse(CommonMessage.MediaInsert, true);
             }
             catch (Exception ex)
             {
-                response.status = false;
-                response.message = "Something went wrong while inserting Media. Error Message - " + ex.Message;
-                response.responseCode = ResponseCode.InternalServerError;
-                return response;
+                return ReturnResponse.ExceptionResponse(ex);
             }
         }
 
-        public async Task<MediasResponse> UpdateMedias(MediasModel model)
+        public async Task<dynamic> UpdateMedias(MediasModel model)
         {
-            MediasResponse response = new MediasResponse();
             string blobUrl = string.Empty, mediaReferenceName = string.Empty;
             try
             {
-                if (model == null)
-                {
-                    response.status = false;
-                    response.message = "Pass valid data in model.";
-                    response.responseCode = ResponseCode.BadRequest;
-                    return response;
-                }
-
-                var mediaData = _context.Medias.Where(x => x.MediaId == model.MediaId).FirstOrDefault();
+                var mediaData = _context.Medias.Include(x => x.MediaMetadata).Where(x => x.MediaId == model.MediaId).FirstOrDefault();
                 if (mediaData == null)
-                {
-                    response.status = false;
-                    response.message = "Media not found.";
-                    response.responseCode = ResponseCode.NotFound;
-                    return response;
-                }
+                    return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
 
                 if (!string.IsNullOrEmpty(mediaData.Url))
                 {
@@ -289,8 +213,7 @@ namespace AdvertisementService.Repository
                     }
                 }
 
-                var metadata = _context.MediaMetadata.Where(x => x.MediaMetadataId == mediaData.MediaMetadataId).FirstOrDefault();
-                if (metadata == null)
+                if (mediaData.MediaMetadata == null)
                 {
                     MediaMetadata mediaMetadata = new MediaMetadata()
                     {
@@ -303,9 +226,9 @@ namespace AdvertisementService.Repository
                 }
                 else
                 {
-                    metadata.Duration = model.Duration;
-                    metadata.Size = model.Size;
-                    _context.MediaMetadata.Update(metadata);
+                    mediaData.MediaMetadata.Duration = model.Duration;
+                    mediaData.MediaMetadata.Size = model.Size;
+                    _context.MediaMetadata.Update(mediaData.MediaMetadata);
                     _context.SaveChanges();
                 }
 
@@ -314,18 +237,11 @@ namespace AdvertisementService.Repository
                 mediaData.MediaType = model.MediaType;
                 _context.Medias.Update(mediaData);
                 _context.SaveChanges();
-
-                response.status = true;
-                response.message = "Media updated successfully.";
-                response.responseCode = ResponseCode.Success;
-                return response;
+                return ReturnResponse.SuccessResponse(CommonMessage.MediaUpdate, false);
             }
             catch (Exception ex)
             {
-                response.status = false;
-                response.message = "Something went wrong while updating Media. Error Message - " + ex.Message;
-                response.responseCode = ResponseCode.InternalServerError;
-                return response;
+                return ReturnResponse.ExceptionResponse(ex);
             }
         }
     }
