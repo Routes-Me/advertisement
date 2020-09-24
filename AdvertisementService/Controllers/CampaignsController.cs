@@ -17,7 +17,7 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("campaigns/{id=0}")]
-        public IActionResult GetCampaigns(int id, string include, [FromQuery] Pagination pageInfo)
+        public IActionResult GetCampaigns(string id, string include, [FromQuery] Pagination pageInfo)
         {
             dynamic response = _campaignsRepository.GetCampaigns(id, include, pageInfo);
             return StatusCode((int)response.statusCode, response);
@@ -25,17 +25,9 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("campaigns/{id=0}/advertisements/{advertisementsId=0}")]
-        public IActionResult GetAdvertisementsById(int id, int advertisementsId, string include, [FromQuery] Pagination pageInfo)
+        public IActionResult GetAdvertisementsById(string id, string advertisementsId, string include, [FromQuery] Pagination pageInfo)
         {
             dynamic response = _campaignsRepository.GetAdvertisements(id, advertisementsId, include, pageInfo);
-            return StatusCode((int)response.statusCode, response);
-        }
-
-        [HttpGet]
-        [Route("campaigns/advertisementsqr")]
-        public IActionResult GetAdvertisementsOfActiveCampaign(string include, [FromQuery] Pagination pageInfo)
-        {
-            dynamic response = _campaignsRepository.GetAdvertisementsofActiveCampaign(include, pageInfo);
             return StatusCode((int)response.statusCode, response);
         }
 
@@ -57,7 +49,7 @@ namespace AdvertisementService.Controllers
 
         [HttpDelete]
         [Route("campaigns/{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string id)
         {
             dynamic response = _campaignsRepository.DeleteCampaigns(id);
             return StatusCode((int)response.statusCode, response);

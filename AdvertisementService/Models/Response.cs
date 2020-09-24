@@ -73,28 +73,7 @@ namespace AdvertisementService.Models
 
     public class AdvertisementsPostResponse : Response
     {
-        public int AdvertisementId { get; set; }
-    }
-
-    public class ActiveCampAdWithQRGetResponse : Response
-    {
-        public Pagination pagination { get; set; }
-        public List<GetActiveCampAdWithQRCodeModel> data { get; set; }
-    }
-
-    public class GetQrcodesModel
-    {
-        public int? AdvertisementId { get; set; }
-        public string Details { get; set; }
-        public string ImageUrl { get; set; }
-    }
-    #endregion
-
-    #region QRCode Response
-    public class GetQRCodeResponse : Response
-    {
-        public Pagination pagination { get; set; }
-        public List<GetQrcodesModel> data { get; set; }
+        public string AdvertisementId { get; set; }
     }
     #endregion
 
@@ -109,7 +88,7 @@ namespace AdvertisementService.Models
 
     public class MediasInsertResponse : Response
     {
-        public int mediaId { get; set; }
+        public string mediaId { get; set; }
         public string url { get; set; }
     }
     #endregion

@@ -18,11 +18,11 @@ namespace AdvertisementService.Repository
             _context = context;
         }
 
-        public dynamic DeleteIntervals(int id)
+        public dynamic DeleteIntervals(string id)
         {
             try
             {
-                var intervals = _context.Intervals.Include(x => x.AdvertisementsIntervals).Where(x => x.IntervalId == id).FirstOrDefault();
+                var intervals = _context.Intervals.Include(x => x.AdvertisementsIntervals).Where(x => x.IntervalId == Convert.ToInt32(id)).FirstOrDefault();
                 if (intervals == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
 
@@ -39,19 +39,19 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public dynamic GetIntervals(int intervalId, Pagination pageInfo)
+        public dynamic GetIntervals(string intervalId, Pagination pageInfo)
         {
             int totalCount = 0;
             try
             {
                 IntervalsGetResponse response = new IntervalsGetResponse();
                 List<IntervalsModel> intervalsModelList = new List<IntervalsModel>();
-                if (intervalId == 0)
+                if (intervalId == "0")
                 {
                     intervalsModelList = (from interval in _context.Intervals
                                              select new IntervalsModel()
                                              {
-                                                 IntervalId = interval.IntervalId,
+                                                 IntervalId = interval.IntervalId.ToString(),
                                                  Title = interval.Title
                                              }).OrderBy(a => a.IntervalId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
@@ -60,14 +60,14 @@ namespace AdvertisementService.Repository
                 else
                 {
                     intervalsModelList = (from interval in _context.Intervals
-                                             where interval.IntervalId == intervalId
+                                             where interval.IntervalId == Convert.ToInt32(intervalId)
                                              select new IntervalsModel()
                                              {
-                                                 IntervalId = interval.IntervalId,
+                                                 IntervalId = interval.IntervalId.ToString(),
                                                  Title = interval.Title
                                              }).OrderBy(a => a.IntervalId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
-                    totalCount = _context.Intervals.Where(x => x.IntervalId == intervalId).ToList().Count();
+                    totalCount = _context.Intervals.Where(x => x.IntervalId == Convert.ToInt32(intervalId)).ToList().Count();
                 }
 
                 if (intervalsModelList == null || intervalsModelList.Count == 0)
@@ -115,7 +115,7 @@ namespace AdvertisementService.Repository
         {
             try
             {
-                var intervalData = _context.Intervals.Where(x => x.IntervalId == model.IntervalId).FirstOrDefault();
+                var intervalData = _context.Intervals.Where(x => x.IntervalId == Convert.ToInt32(model.IntervalId)).FirstOrDefault();
                 if (intervalData == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
 

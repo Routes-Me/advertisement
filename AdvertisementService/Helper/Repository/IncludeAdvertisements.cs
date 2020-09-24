@@ -19,10 +19,12 @@ namespace AdvertisementService.Helper.Repository
     {
         private readonly AppSettings _appSettings;
         private readonly advertisementserviceContext _context;
-        public IncludeAdvertisements(IOptions<AppSettings> appSettings, advertisementserviceContext context)
+        private readonly Dependencies _dependencies;
+        public IncludeAdvertisements(IOptions<AppSettings> appSettings, advertisementserviceContext context, IOptions<Dependencies> dependencies)
         {
             _appSettings = appSettings.Value;
             _context = context;
+            _dependencies = dependencies.Value;
         }
 
         public dynamic GetCampaignIncludedData(List<AdvertisementsModel> advertisementsModel)
@@ -33,10 +35,10 @@ namespace AdvertisementService.Helper.Repository
                 var campaignsDetails = (from campaign in _context.Campaigns
                                      join campadvt in _context.AdvertisementsCampaigns on campaign.CampaignId equals campadvt.CampaignId
                                      join advt in _context.Advertisements on campadvt.AdvertisementId equals advt.AdvertisementId
-                                     where advt.AdvertisementId == item.AdvertisementId
+                                     where advt.AdvertisementId == Convert.ToInt32(item.AdvertisementId)
                                      select new CampaignsModel()
                                      {
-                                         CampaignId = campaign.CampaignId,
+                                         CampaignId = campaign.CampaignId.ToString(),
                                          StartAt = campaign.StartAt,
                                          EndAt = campaign.EndAt,
                                          Status = campaign.Status,
@@ -62,7 +64,7 @@ namespace AdvertisementService.Helper.Repository
             List<InstitutionsModel> institutions = new List<InstitutionsModel>();
             foreach (var item in advertisementsModel)
             {
-                var client = new RestClient(_appSettings.InstitutionEndpointUrl + item.InstitutionId);
+                var client = new RestClient(_appSettings.Host + _dependencies.InstitutionUrl + item.InstitutionId);
                 var request = new RestRequest(Method.GET);
                 IRestResponse response = client.Execute(request);
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -89,10 +91,10 @@ namespace AdvertisementService.Helper.Repository
                 var intervalsDetails = (from interval in _context.Intervals
                                         join advtInterval in _context.AdvertisementsIntervals on interval.IntervalId equals advtInterval.IntervalId
                                         join advt in _context.Advertisements on advtInterval.AdvertisementId equals advt.AdvertisementId
-                                        where advt.AdvertisementId == item.AdvertisementId
+                                        where advt.AdvertisementId == Convert.ToInt32(item.AdvertisementId)
                                         select new IntervalsModel()
                                         {
-                                            IntervalId = interval.IntervalId,
+                                            IntervalId = interval.IntervalId.ToString(),
                                             Title = interval.Title
                                         }).ToList().FirstOrDefault();
 
@@ -117,10 +119,10 @@ namespace AdvertisementService.Helper.Repository
             {
                 var mediasDetails = (from media in _context.Medias
                                      join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
-                                     where media.MediaId == item.MediaId
+                                     where media.MediaId == Convert.ToInt32(item.MediaId)
                                      select new GetMediasModel()
                                      {
-                                         MediaId = media.MediaId,
+                                         MediaId = media.MediaId.ToString(),
                                          CreatedAt = media.CreatedAt,
                                          Url = media.Url,
                                          MediaType = media.MediaType,

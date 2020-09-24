@@ -5,10 +5,10 @@ namespace AdvertisementService.Abstraction
 {
     public interface IAdvertisementsRepository
     {
-        dynamic GetAdvertisements(int institutionId, int advertisementId, string includeType, Pagination pageInfo);
+        dynamic GetAdvertisements(string institutionId, string advertisementId, string includeType, Pagination pageInfo);
         dynamic UpdateAdvertisements(PostAdvertisementsModel model);
-        dynamic DeleteAdvertisements(int id);
+        dynamic DeleteAdvertisements(string id);
         dynamic InsertAdvertisements(PostAdvertisementsModel model);
-        dynamic GetContents(int advertisementsId, Pagination pageInfo);
+        dynamic GetContents(string advertisementsId, Pagination pageInfo);
     }
 }

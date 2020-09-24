@@ -3,6 +3,7 @@ using AdvertisementService.Models;
 using AdvertisementService.Models.ResponseModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace AdvertisementService.Controllers
 {
@@ -18,9 +19,9 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("advertisements/{advertisementsId=0}")]
-        public IActionResult Get(int advertisementsId, string include, [FromQuery] Pagination pageInfo)
+        public IActionResult Get(string advertisementsId, string include, [FromQuery] Pagination pageInfo)
         {
-            int institutionId = 0;
+            string institutionId = "0";
             dynamic response = _advertisementsRepository.GetAdvertisements(institutionId, advertisementsId, include, pageInfo);
             return StatusCode((int)response.statusCode, response);
         }
@@ -43,7 +44,7 @@ namespace AdvertisementService.Controllers
 
         [HttpDelete]
         [Route("advertisements/{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string id)
         {
             dynamic response = _advertisementsRepository.DeleteAdvertisements(id);
             return StatusCode((int)response.statusCode, response);
@@ -51,9 +52,9 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("institutions/{institutionId}/advertisements/{advertisementsId=0}")]
-        public IActionResult GetAdvertisementsByInstitutionsId(int institutionId, int advertisementsId, string include, [FromQuery] Pagination pageInfo)
+        public IActionResult GetAdvertisementsByInstitutionsId(string institutionId, string advertisementsId, string include, [FromQuery] Pagination pageInfo)
         {
-            if (institutionId <= 0)
+            if (Convert.ToInt32(institutionId) <= 0)
             {
                 dynamic resp = ReturnResponse.ErrorResponse(CommonMessage.InstitutionNotFound, StatusCodes.Status404NotFound);
                 return StatusCode((int)resp.statusCode, resp);
@@ -64,7 +65,7 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("contents/{id=0}")]
-        public IActionResult GetAdvertisementsByPromotions(int id, [FromQuery] Pagination pageInfo)
+        public IActionResult GetAdvertisementsByPromotions(string id, [FromQuery] Pagination pageInfo)
         {
             dynamic response = _advertisementsRepository.GetContents(id, pageInfo);
             return StatusCode((int)response.statusCode, response);

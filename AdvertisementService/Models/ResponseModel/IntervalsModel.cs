@@ -2,7 +2,7 @@
 {
     public class IntervalsModel
     {
-        public int IntervalId { get; set; }
+        public string IntervalId { get; set; }
         public string Title { get; set; }
     }
 }
