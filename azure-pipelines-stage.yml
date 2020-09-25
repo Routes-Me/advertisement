@@ -3,7 +3,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- master
+- development
 
 resources:
 - repo: self
@@ -11,8 +11,8 @@ resources:
 variables:
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: 'b330c09a-7825-4caa-9809-432c5fd14538'
-  imageRepository: 'stageadvertisementservice'
-  containerRegistry: 'noruaebscontainerregistry.azurecr.io'
+  imageRepository: 'advertisementservice'
+  containerRegistry: 'stagenoruaebscontainerregistry.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/AdvertisementService/Dockerfile'
   tag: '$(Build.BuildId)'
   
@@ -35,5 +35,7 @@ stages:
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
+        dockerComposeFileArgs: |
+          ASPNETCORE_ENVIRONMENT = Staging
         tags: |
           $(tag)
