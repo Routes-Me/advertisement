@@ -36,6 +36,6 @@ stages:
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
         dockerComposeFileArgs: |
-          ASPNETCORE_ENVIRONMENT = Staging
+          'ASPNETCORE_ENVIRONMENT=Staging'
         tags: |
           $(tag)
