@@ -13,7 +13,7 @@ variables:
   dockerRegistryServiceConnection: 'b330c09a-7825-4caa-9809-432c5fd14538'
   imageRepository: 'advertisementservice'
   containerRegistry: 'stagenoruaebscontainerregistry.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/AdvertisementService/Dockerfile'
+  dockerfilePath: '$(Build.SourcesDirectory)/AdvertisementService/Dockerfile-stage'
   tag: '$(Build.BuildId)'
   
   # Agent VM image name
@@ -35,7 +35,5 @@ stages:
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
-        dockerComposeFileArgs: |
-          ASPNETCORE_ENVIRONMENT = Staging
         tags: |
           $(tag)
