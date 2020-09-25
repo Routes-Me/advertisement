@@ -31,11 +31,6 @@ namespace AdvertisementService
                 options.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddCors(c =>
-            {
-                c.AddPolicy("AllowOrigin", options => options.WithOrigins("http://localhost:56411"));
-            });
-
             services.AddScoped<IAdvertisementsRepository, AdvertisementsRepository>();
             services.AddScoped<ICampaignsRepository, CampaignsRepository>();
             services.AddScoped<IMediasRepository, MediasRepository>();
@@ -64,8 +59,7 @@ namespace AdvertisementService
             
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthorization();
-            app.UseCors(options => options.WithOrigins("http://localhost:56411"));
+            app.UseAuthorization();           
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
