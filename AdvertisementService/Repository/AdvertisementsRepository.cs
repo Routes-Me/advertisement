@@ -23,11 +23,11 @@ namespace AdvertisementService.Repository
             _includeAdvertisements = includeAdvertisements;
         }
 
-        public dynamic DeleteAdvertisements(int id)
+        public dynamic DeleteAdvertisements(string id)
         {
             try
             {
-                var advertisements = _context.Advertisements.Include(x => x.AdvertisementsIntervals).Include(x => x.AdvertisementsCampaigns).Where(x => x.AdvertisementId == id).FirstOrDefault();
+                var advertisements = _context.Advertisements.Include(x => x.AdvertisementsIntervals).Include(x => x.AdvertisementsCampaigns).Where(x => x.AdvertisementId == Convert.ToInt32(id)).FirstOrDefault();
                 if (advertisements == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
 
@@ -47,24 +47,24 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public dynamic GetAdvertisements(int institutionId, int advertisementId, string includeType, Pagination pageInfo)
+        public dynamic GetAdvertisements(string institutionId, string advertisementId, string includeType, Pagination pageInfo)
         {
             int totalCount = 0;
             try
             {
                 AdvertisementsGetResponse response = new AdvertisementsGetResponse();
                 List<AdvertisementsModel> advertisementsModelList = new List<AdvertisementsModel>();
-                if (institutionId == 0)
+                if (institutionId == "0")
                 {
-                    if (advertisementId == 0)
+                    if (advertisementId == "0")
                     {
                         advertisementsModelList = (from advertisement in _context.Advertisements
                                                    select new AdvertisementsModel()
                                                    {
-                                                       AdvertisementId = advertisement.AdvertisementId,
+                                                       AdvertisementId = advertisement.AdvertisementId.ToString(),
                                                        CreatedAt = advertisement.CreatedAt,
-                                                       InstitutionId = advertisement.InstitutionId,
-                                                       MediaId = advertisement.MediaId,
+                                                       InstitutionId = advertisement.InstitutionId.ToString(),
+                                                       MediaId = advertisement.MediaId.ToString(),
                                                        ResourceName = advertisement.ResourceName
                                                    }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
@@ -73,51 +73,51 @@ namespace AdvertisementService.Repository
                     else
                     {
                         advertisementsModelList = (from advertisement in _context.Advertisements
-                                                   where advertisement.AdvertisementId == advertisementId
+                                                   where advertisement.AdvertisementId == Convert.ToInt32(advertisementId)
                                                    select new AdvertisementsModel()
                                                    {
-                                                       AdvertisementId = advertisement.AdvertisementId,
+                                                       AdvertisementId = advertisement.AdvertisementId.ToString(),
                                                        CreatedAt = advertisement.CreatedAt,
-                                                       InstitutionId = advertisement.InstitutionId,
-                                                       MediaId = advertisement.MediaId,
+                                                       InstitutionId = advertisement.InstitutionId.ToString(),
+                                                       MediaId = advertisement.MediaId.ToString(),
                                                        ResourceName = advertisement.ResourceName
                                                    }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
-                        totalCount = _context.Advertisements.Where(x => x.AdvertisementId == advertisementId).ToList().Count();
+                        totalCount = _context.Advertisements.Where(x => x.AdvertisementId == Convert.ToInt32(advertisementId)).ToList().Count();
                     }
 
                 }
                 else
                 {
-                    if (advertisementId == 0)
+                    if (advertisementId == "0")
                     {
                         advertisementsModelList = (from advertisement in _context.Advertisements
-                                                   where advertisement.InstitutionId == institutionId
+                                                   where advertisement.InstitutionId == Convert.ToInt32(institutionId)
                                                    select new AdvertisementsModel()
                                                    {
-                                                       AdvertisementId = advertisement.AdvertisementId,
+                                                       AdvertisementId = advertisement.AdvertisementId.ToString(),
                                                        CreatedAt = advertisement.CreatedAt,
-                                                       InstitutionId = advertisement.InstitutionId,
-                                                       MediaId = advertisement.MediaId,
+                                                       InstitutionId = advertisement.InstitutionId.ToString(),
+                                                       MediaId = advertisement.MediaId.ToString(),
                                                        ResourceName = advertisement.ResourceName
                                                    }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
-                        totalCount = _context.Advertisements.Where(x => x.InstitutionId == institutionId).ToList().Count();
+                        totalCount = _context.Advertisements.Where(x => x.InstitutionId == Convert.ToInt32(institutionId)).ToList().Count();
                     }
                     else
                     {
                         advertisementsModelList = (from advertisement in _context.Advertisements
-                                                   where advertisement.AdvertisementId == advertisementId && advertisement.InstitutionId == institutionId
+                                                   where advertisement.AdvertisementId == Convert.ToInt32(advertisementId) && advertisement.InstitutionId == Convert.ToInt32(institutionId)
                                                    select new AdvertisementsModel()
                                                    {
-                                                       AdvertisementId = advertisement.AdvertisementId,
+                                                       AdvertisementId = advertisement.AdvertisementId.ToString(),
                                                        CreatedAt = advertisement.CreatedAt,
-                                                       InstitutionId = advertisement.InstitutionId,
-                                                       MediaId = advertisement.MediaId,
+                                                       InstitutionId = advertisement.InstitutionId.ToString(),
+                                                       MediaId = advertisement.MediaId.ToString(),
                                                        ResourceName = advertisement.ResourceName
                                                    }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
-                        totalCount = _context.Advertisements.Where(x => x.AdvertisementId == advertisementId && x.InstitutionId == institutionId).ToList().Count();
+                        totalCount = _context.Advertisements.Where(x => x.AdvertisementId == Convert.ToInt32(advertisementId) && x.InstitutionId == Convert.ToInt32(institutionId)).ToList().Count();
                     }
                 }
 
@@ -176,27 +176,121 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public dynamic InsertAdvertisements(PostAdvertisementsModel model)
+        public dynamic GetContents(string advertisementId, Pagination pageInfo)
         {
+            int totalCount = 0;
             try
             {
-                var media = _context.Medias.Where(x => x.MediaId == model.MediaId).FirstOrDefault();
+                ContentsGetResponse response = new ContentsGetResponse();
+                List<AdvertisementsForContentModel> contentsModelList = new List<AdvertisementsForContentModel>();
+                MediasModel medias = new MediasModel();
+                List<ContentsModel> contents = new List<ContentsModel>();
+
+                if (advertisementId == "0")
+                {
+                    contentsModelList = (from advertisement in _context.Advertisements
+                                         join media in _context.Medias on advertisement.MediaId equals media.MediaId
+                                         select new AdvertisementsForContentModel()
+                                         {
+                                             ContentId = advertisement.AdvertisementId.ToString(),
+                                             Type = media.MediaType,
+                                             Url = media.Url
+                                         }).OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+
+                    totalCount = _context.Advertisements.ToList().Count();
+                }
+                else
+                {
+                    contentsModelList = (from advertisement in _context.Advertisements
+                                         join media in _context.Medias on advertisement.MediaId equals media.MediaId
+                                         where advertisement.AdvertisementId == Convert.ToInt32(advertisementId)
+                                         select new AdvertisementsForContentModel()
+                                         {
+                                             ContentId = advertisement.AdvertisementId.ToString(),
+                                             Type = media.MediaType,
+                                             Url = media.Url
+                                         }).OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+
+                    totalCount = _context.Advertisements.Where(x => x.AdvertisementId == Convert.ToInt32(advertisementId)).ToList().Count();
+                }
+
+                if (contentsModelList == null || contentsModelList.Count == 0)
+                    return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
+
+                foreach (var content in contentsModelList)
+                {
+                    ContentsModel contentsModel = new ContentsModel()
+                    {
+                        ContentId = content.ContentId,
+                        Type = content.Type,
+                        Url = content.Url
+                    };
+                    contents.Add(contentsModel);
+                }
+
+                List<PromotionsModel> promotions = _includeAdvertisements.GetPromotionsIncludedData(contentsModelList);
+
+                if (promotions != null && promotions.Count > 0)
+                {
+                    foreach (var content in contents)
+                    {
+                        foreach (var promotion in promotions)
+                        {
+                            if (content.ContentId == promotion.PromotionId)
+                            {
+                                content.promotion = new PromotionsModel()
+                                {
+                                    Title = promotion.Title,
+                                    Subtitle = promotion.Subtitle,
+                                    PromotionId = promotion.PromotionId,
+                                    LogoUrl = promotion.LogoUrl
+                                };
+                            }
+                        }
+                    }
+                }
+                var page = new Pagination
+                {
+                    offset = pageInfo.offset,
+                    limit = pageInfo.limit,
+                    total = totalCount
+                };
+
+                response.status = true;
+                response.message = CommonMessage.ContentsRetrive;
+                response.pagination = page;
+                response.data = contents;
+                response.statusCode = StatusCodes.Status200OK;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ReturnResponse.ExceptionResponse(ex);
+            }
+        }
+
+        public dynamic InsertAdvertisements(PostAdvertisementsModel model)
+        {
+            AdvertisementsPostResponse response = new AdvertisementsPostResponse();
+            try
+            {
+                var media = _context.Medias.Where(x => x.MediaId == Convert.ToInt32(model.MediaId)).FirstOrDefault();
                 if (media == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
 
-                var interval = _context.Intervals.Where(x => x.IntervalId == model.IntervalId).FirstOrDefault();
+                var interval = _context.Intervals.Where(x => x.IntervalId == Convert.ToInt32(model.IntervalId)).FirstOrDefault();
                 if (interval == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
 
-                var campaign = _context.Campaigns.Where(x => x.CampaignId == model.CampaignId).FirstOrDefault();
+                var campaign = _context.Campaigns.Where(x => x.CampaignId == Convert.ToInt32(model.CampaignId)).FirstOrDefault();
                 if (campaign == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.CampaignNotFound, StatusCodes.Status404NotFound);
 
                 Advertisements advertisements = new Advertisements()
                 {
                     CreatedAt = DateTime.UtcNow,
-                    InstitutionId = model.InstitutionId,
-                    MediaId = model.MediaId,
+                    InstitutionId = Convert.ToInt32(model.InstitutionId),
+                    MediaId = Convert.ToInt32(model.MediaId),
                     ResourceName = model.ResourceName
                 };
                 _context.Advertisements.Add(advertisements);
@@ -216,7 +310,12 @@ namespace AdvertisementService.Repository
                 };
                 _context.AdvertisementsCampaigns.Add(objAdvertisementscampaigns);
                 _context.SaveChanges();
-                return ReturnResponse.SuccessResponse(CommonMessage.AdvertisementInsert, true);
+
+                response.status = true;
+                response.statusCode = StatusCodes.Status201Created;
+                response.message = CommonMessage.AdvertisementInsert;
+                response.AdvertisementId = advertisements.AdvertisementId.ToString();
+                return response;
             }
             catch (Exception ex)
             {
@@ -228,23 +327,23 @@ namespace AdvertisementService.Repository
         {
             try
             {
-                var advertisements = _context.Advertisements.Include(x => x.AdvertisementsIntervals).Include(x => x.AdvertisementsCampaigns).Where(x => x.AdvertisementId == model.AdvertisementId).FirstOrDefault();
+                var advertisements = _context.Advertisements.Include(x => x.AdvertisementsIntervals).Include(x => x.AdvertisementsCampaigns).Where(x => x.AdvertisementId == Convert.ToInt32(model.AdvertisementId)).FirstOrDefault();
                 if (advertisements == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
 
-                var media = _context.Medias.Where(x => x.MediaId == model.MediaId).FirstOrDefault();
+                var media = _context.Medias.Where(x => x.MediaId == Convert.ToInt32(model.MediaId)).FirstOrDefault();
                 if (media == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
 
-                var interval = _context.Intervals.Where(x => x.IntervalId == model.IntervalId).FirstOrDefault();
+                var interval = _context.Intervals.Where(x => x.IntervalId == Convert.ToInt32(model.IntervalId)).FirstOrDefault();
                 if (interval == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
 
-                var campaign = _context.Campaigns.Where(x => x.CampaignId == model.CampaignId).FirstOrDefault();
+                var campaign = _context.Campaigns.Where(x => x.CampaignId == Convert.ToInt32(model.CampaignId)).FirstOrDefault();
                 if (campaign == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.CampaignNotFound, StatusCodes.Status404NotFound);
 
-                var advertisementsinterval = advertisements.AdvertisementsIntervals.Where(x => x.AdvertisementId == model.AdvertisementId).FirstOrDefault();
+                var advertisementsinterval = advertisements.AdvertisementsIntervals.Where(x => x.AdvertisementId == Convert.ToInt32(model.AdvertisementId)).FirstOrDefault();
                 if (advertisementsinterval == null)
                 {
                     AdvertisementsIntervals objAdvertisementsintervals = new AdvertisementsIntervals()
@@ -261,7 +360,7 @@ namespace AdvertisementService.Repository
                     _context.AdvertisementsIntervals.Update(advertisementsinterval);
                 }
 
-                var advertisementscampaigns = advertisements.AdvertisementsCampaigns.Where(x => x.AdvertisementId == model.AdvertisementId).FirstOrDefault();
+                var advertisementscampaigns = advertisements.AdvertisementsCampaigns.Where(x => x.AdvertisementId == Convert.ToInt32(model.AdvertisementId)).FirstOrDefault();
                 if (advertisementscampaigns == null)
                 {
                     AdvertisementsCampaigns objAdvertisementsintervals = new AdvertisementsCampaigns()
@@ -278,8 +377,8 @@ namespace AdvertisementService.Repository
                     _context.AdvertisementsCampaigns.Update(advertisementscampaigns);
                 }
 
-                advertisements.InstitutionId = model.InstitutionId;
-                advertisements.MediaId = model.MediaId;
+                advertisements.InstitutionId = Convert.ToInt32(model.InstitutionId);
+                advertisements.MediaId = Convert.ToInt32(model.MediaId);
                 advertisements.ResourceName = model.ResourceName;
                 _context.Advertisements.Update(advertisements);
                 _context.SaveChanges();

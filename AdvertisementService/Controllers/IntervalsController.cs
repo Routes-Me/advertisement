@@ -17,7 +17,7 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("intervals/{id=0}")]
-        public IActionResult Get(int id, [FromQuery] Pagination pageInfo)
+        public IActionResult Get(string id, [FromQuery] Pagination pageInfo)
         {
             dynamic response = _intervalsRepository.GetIntervals(id, pageInfo);
             return StatusCode((int)response.statusCode, response);
@@ -41,7 +41,7 @@ namespace AdvertisementService.Controllers
 
         [HttpDelete]
         [Route("intervals/{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string id)
         {
             dynamic response = _intervalsRepository.DeleteIntervals(id);
             return StatusCode((int)response.statusCode, response);

@@ -6,9 +6,9 @@ namespace AdvertisementService.Abstraction
 {
     public interface IMediasRepository
     {
-        dynamic GetMedias(int mediaId, string include, Pagination pageInfo);
+        dynamic GetMedias(string mediaId, string include, Pagination pageInfo);
         Task<dynamic> UpdateMedias(MediasModel model);
-        Task<dynamic> DeleteMedias(int id);
+        Task<dynamic> DeleteMedias(string id);
         Task<dynamic> InsertMedias(MediasModel model);
     }
 }

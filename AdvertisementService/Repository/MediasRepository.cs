@@ -26,15 +26,15 @@ namespace AdvertisementService.Repository
             _context = context;
         }
 
-        public async Task<dynamic> DeleteMedias(int id)
+        public async Task<dynamic> DeleteMedias(string id)
         {
             try
             {
-                var medias = _context.Medias.Include(x => x.Advertisements).Include(x => x.MediaMetadata).Where(x => x.MediaId == id).FirstOrDefault();
+                var medias = _context.Medias.Include(x => x.Advertisements).Include(x => x.MediaMetadata).Where(x => x.MediaId == Convert.ToInt32(id)).FirstOrDefault();
                 if (medias == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
 
-                var advertisementData = medias.Advertisements.Where(x => x.MediaId == id).FirstOrDefault();
+                var advertisementData = medias.Advertisements.Where(x => x.MediaId == Convert.ToInt32(id)).FirstOrDefault();
                 if (advertisementData != null)
                     return ReturnResponse.ErrorResponse(CommonMessage.MediaAssociatedWithAdvertisement, StatusCodes.Status409Conflict);
 
@@ -62,20 +62,20 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public dynamic GetMedias(int mediaId, string includeType, Pagination pageInfo)
+        public dynamic GetMedias(string mediaId, string includeType, Pagination pageInfo)
         {
             MediasGetResponse response = new MediasGetResponse();
             int totalCount = 0;
             try
             {
                 List<GetMediasModel> mediasModelList = new List<GetMediasModel>();
-                if (mediaId == 0)
+                if (mediaId == "0")
                 {
                     mediasModelList = (from media in _context.Medias
                                        join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
                                        select new GetMediasModel()
                                        {
-                                           MediaId = media.MediaId,
+                                           MediaId = media.MediaId.ToString(),
                                            CreatedAt = media.CreatedAt,
                                            Url = media.Url,
                                            MediaType = media.MediaType,
@@ -91,10 +91,10 @@ namespace AdvertisementService.Repository
                 {
                     mediasModelList = (from media in _context.Medias
                                        join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
-                                       where media.MediaId == mediaId
+                                       where media.MediaId == Convert.ToInt32(mediaId)
                                        select new GetMediasModel()
                                        {
-                                           MediaId = media.MediaId,
+                                           MediaId = media.MediaId.ToString(),
                                            CreatedAt = media.CreatedAt,
                                            Url = media.Url,
                                            MediaType = media.MediaType,
@@ -104,7 +104,7 @@ namespace AdvertisementService.Repository
 
                     totalCount = (from media in _context.Medias
                                   join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
-                                  where media.MediaId == mediaId
+                                  where media.MediaId == Convert.ToInt32(mediaId)
                                   select new GetMediasModel() { }).ToList().Count();
                 }
 
@@ -134,6 +134,7 @@ namespace AdvertisementService.Repository
         public async Task<dynamic> InsertMedias(MediasModel model)
         {
             string blobUrl = string.Empty;
+            MediasInsertResponse response = new MediasInsertResponse();
             try
             {
                 string mediaReferenceName = model.media.FileName.Split('.')[0] + "_" + DateTime.UtcNow.Ticks + "." + model.media.FileName.Split('.')[1];
@@ -163,7 +164,13 @@ namespace AdvertisementService.Repository
                 };
                 _context.Medias.Add(media);
                 _context.SaveChanges();
-                return ReturnResponse.SuccessResponse(CommonMessage.MediaInsert, true);
+
+                response.status = true;
+                response.statusCode = StatusCodes.Status201Created;
+                response.message = CommonMessage.MediaInsert;
+                response.mediaId = media.MediaId.ToString();
+                response.url = media.Url;
+                return response;
             }
             catch (Exception ex)
             {
@@ -176,7 +183,7 @@ namespace AdvertisementService.Repository
             string blobUrl = string.Empty, mediaReferenceName = string.Empty;
             try
             {
-                var mediaData = _context.Medias.Include(x => x.MediaMetadata).Where(x => x.MediaId == model.MediaId).FirstOrDefault();
+                var mediaData = _context.Medias.Include(x => x.MediaMetadata).Where(x => x.MediaId == Convert.ToInt32(model.MediaId)).FirstOrDefault();
                 if (mediaData == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
 

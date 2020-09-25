@@ -65,25 +65,15 @@ namespace AdvertisementService.Models
         public JObject included { get; set; }
     }
 
-    public class ActiveCampAdWithQRGetResponse : Response
+    public class ContentsGetResponse : Response
     {
         public Pagination pagination { get; set; }
-        public List<GetActiveCampAdWithQRCodeModel> data { get; set; }
+        public List<ContentsModel> data { get; set; }
     }
 
-    public class GetQrcodesModel
+    public class AdvertisementsPostResponse : Response
     {
-        public int? AdvertisementId { get; set; }
-        public string Details { get; set; }
-        public string ImageUrl { get; set; }
-    }
-    #endregion
-
-    #region QRCode Response
-    public class GetQRCodeResponse : Response
-    {
-        public Pagination pagination { get; set; }
-        public List<GetQrcodesModel> data { get; set; }
+        public string AdvertisementId { get; set; }
     }
     #endregion
 
@@ -94,6 +84,12 @@ namespace AdvertisementService.Models
         public List<GetMediasModel> data { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public JObject included { get; set; }
+    }
+
+    public class MediasInsertResponse : Response
+    {
+        public string mediaId { get; set; }
+        public string url { get; set; }
     }
     #endregion
 
@@ -112,4 +108,8 @@ namespace AdvertisementService.Models
         public List<InstitutionsModel> data { get; set; }
     }
     #endregion
+    public class PromotionsGetResponse : Response
+    {
+        public List<PromotionsModel> data { get; set; }
+    }
 }

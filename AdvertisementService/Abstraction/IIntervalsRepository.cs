@@ -5,9 +5,9 @@ namespace AdvertisementService.Abstraction
 {
     public interface IIntervalsRepository
     {
-        dynamic GetIntervals(int intervalId, Pagination pageInfo);
+        dynamic GetIntervals(string intervalId, Pagination pageInfo);
         dynamic UpdateIntervals(IntervalsModel model);
-        dynamic DeleteIntervals(int id);
+        dynamic DeleteIntervals(string id);
         dynamic InsertIntervals(IntervalsModel model);
     }
 }

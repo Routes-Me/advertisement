@@ -5,7 +5,7 @@ namespace AdvertisementService.Models.ResponseModel
 {
     public class MediasModel
     {
-        public int MediaId { get; set; }
+        public string MediaId { get; set; }
         public string Url { get; set; }
         public DateTime? CreatedAt { get; set; }
         public string MediaType { get; set; }
@@ -16,7 +16,7 @@ namespace AdvertisementService.Models.ResponseModel
 
     public class GetMediasModel
     {
-        public int MediaId { get; set; }
+        public string MediaId { get; set; }
         public string Url { get; set; }
         public DateTime? CreatedAt { get; set; }
         public string MediaType { get; set; }

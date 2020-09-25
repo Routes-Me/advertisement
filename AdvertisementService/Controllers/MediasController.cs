@@ -18,7 +18,7 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("medias/{id=0}")]
-        public IActionResult Get(int id, string include, [FromQuery] Pagination pageInfo)
+        public IActionResult Get(string id, string include, [FromQuery] Pagination pageInfo)
         {
             dynamic response = _mediasRepository.GetMedias(id, include, pageInfo);
             return StatusCode((int)response.statusCode, response);
@@ -42,7 +42,7 @@ namespace AdvertisementService.Controllers
 
         [HttpDelete]
         [Route("medias/{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             dynamic response = await _mediasRepository.DeleteMedias(id);
             return StatusCode((int)response.statusCode, response);

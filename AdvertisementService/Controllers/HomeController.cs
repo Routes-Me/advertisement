@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace AdvertisementService.Controllers
 {
@@ -6,10 +8,19 @@ namespace AdvertisementService.Controllers
     [ApiController]
     public class HomeController : ControllerBase
     {
+        [Obsolete]
+        public readonly IHostingEnvironment _hostingEnv;
+
+        [Obsolete]
+        public HomeController(IHostingEnvironment hostingEnv)
+        {
+            _hostingEnv = hostingEnv;
+        }
         [HttpGet]
+        [Obsolete]
         public string Get()
         {
-            return "Advertisement service started successfully";
+            return "Advertisement service started successfully. Environment - " + _hostingEnv.EnvironmentName + "";
         }
     }
 }
