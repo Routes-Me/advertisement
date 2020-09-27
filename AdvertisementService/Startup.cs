@@ -2,6 +2,7 @@ using AdvertisementService.Abstraction;
 using AdvertisementService.Helper.Abstraction;
 using AdvertisementService.Helper.Repository;
 using AdvertisementService.Models.Common;
+using AdvertisementService.Models.DBModels;
 using AdvertisementService.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 
 namespace AdvertisementService
 {
@@ -23,10 +25,22 @@ namespace AdvertisementService
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+
             services.AddControllers();
             services.AddMvc().AddNewtonsoftJson();
 
-            services.AddDbContext<AdvertisementService.Models.DBModels.advertisementserviceContext>(options =>
+            services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
+
+            services.AddDbContext<advertisementserviceContext>(options =>
             {
                 options.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
             });
@@ -37,16 +51,9 @@ namespace AdvertisementService
             services.AddScoped<IIntervalsRepository, IntervalsRepository>();
             services.AddScoped<IIncludeAdvertisementsRepository, IncludeAdvertisementsRepository>();
 
-            var appSettingsSection = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingsSection);
-            var appSettings = appSettingsSection.Get<AppSettings>();
-
-            var dependenciessSection = Configuration.GetSection("Dependencies");
-            services.Configure<Dependencies>(dependenciessSection);
-
-            var azureConfigSection = Configuration.GetSection("AzureStorageBlobConfig");
-            services.Configure<AzureStorageBlobConfig>(azureConfigSection);
-            var azureConfig = azureConfigSection.Get<AzureStorageBlobConfig>();
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<Dependencies>(Configuration.GetSection("Dependencies"));
+            services.Configure<AzureStorageBlobConfig>(Configuration.GetSection("AzureStorageBlobConfig"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,7 +66,8 @@ namespace AdvertisementService
             
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthorization();           
+            app.UseAuthorization();
+            app.UseCors("MyPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

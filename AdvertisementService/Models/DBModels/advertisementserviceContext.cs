@@ -1,11 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace AdvertisementService.Models.DBModels
 {
     public partial class advertisementserviceContext : DbContext
     {
+        public advertisementserviceContext()
+        {
+        }
 
-        public advertisementserviceContext(DbContextOptions<advertisementserviceContext> options) : base(options)
+        public advertisementserviceContext(DbContextOptions<advertisementserviceContext> options)
+            : base(options)
         {
         }
 
@@ -16,6 +22,15 @@ namespace AdvertisementService.Models.DBModels
         public virtual DbSet<Intervals> Intervals { get; set; }
         public virtual DbSet<MediaMetadata> MediaMetadata { get; set; }
         public virtual DbSet<Medias> Medias { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseMySql("server=localhost;port=3306;user=nirmal;password=NirmalTheOne@123;database=advertisementservice", x => x.ServerVersion("8.0.20-mysql"));
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,7 +48,7 @@ namespace AdvertisementService.Models.DBModels
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
-                    .HasColumnType("datetime");
+                    .HasColumnType("timestamp");
 
                 entity.Property(e => e.InstitutionId).HasColumnName("institution_id");
 
@@ -85,8 +100,6 @@ namespace AdvertisementService.Models.DBModels
 
                 entity.ToTable("advertisements_intervals");
 
-                entity.ToTable("advertisements_intervals");
-
                 entity.HasIndex(e => e.AdvertisementId)
                     .HasName("advertisement_id");
 
@@ -116,6 +129,10 @@ namespace AdvertisementService.Models.DBModels
 
                 entity.Property(e => e.CampaignId).HasColumnName("campaign_id");
 
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnName("created_at")
+                    .HasColumnType("timestamp");
+
                 entity.Property(e => e.EndAt)
                     .HasColumnName("end_at")
                     .HasColumnType("datetime");
@@ -132,9 +149,13 @@ namespace AdvertisementService.Models.DBModels
 
                 entity.Property(e => e.Title)
                     .HasColumnName("title")
-                    .HasColumnType("varchar(30)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_0900_ai_ci");
+                    .HasColumnType("varchar(50)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnName("updated_at")
+                    .HasColumnType("timestamp");
             });
 
             modelBuilder.Entity<Intervals>(entity =>
@@ -178,7 +199,7 @@ namespace AdvertisementService.Models.DBModels
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
-                    .HasColumnType("datetime");
+                    .HasColumnType("timestamp");
 
                 entity.Property(e => e.MediaMetadataId).HasColumnName("media_metadata_id");
 
