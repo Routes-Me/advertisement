@@ -19,8 +19,8 @@ namespace AdvertisementService.Models
         {
             Response response = new Response();
             response.status = false;
-            response.message = CommonMessage.ExceptionMessage + ex.Message;
-            response.statusCode = StatusCodes.Status500InternalServerError;
+            response.message = CommonMessage.GenericException;
+            response.statusCode = StatusCodes.Status401Unauthorized;
             return response;
         }
 
@@ -39,7 +39,7 @@ namespace AdvertisementService.Models
         public static dynamic ErrorResponse(string message, int statusCode)
         {
             Response response = new Response();
-            response.status = true;
+            response.status = false;
             response.message = message;
             response.statusCode = statusCode;
             return response;
