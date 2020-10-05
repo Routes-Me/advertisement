@@ -70,8 +70,6 @@ namespace AdvertisementService.Repository
                     totalCount = _context.Intervals.Where(x => x.IntervalId == Convert.ToInt32(intervalId)).ToList().Count();
                 }
 
-                if (intervalsModelList == null || intervalsModelList.Count == 0)
-                    return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
 
                 var page = new Pagination
                 {

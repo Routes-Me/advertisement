@@ -108,8 +108,6 @@ namespace AdvertisementService.Repository
                                   select new GetMediasModel() { }).ToList().Count();
                 }
 
-                if (mediasModelList == null || mediasModelList.Count == 0)
-                    return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
 
                 var page = new Pagination
                 {

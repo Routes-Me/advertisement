@@ -121,9 +121,6 @@ namespace AdvertisementService.Repository
                     }
                 }
 
-                if (advertisementsModelList == null || advertisementsModelList.Count == 0)
-                    return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
-
                 dynamic includeData = new JObject();
                 if (!string.IsNullOrEmpty(includeType))
                 {
@@ -214,8 +211,6 @@ namespace AdvertisementService.Repository
                     totalCount = _context.Advertisements.Where(x => x.AdvertisementId == Convert.ToInt32(advertisementId)).ToList().Count();
                 }
 
-                if (contentsModelList == null || contentsModelList.Count == 0)
-                    return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
 
                 foreach (var content in contentsModelList)
                 {

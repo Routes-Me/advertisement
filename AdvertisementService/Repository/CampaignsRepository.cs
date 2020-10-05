@@ -116,8 +116,7 @@ namespace AdvertisementService.Repository
                                   }).ToList().Count();
                 }
 
-                if (advertisementsModelList == null || advertisementsModelList.Count == 0)
-                    return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
+              
 
                 dynamic includeData = new JObject();
                 if (!string.IsNullOrEmpty(includeType))
@@ -207,9 +206,6 @@ namespace AdvertisementService.Repository
 
                     totalCount = _context.Campaigns.Where(x => x.CampaignId == Convert.ToInt32(campaignId)).ToList().Count();
                 }
-
-                if (campaignsModelList == null || campaignsModelList.Count == 0)
-                    return ReturnResponse.ErrorResponse(CommonMessage.CampaignNotFound, StatusCodes.Status404NotFound);
 
                 var page = new Pagination
                 {
