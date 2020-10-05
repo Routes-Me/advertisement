@@ -125,7 +125,7 @@ namespace AdvertisementService.Helper.Repository
                 var client = new RestClient(_appSettings.Host + _dependencies.CouponsUrl + item.ContentId);
                 var request = new RestRequest(Method.GET);
                 IRestResponse response = client.Execute(request);
-                request.AddHeader("Authorization", "Bearer " + token + "");
+                //request.AddHeader("Authorization", "Bearer " + token + "");
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     var result = response.Content;
