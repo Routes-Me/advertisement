@@ -1,4 +1,5 @@
 ﻿using AdvertisementService.Abstraction;
+using AdvertisementService.Helper.Abstraction;
 using AdvertisementService.Models;
 using AdvertisementService.Models.Common;
 using AdvertisementService.Models.DBModels;
@@ -11,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,10 +22,12 @@ namespace AdvertisementService.Repository
     {
         private readonly advertisementserviceContext _context;
         private readonly AzureStorageBlobConfig _config;
-        public MediasRepository(IOptions<AzureStorageBlobConfig> config, advertisementserviceContext context)
+        private readonly IVideoConversionRepository _videoConversionRepository;
+        public MediasRepository(IOptions<AzureStorageBlobConfig> config, advertisementserviceContext context, IVideoConversionRepository videoConversionRepository)
         {
             _config = config.Value;
             _context = context;
+            _videoConversionRepository = videoConversionRepository;
         }
 
         public async Task<dynamic> DeleteMedias(string id)
@@ -106,8 +110,8 @@ namespace AdvertisementService.Repository
                                   join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
                                   where media.MediaId == Convert.ToInt32(mediaId)
                                   select new GetMediasModel() { }).ToList().Count();
-                }
 
+                }
 
                 var page = new Pagination
                 {
@@ -135,14 +139,33 @@ namespace AdvertisementService.Repository
             MediasInsertResponse response = new MediasInsertResponse();
             try
             {
-                string mediaReferenceName = model.media.FileName.Split('.')[0] + "_" + DateTime.UtcNow.Ticks + "." + model.media.FileName.Split('.')[1];
-                if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
+                if (model.MediaType == "video")
                 {
-                    CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
-                    CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
-                    CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
-                    await blockBlob.UploadFromStreamAsync(model.media.OpenReadStream());
-                    blobUrl = blockBlob.Uri.AbsoluteUri;
+                    var videoPath = _videoConversionRepository.ConvertVideo(model.media, model.Mute);
+                    string mediaReferenceName = videoPath.Split("\\").LastOrDefault();
+                    if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
+                    {
+                        CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+                        CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
+                        CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
+                        await blockBlob.UploadFromStreamAsync(File.OpenRead(videoPath));
+                        blobUrl = blockBlob.Uri.AbsoluteUri;
+                    }
+
+                    if (File.Exists(videoPath))
+                        File.Delete(videoPath);
+                }
+                else
+                {
+                    string mediaReferenceName = model.media.FileName.Split('.')[0] + "_" + DateTime.UtcNow.Ticks + "." + model.media.FileName.Split('.')[1];
+                    if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
+                    {
+                        CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+                        CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
+                        CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
+                        await blockBlob.UploadFromStreamAsync(model.media.OpenReadStream());
+                        blobUrl = blockBlob.Uri.AbsoluteUri;
+                    }
                 }
 
                 MediaMetadata mediaMetadata = new MediaMetadata()
@@ -199,22 +222,55 @@ namespace AdvertisementService.Repository
                                 await file.DeleteAsync();
                         }
 
-                        mediaReferenceName = model.media.FileName.Split('.')[0] + "_" + DateTime.UtcNow.Ticks + "." + model.media.FileName.Split('.')[1];
-                        CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
-                        await blockBlob.UploadFromStreamAsync(model.media.OpenReadStream());
-                        blobUrl = blockBlob.Uri.AbsoluteUri;
+                        if (model.MediaType == "video")
+                        {
+                            var videoPath = _videoConversionRepository.ConvertVideo(model.media, model.Mute);
+                            mediaReferenceName = videoPath.Split("\\").LastOrDefault();
+                            CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
+                            await blockBlob.UploadFromStreamAsync(File.OpenRead(videoPath));
+                            blobUrl = blockBlob.Uri.AbsoluteUri;
+
+                            if (File.Exists(videoPath))
+                                File.Delete(videoPath);
+                        }
+                        else
+                        {
+                            mediaReferenceName = model.media.FileName.Split('.')[0] + "_" + DateTime.UtcNow.Ticks + "." + model.media.FileName.Split('.')[1];
+                            CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
+                            await blockBlob.UploadFromStreamAsync(model.media.OpenReadStream());
+                            blobUrl = blockBlob.Uri.AbsoluteUri;
+                        }
                     }
                 }
                 else
                 {
-                    mediaReferenceName = model.media.FileName.Split('.')[0] + "_" + DateTime.UtcNow.Ticks + "." + model.media.FileName.Split('.')[1];
-                    if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
+                    if (model.MediaType == "video")
                     {
-                        CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
-                        CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
-                        CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
-                        await blockBlob.UploadFromStreamAsync(model.media.OpenReadStream());
-                        blobUrl = blockBlob.Uri.AbsoluteUri;
+                        var videoPath = _videoConversionRepository.ConvertVideo(model.media, model.Mute);
+                        mediaReferenceName = videoPath.Split("\\").LastOrDefault();
+                        if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
+                        {
+                            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+                            CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
+                            CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
+                            await blockBlob.UploadFromStreamAsync(File.OpenRead(videoPath));
+                            blobUrl = blockBlob.Uri.AbsoluteUri;
+                        }
+
+                        if (File.Exists(videoPath))
+                            File.Delete(videoPath);
+                    }
+                    else
+                    {
+                        mediaReferenceName = model.media.FileName.Split('.')[0] + "_" + DateTime.UtcNow.Ticks + "." + model.media.FileName.Split('.')[1];
+                        if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
+                        {
+                            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+                            CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
+                            CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
+                            await blockBlob.UploadFromStreamAsync(model.media.OpenReadStream());
+                            blobUrl = blockBlob.Uri.AbsoluteUri;
+                        }
                     }
                 }
 

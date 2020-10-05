@@ -11,6 +11,7 @@ namespace AdvertisementService.Models.ResponseModel
         public string MediaType { get; set; }
         public float? Size { get; set; }
         public float? Duration { get; set; }
+        public bool Mute { get; set; }
         public IFormFile media { get; set; }
     }
 

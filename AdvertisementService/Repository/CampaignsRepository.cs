@@ -116,10 +116,8 @@ namespace AdvertisementService.Repository
                                   }).ToList().Count();
                 }
 
-              
-
                 dynamic includeData = new JObject();
-                if (!string.IsNullOrEmpty(includeType))
+                if (!string.IsNullOrEmpty(includeType) && advertisementsModelList.Count > 0)
                 {
                     string[] includeArr = includeType.Split(',');
                     if (includeArr.Length > 0)
@@ -186,7 +184,9 @@ namespace AdvertisementService.Repository
                                               Title = campaign.Title,
                                               StartAt = campaign.StartAt,
                                               EndAt = campaign.EndAt,
-                                              Status = campaign.Status
+                                              Status = campaign.Status,
+                                              CreatedAt = campaign.CreatedAt,
+                                              UpdatedAt = campaign.UpdatedAt
                                           }).OrderBy(a => a.CampaignId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = _context.Campaigns.ToList().Count();
@@ -236,7 +236,9 @@ namespace AdvertisementService.Repository
                     Title = model.Title,
                     StartAt = model.StartAt,
                     EndAt = model.EndAt,
-                    Status = model.Status
+                    Status = model.Status,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
                 };
                 _context.Campaigns.Add(campaigns);
                 _context.SaveChanges();
@@ -260,6 +262,7 @@ namespace AdvertisementService.Repository
                 campaignData.EndAt = model.EndAt;
                 campaignData.Title = model.Title;
                 campaignData.Status = model.Status;
+                campaignData.UpdatedAt = DateTime.Now;
                 _context.Campaigns.Update(campaignData);
                 _context.SaveChanges();
                 return ReturnResponse.SuccessResponse(CommonMessage.CampaignUpdate, false);

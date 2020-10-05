@@ -66,10 +66,8 @@ namespace AdvertisementService.Repository
                                                  IntervalId = interval.IntervalId.ToString(),
                                                  Title = interval.Title
                                              }).OrderBy(a => a.IntervalId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
-
                     totalCount = _context.Intervals.Where(x => x.IntervalId == Convert.ToInt32(intervalId)).ToList().Count();
                 }
-
 
                 var page = new Pagination
                 {

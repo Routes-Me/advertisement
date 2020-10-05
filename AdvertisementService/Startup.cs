@@ -57,6 +57,7 @@ namespace AdvertisementService
             services.AddScoped<IMediasRepository, MediasRepository>();
             services.AddScoped<IIntervalsRepository, IntervalsRepository>();
             services.AddScoped<IIncludeAdvertisementsRepository, IncludeAdvertisementsRepository>();
+            services.AddScoped<IVideoConversionRepository, VideoConversionRepository>();
 
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);

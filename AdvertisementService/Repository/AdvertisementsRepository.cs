@@ -85,7 +85,6 @@ namespace AdvertisementService.Repository
 
                         totalCount = _context.Advertisements.Where(x => x.AdvertisementId == Convert.ToInt32(advertisementId)).ToList().Count();
                     }
-
                 }
                 else
                 {
@@ -122,7 +121,7 @@ namespace AdvertisementService.Repository
                 }
 
                 dynamic includeData = new JObject();
-                if (!string.IsNullOrEmpty(includeType))
+                if (!string.IsNullOrEmpty(includeType) && advertisementsModelList.Count > 0)
                 {
                     string[] includeArr = includeType.Split(',');
                     if (includeArr.Length > 0)
@@ -211,7 +210,6 @@ namespace AdvertisementService.Repository
                     totalCount = _context.Advertisements.Where(x => x.AdvertisementId == Convert.ToInt32(advertisementId)).ToList().Count();
                 }
 
-
                 foreach (var content in contentsModelList)
                 {
                     ContentsModel contentsModel = new ContentsModel()
@@ -223,27 +221,31 @@ namespace AdvertisementService.Repository
                     contents.Add(contentsModel);
                 }
 
-                List<PromotionsModel> promotions = _includeAdvertisements.GetPromotionsIncludedData(contentsModelList);
 
-                if (promotions != null && promotions.Count > 0)
+                if (contentsModelList.Count > 0)
                 {
-                    foreach (var content in contents)
+                    List<PromotionsModel> promotions = _includeAdvertisements.GetPromotionsIncludedData(contentsModelList);
+                    if (promotions != null && promotions.Count > 0)
                     {
-                        foreach (var promotion in promotions)
+                        foreach (var content in contents)
                         {
-                            if (content.ContentId == promotion.PromotionId)
+                            foreach (var promotion in promotions)
                             {
-                                content.promotion = new PromotionsModel()
+                                if (content.ContentId == promotion.PromotionId)
                                 {
-                                    Title = promotion.Title,
-                                    Subtitle = promotion.Subtitle,
-                                    PromotionId = promotion.PromotionId,
-                                    LogoUrl = promotion.LogoUrl
-                                };
+                                    content.promotion = new PromotionsModel()
+                                    {
+                                        Title = promotion.Title,
+                                        Subtitle = promotion.Subtitle,
+                                        PromotionId = promotion.PromotionId,
+                                        LogoUrl = promotion.LogoUrl
+                                    };
+                                }
                             }
                         }
                     }
                 }
+
                 var page = new Pagination
                 {
                     offset = pageInfo.offset,

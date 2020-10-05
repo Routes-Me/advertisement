@@ -42,7 +42,9 @@ namespace AdvertisementService.Helper.Repository
                                          StartAt = campaign.StartAt,
                                          EndAt = campaign.EndAt,
                                          Status = campaign.Status,
-                                         Title = campaign.Title
+                                         Title = campaign.Title,
+                                         CreatedAt = campaign.CreatedAt,
+                                         UpdatedAt = campaign.UpdatedAt
                                      }).ToList().FirstOrDefault();
 
                 if (campaignsDetails != null)

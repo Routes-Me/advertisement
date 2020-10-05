@@ -23,15 +23,6 @@ namespace AdvertisementService.Models.DBModels
         public virtual DbSet<MediaMetadata> MediaMetadata { get; set; }
         public virtual DbSet<Medias> Medias { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("server=localhost;port=3306;user=nirmal;password=NirmalTheOne@123;database=advertisementservice", x => x.ServerVersion("8.0.20-mysql"));
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Advertisements>(entity =>
