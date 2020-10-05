@@ -179,7 +179,7 @@ namespace AdvertisementService.Repository
                 Medias media = new Medias()
                 {
                     Url = blobUrl,
-                    CreatedAt = model.CreatedAt,
+                    CreatedAt = DateTime.Now,
                     MediaType = model.MediaType,
                     MediaMetadataId = mediaMetadata.MediaMetadataId
                 };
@@ -294,7 +294,6 @@ namespace AdvertisementService.Repository
                 }
 
                 mediaData.Url = blobUrl;
-                mediaData.CreatedAt = model.CreatedAt;
                 mediaData.MediaType = model.MediaType;
                 _context.Medias.Update(mediaData);
                 _context.SaveChanges();

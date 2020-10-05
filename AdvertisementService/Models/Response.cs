@@ -19,8 +19,8 @@ namespace AdvertisementService.Models
         {
             Response response = new Response();
             response.status = false;
-            response.message = CommonMessage.GenericException;
-            response.statusCode = StatusCodes.Status401Unauthorized;
+            response.message = CommonMessage.GenericException + ex.Message;
+            response.statusCode = StatusCodes.Status401Unauthorized ;
             return response;
         }
 
