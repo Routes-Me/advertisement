@@ -1,9 +1,11 @@
 ﻿using AdvertisementService.Abstraction;
 using AdvertisementService.Models;
 using AdvertisementService.Models.ResponseModel;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace AdvertisementService.Controllers
 {
@@ -65,9 +67,10 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("contents/{id=0}")]
-        public IActionResult GetAdvertisementsByPromotions(string id, [FromQuery] Pagination pageInfo)
+        public async Task<IActionResult> GetAdvertisementsByPromotions(string id, [FromQuery] Pagination pageInfo)
         {
-            dynamic response = _advertisementsRepository.GetContents(id, pageInfo);
+            string token = await HttpContext.GetTokenAsync("access_token");
+            dynamic response = _advertisementsRepository.GetContents(id, pageInfo, token);
             return StatusCode((int)response.statusCode, response);
         }
     }

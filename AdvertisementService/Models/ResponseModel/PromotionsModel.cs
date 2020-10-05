@@ -12,4 +12,13 @@ namespace AdvertisementService.Models.ResponseModel
         public string Subtitle { get; set; }
         public string LogoUrl { get; set; }
     }
+
+    public class PromotionsGetModel
+    {
+        public string PromotionId { get; set; }
+        public string Title { get; set; }
+        public string Subtitle { get; set; }
+        public string LogoUrl { get; set; }
+        public string AdvertisementId { get; set; }
+    }
 }

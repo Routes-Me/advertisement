@@ -172,7 +172,7 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public dynamic GetContents(string advertisementId, Pagination pageInfo)
+        public dynamic GetContents(string advertisementId, Pagination pageInfo, string token)
         {
             int totalCount = 0;
             try
@@ -186,6 +186,9 @@ namespace AdvertisementService.Repository
                 {
                     contentsModelList = (from advertisement in _context.Advertisements
                                          join media in _context.Medias on advertisement.MediaId equals media.MediaId
+                                         join advtcamp in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advtcamp.AdvertisementId
+                                         join camp in _context.Campaigns on  advtcamp.CampaignId equals camp.CampaignId
+                                         where camp.Status == "active" && camp.StartAt < DateTime.Now && camp.EndAt > DateTime.Now
                                          select new AdvertisementsForContentModel()
                                          {
                                              ContentId = advertisement.AdvertisementId.ToString(),
@@ -193,13 +196,22 @@ namespace AdvertisementService.Repository
                                              Url = media.Url
                                          }).OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
-                    totalCount = _context.Advertisements.ToList().Count();
+                    totalCount = (from advertisement in _context.Advertisements
+                                  join media in _context.Medias on advertisement.MediaId equals media.MediaId
+                                  join advtcamp in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advtcamp.AdvertisementId
+                                  join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
+                                  where camp.Status == "active" && camp.StartAt < DateTime.Now && camp.EndAt > DateTime.Now
+                                  select new AdvertisementsForContentModel()
+                                  {
+                                  }).ToList().Count();
                 }
                 else
                 {
                     contentsModelList = (from advertisement in _context.Advertisements
                                          join media in _context.Medias on advertisement.MediaId equals media.MediaId
-                                         where advertisement.AdvertisementId == Convert.ToInt32(advertisementId)
+                                         join advtcamp in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advtcamp.AdvertisementId
+                                         join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
+                                         where camp.Status == "active" && camp.StartAt < DateTime.Now && camp.EndAt > DateTime.Now && advertisement.AdvertisementId == Convert.ToInt32(advertisementId)
                                          select new AdvertisementsForContentModel()
                                          {
                                              ContentId = advertisement.AdvertisementId.ToString(),
@@ -207,7 +219,14 @@ namespace AdvertisementService.Repository
                                              Url = media.Url
                                          }).OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
-                    totalCount = _context.Advertisements.Where(x => x.AdvertisementId == Convert.ToInt32(advertisementId)).ToList().Count();
+                    totalCount = (from advertisement in _context.Advertisements
+                                 join media in _context.Medias on advertisement.MediaId equals media.MediaId
+                                 join advtcamp in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advtcamp.AdvertisementId
+                                 join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
+                                 where camp.Status == "active" && camp.StartAt < DateTime.Now && camp.EndAt > DateTime.Now && advertisement.AdvertisementId == Convert.ToInt32(advertisementId)
+                                 select new AdvertisementsForContentModel()
+                                 {
+                                 }).ToList().Count();
                 }
 
                 foreach (var content in contentsModelList)
@@ -224,14 +243,14 @@ namespace AdvertisementService.Repository
 
                 if (contentsModelList.Count > 0)
                 {
-                    List<PromotionsModel> promotions = _includeAdvertisements.GetPromotionsIncludedData(contentsModelList);
+                    List<PromotionsGetModel> promotions = _includeAdvertisements.GetPromotionsIncludedData(contentsModelList,token);
                     if (promotions != null && promotions.Count > 0)
                     {
                         foreach (var content in contents)
                         {
                             foreach (var promotion in promotions)
                             {
-                                if (content.ContentId == promotion.PromotionId)
+                                if (content.ContentId == promotion.AdvertisementId)
                                 {
                                     content.promotion = new PromotionsModel()
                                     {

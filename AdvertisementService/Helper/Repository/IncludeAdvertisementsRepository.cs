@@ -117,14 +117,15 @@ namespace AdvertisementService.Helper.Repository
             return Common.SerializeJsonForIncludedRepo(mediaList.Cast<dynamic>().ToList());
         }
 
-        public dynamic GetPromotionsIncludedData(List<AdvertisementsForContentModel> advertisementsModelList)
+        public dynamic GetPromotionsIncludedData(List<AdvertisementsForContentModel> advertisementsModelList, string token)
         {
-            List<PromotionsModel> promotions = new List<PromotionsModel>();
+            List<PromotionsGetModel> promotions = new List<PromotionsGetModel>();
             foreach (var item in advertisementsModelList)
             {
                 var client = new RestClient(_appSettings.Host + _dependencies.CouponsUrl + item.ContentId);
                 var request = new RestRequest(Method.GET);
                 IRestResponse response = client.Execute(request);
+                request.AddHeader("Authorization", "Bearer " + token + "");
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     var result = response.Content;

@@ -110,6 +110,6 @@ namespace AdvertisementService.Models
     #endregion
     public class PromotionsGetResponse : Response
     {
-        public List<PromotionsModel> data { get; set; }
+        public List<PromotionsGetModel> data { get; set; }
     }
 }
