@@ -10,6 +10,7 @@ using Microsoft.Azure.Storage.Blob;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Obfuscation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,8 +24,11 @@ namespace AdvertisementService.Repository
         private readonly advertisementserviceContext _context;
         private readonly AzureStorageBlobConfig _config;
         private readonly IVideoConversionRepository _videoConversionRepository;
-        public MediasRepository(IOptions<AzureStorageBlobConfig> config, advertisementserviceContext context, IVideoConversionRepository videoConversionRepository)
+        private readonly AppSettings _appSettings;
+
+        public MediasRepository(IOptions<AppSettings> appSettings, IOptions<AzureStorageBlobConfig> config, advertisementserviceContext context, IVideoConversionRepository videoConversionRepository)
         {
+            _appSettings = appSettings.Value;
             _config = config.Value;
             _context = context;
             _videoConversionRepository = videoConversionRepository;
@@ -34,11 +38,12 @@ namespace AdvertisementService.Repository
         {
             try
             {
-                var medias = _context.Medias.Include(x => x.Advertisements).Include(x => x.MediaMetadata).Where(x => x.MediaId == Convert.ToInt32(id)).FirstOrDefault();
+                int mediaIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(id), _appSettings.PrimeInverse);
+                var medias = _context.Medias.Include(x => x.Advertisements).Include(x => x.MediaMetadata).Where(x => x.MediaId == mediaIdDecrypted).FirstOrDefault();
                 if (medias == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
 
-                var advertisementData = medias.Advertisements.Where(x => x.MediaId == Convert.ToInt32(id)).FirstOrDefault();
+                var advertisementData = medias.Advertisements.Where(x => x.MediaId == mediaIdDecrypted).FirstOrDefault();
                 if (advertisementData != null)
                     return ReturnResponse.ErrorResponse(CommonMessage.MediaAssociatedWithAdvertisement, StatusCodes.Status409Conflict);
 
@@ -72,20 +77,21 @@ namespace AdvertisementService.Repository
             int totalCount = 0;
             try
             {
+                int mediaIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(mediaId), _appSettings.PrimeInverse);
                 List<GetMediasModel> mediasModelList = new List<GetMediasModel>();
-                if (mediaId == "0")
+                if (mediaIdDecrypted == 0)
                 {
                     mediasModelList = (from media in _context.Medias
                                        join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
                                        select new GetMediasModel()
                                        {
-                                           MediaId = media.MediaId.ToString(),
+                                           MediaId = ObfuscationClass.EncodeId(media.MediaId, _appSettings.Prime).ToString(),
                                            CreatedAt = media.CreatedAt,
                                            Url = media.Url,
                                            MediaType = media.MediaType,
                                            Duration = metadata.Duration,
                                            Size = metadata.Size
-                                       }).OrderBy(a => a.MediaId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                                       }).AsEnumerable().OrderBy(a => a.MediaId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = (from media in _context.Medias
                                   join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
@@ -95,20 +101,20 @@ namespace AdvertisementService.Repository
                 {
                     mediasModelList = (from media in _context.Medias
                                        join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
-                                       where media.MediaId == Convert.ToInt32(mediaId)
+                                       where media.MediaId == mediaIdDecrypted
                                        select new GetMediasModel()
                                        {
-                                           MediaId = media.MediaId.ToString(),
+                                           MediaId = ObfuscationClass.EncodeId(media.MediaId, _appSettings.Prime).ToString(),
                                            CreatedAt = media.CreatedAt,
                                            Url = media.Url,
                                            MediaType = media.MediaType,
                                            Duration = metadata.Duration,
                                            Size = metadata.Size
-                                       }).OrderBy(a => a.MediaId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                                       }).AsEnumerable().OrderBy(a => a.MediaId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = (from media in _context.Medias
                                   join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
-                                  where media.MediaId == Convert.ToInt32(mediaId)
+                                  where media.MediaId == mediaIdDecrypted
                                   select new GetMediasModel() { }).ToList().Count();
 
                 }
@@ -189,7 +195,7 @@ namespace AdvertisementService.Repository
                 response.status = true;
                 response.statusCode = StatusCodes.Status201Created;
                 response.message = CommonMessage.MediaInsert;
-                response.mediaId = media.MediaId.ToString();
+                response.mediaId = ObfuscationClass.EncodeId(media.MediaId, _appSettings.Prime).ToString();
                 response.url = media.Url;
                 return response;
             }
@@ -204,7 +210,8 @@ namespace AdvertisementService.Repository
             string blobUrl = string.Empty, mediaReferenceName = string.Empty;
             try
             {
-                var mediaData = _context.Medias.Include(x => x.MediaMetadata).Where(x => x.MediaId == Convert.ToInt32(model.MediaId)).FirstOrDefault();
+                int intervalIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(model.MediaId), _appSettings.PrimeInverse);
+                var mediaData = _context.Medias.Include(x => x.MediaMetadata).Where(x => x.MediaId == intervalIdDecrypted).FirstOrDefault();
                 if (mediaData == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
 

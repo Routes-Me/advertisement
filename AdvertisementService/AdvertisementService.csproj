@@ -30,6 +30,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DLL\" />
     <Folder Include="wwwroot\TempVideo\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Obfuscation">
+      <HintPath>DLL\Obfuscation.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

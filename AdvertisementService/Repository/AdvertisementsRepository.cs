@@ -1,15 +1,18 @@
 ﻿using AdvertisementService.Abstraction;
 using AdvertisementService.Helper.Abstraction;
 using AdvertisementService.Models;
+using AdvertisementService.Models.Common;
 using AdvertisementService.Models.DBModels;
 using AdvertisementService.Models.ResponseModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Obfuscation;
 
 namespace AdvertisementService.Repository
 {
@@ -17,8 +20,10 @@ namespace AdvertisementService.Repository
     {
         private readonly advertisementserviceContext _context;
         private readonly IIncludeAdvertisementsRepository _includeAdvertisements;
-        public AdvertisementsRepository(advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements)
+        private readonly AppSettings _appSettings;
+        public AdvertisementsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements)
         {
+            _appSettings = appSettings.Value;
             _context = context;
             _includeAdvertisements = includeAdvertisements;
         }
@@ -27,7 +32,8 @@ namespace AdvertisementService.Repository
         {
             try
             {
-                var advertisements = _context.Advertisements.Include(x => x.AdvertisementsIntervals).Include(x => x.AdvertisementsCampaigns).Where(x => x.AdvertisementId == Convert.ToInt32(id)).FirstOrDefault();
+                int advertisementIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(id), _appSettings.PrimeInverse);
+                var advertisements = _context.Advertisements.Include(x => x.AdvertisementsIntervals).Include(x => x.AdvertisementsCampaigns).Where(x => x.AdvertisementId == advertisementIdDecrypted).FirstOrDefault();
                 if (advertisements == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
 
@@ -52,71 +58,73 @@ namespace AdvertisementService.Repository
             int totalCount = 0;
             try
             {
+                int institutionIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(institutionId), _appSettings.PrimeInverse);
+                int advertisementIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(advertisementId), _appSettings.PrimeInverse);
                 AdvertisementsGetResponse response = new AdvertisementsGetResponse();
                 List<AdvertisementsModel> advertisementsModelList = new List<AdvertisementsModel>();
-                if (institutionId == "0")
+                if (institutionIdDecrypted == 0)
                 {
-                    if (advertisementId == "0")
+                    if (advertisementIdDecrypted == 0)
                     {
                         advertisementsModelList = (from advertisement in _context.Advertisements
                                                    select new AdvertisementsModel()
                                                    {
-                                                       AdvertisementId = advertisement.AdvertisementId.ToString(),
+                                                       AdvertisementId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString(),
                                                        CreatedAt = advertisement.CreatedAt,
-                                                       InstitutionId = advertisement.InstitutionId.ToString(),
-                                                       MediaId = advertisement.MediaId.ToString(),
+                                                       InstitutionId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.InstitutionId), _appSettings.Prime).ToString(),
+                                                       MediaId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.MediaId), _appSettings.Prime).ToString(),
                                                        ResourceName = advertisement.ResourceName
-                                                   }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                                                   }).AsEnumerable().OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                         totalCount = _context.Advertisements.ToList().Count();
                     }
                     else
                     {
                         advertisementsModelList = (from advertisement in _context.Advertisements
-                                                   where advertisement.AdvertisementId == Convert.ToInt32(advertisementId)
+                                                   where advertisement.AdvertisementId == advertisementIdDecrypted
                                                    select new AdvertisementsModel()
                                                    {
-                                                       AdvertisementId = advertisement.AdvertisementId.ToString(),
+                                                       AdvertisementId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString(),
                                                        CreatedAt = advertisement.CreatedAt,
-                                                       InstitutionId = advertisement.InstitutionId.ToString(),
-                                                       MediaId = advertisement.MediaId.ToString(),
+                                                       InstitutionId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.InstitutionId), _appSettings.Prime).ToString(),
+                                                       MediaId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.MediaId), _appSettings.Prime).ToString(),
                                                        ResourceName = advertisement.ResourceName
-                                                   }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                                                   }).AsEnumerable().OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
-                        totalCount = _context.Advertisements.Where(x => x.AdvertisementId == Convert.ToInt32(advertisementId)).ToList().Count();
+                        totalCount = _context.Advertisements.Where(x => x.AdvertisementId == advertisementIdDecrypted).ToList().Count();
                     }
                 }
                 else
                 {
-                    if (advertisementId == "0")
+                    if (advertisementIdDecrypted == 0)
                     {
                         advertisementsModelList = (from advertisement in _context.Advertisements
-                                                   where advertisement.InstitutionId == Convert.ToInt32(institutionId)
+                                                   where advertisement.InstitutionId == institutionIdDecrypted
                                                    select new AdvertisementsModel()
                                                    {
-                                                       AdvertisementId = advertisement.AdvertisementId.ToString(),
+                                                       AdvertisementId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString(),
                                                        CreatedAt = advertisement.CreatedAt,
-                                                       InstitutionId = advertisement.InstitutionId.ToString(),
-                                                       MediaId = advertisement.MediaId.ToString(),
+                                                       InstitutionId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.InstitutionId), _appSettings.Prime).ToString(),
+                                                       MediaId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.MediaId), _appSettings.Prime).ToString(),
                                                        ResourceName = advertisement.ResourceName
-                                                   }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                                                   }).AsEnumerable().OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
-                        totalCount = _context.Advertisements.Where(x => x.InstitutionId == Convert.ToInt32(institutionId)).ToList().Count();
+                        totalCount = _context.Advertisements.Where(x => x.InstitutionId == institutionIdDecrypted).ToList().Count();
                     }
                     else
                     {
                         advertisementsModelList = (from advertisement in _context.Advertisements
-                                                   where advertisement.AdvertisementId == Convert.ToInt32(advertisementId) && advertisement.InstitutionId == Convert.ToInt32(institutionId)
+                                                   where advertisement.AdvertisementId == advertisementIdDecrypted && advertisement.InstitutionId == institutionIdDecrypted
                                                    select new AdvertisementsModel()
                                                    {
-                                                       AdvertisementId = advertisement.AdvertisementId.ToString(),
+                                                       AdvertisementId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString(),
                                                        CreatedAt = advertisement.CreatedAt,
-                                                       InstitutionId = advertisement.InstitutionId.ToString(),
-                                                       MediaId = advertisement.MediaId.ToString(),
+                                                       InstitutionId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.InstitutionId), _appSettings.Prime).ToString(),
+                                                       MediaId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.MediaId), _appSettings.Prime).ToString(),
                                                        ResourceName = advertisement.ResourceName
-                                                   }).OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                                                   }).AsEnumerable().OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
-                        totalCount = _context.Advertisements.Where(x => x.AdvertisementId == Convert.ToInt32(advertisementId) && x.InstitutionId == Convert.ToInt32(institutionId)).ToList().Count();
+                        totalCount = _context.Advertisements.Where(x => x.AdvertisementId == advertisementIdDecrypted && x.InstitutionId == institutionIdDecrypted).ToList().Count();
                     }
                 }
 
@@ -177,24 +185,25 @@ namespace AdvertisementService.Repository
             int totalCount = 0;
             try
             {
+                int advertisementIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(advertisementId), _appSettings.PrimeInverse);
                 ContentsGetResponse response = new ContentsGetResponse();
                 List<AdvertisementsForContentModel> contentsModelList = new List<AdvertisementsForContentModel>();
                 MediasModel medias = new MediasModel();
                 List<ContentsModel> contents = new List<ContentsModel>();
 
-                if (advertisementId == "0")
+                if (advertisementIdDecrypted == 0)
                 {
                     contentsModelList = (from advertisement in _context.Advertisements
                                          join media in _context.Medias on advertisement.MediaId equals media.MediaId
                                          join advtcamp in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advtcamp.AdvertisementId
-                                         join camp in _context.Campaigns on  advtcamp.CampaignId equals camp.CampaignId
+                                         join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
                                          where camp.Status == "active" && camp.StartAt < DateTime.Now && camp.EndAt > DateTime.Now
                                          select new AdvertisementsForContentModel()
                                          {
-                                             ContentId = advertisement.AdvertisementId.ToString(),
+                                             ContentId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString(),
                                              Type = media.MediaType,
                                              Url = media.Url
-                                         }).OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                                         }).AsEnumerable().OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = (from advertisement in _context.Advertisements
                                   join media in _context.Medias on advertisement.MediaId equals media.MediaId
@@ -203,7 +212,8 @@ namespace AdvertisementService.Repository
                                   where camp.Status == "active" && camp.StartAt < DateTime.Now && camp.EndAt > DateTime.Now
                                   select new AdvertisementsForContentModel()
                                   {
-                                  }).ToList().Count();
+                                      ContentId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString()
+                                  }).AsEnumerable().ToList().Count();
                 }
                 else
                 {
@@ -211,22 +221,23 @@ namespace AdvertisementService.Repository
                                          join media in _context.Medias on advertisement.MediaId equals media.MediaId
                                          join advtcamp in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advtcamp.AdvertisementId
                                          join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
-                                         where camp.Status == "active" && camp.StartAt < DateTime.Now && camp.EndAt > DateTime.Now && advertisement.AdvertisementId == Convert.ToInt32(advertisementId)
+                                         where camp.Status == "active" && camp.StartAt < DateTime.Now && camp.EndAt > DateTime.Now && advertisement.AdvertisementId == advertisementIdDecrypted
                                          select new AdvertisementsForContentModel()
                                          {
-                                             ContentId = advertisement.AdvertisementId.ToString(),
+                                             ContentId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString(),
                                              Type = media.MediaType,
                                              Url = media.Url
-                                         }).OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                                         }).AsEnumerable().OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = (from advertisement in _context.Advertisements
-                                 join media in _context.Medias on advertisement.MediaId equals media.MediaId
-                                 join advtcamp in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advtcamp.AdvertisementId
-                                 join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
-                                 where camp.Status == "active" && camp.StartAt < DateTime.Now && camp.EndAt > DateTime.Now && advertisement.AdvertisementId == Convert.ToInt32(advertisementId)
-                                 select new AdvertisementsForContentModel()
-                                 {
-                                 }).ToList().Count();
+                                  join media in _context.Medias on advertisement.MediaId equals media.MediaId
+                                  join advtcamp in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advtcamp.AdvertisementId
+                                  join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
+                                  where camp.Status == "active" && camp.StartAt < DateTime.Now && camp.EndAt > DateTime.Now && advertisement.AdvertisementId == advertisementIdDecrypted
+                                  select new AdvertisementsForContentModel()
+                                  {
+                                      ContentId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString()
+                                  }).AsEnumerable().ToList().Count();
                 }
 
                 foreach (var content in contentsModelList)
@@ -243,7 +254,7 @@ namespace AdvertisementService.Repository
 
                 if (contentsModelList.Count > 0)
                 {
-                    List<PromotionsGetModel> promotions = _includeAdvertisements.GetPromotionsIncludedData(contentsModelList,token);
+                    List<PromotionsGetModel> promotions = _includeAdvertisements.GetPromotionsIncludedData(contentsModelList, token);
                     if (promotions != null && promotions.Count > 0)
                     {
                         foreach (var content in contents)
@@ -290,23 +301,23 @@ namespace AdvertisementService.Repository
             AdvertisementsPostResponse response = new AdvertisementsPostResponse();
             try
             {
-                var media = _context.Medias.Where(x => x.MediaId == Convert.ToInt32(model.MediaId)).FirstOrDefault();
+                var media = _context.Medias.Where(x => x.MediaId == ObfuscationClass.DecodeId(Convert.ToInt32(model.MediaId), _appSettings.PrimeInverse)).FirstOrDefault();
                 if (media == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
 
-                var interval = _context.Intervals.Where(x => x.IntervalId == Convert.ToInt32(model.IntervalId)).FirstOrDefault();
+                var interval = _context.Intervals.Where(x => x.IntervalId == ObfuscationClass.DecodeId(Convert.ToInt32(model.IntervalId), _appSettings.PrimeInverse)).FirstOrDefault();
                 if (interval == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
 
-                var campaign = _context.Campaigns.Where(x => x.CampaignId == Convert.ToInt32(model.CampaignId)).FirstOrDefault();
+                var campaign = _context.Campaigns.Where(x => x.CampaignId == ObfuscationClass.DecodeId(Convert.ToInt32(model.CampaignId), _appSettings.PrimeInverse)).FirstOrDefault();
                 if (campaign == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.CampaignNotFound, StatusCodes.Status404NotFound);
 
                 Advertisements advertisements = new Advertisements()
                 {
                     CreatedAt = DateTime.UtcNow,
-                    InstitutionId = Convert.ToInt32(model.InstitutionId),
-                    MediaId = Convert.ToInt32(model.MediaId),
+                    InstitutionId = ObfuscationClass.DecodeId(Convert.ToInt32(model.InstitutionId), _appSettings.PrimeInverse),
+                    MediaId = ObfuscationClass.DecodeId(Convert.ToInt32(model.MediaId), _appSettings.PrimeInverse),
                     ResourceName = model.ResourceName
                 };
                 _context.Advertisements.Add(advertisements);
@@ -330,7 +341,7 @@ namespace AdvertisementService.Repository
                 response.status = true;
                 response.statusCode = StatusCodes.Status201Created;
                 response.message = CommonMessage.AdvertisementInsert;
-                response.AdvertisementId = advertisements.AdvertisementId.ToString();
+                response.AdvertisementId = ObfuscationClass.EncodeId(advertisements.AdvertisementId, _appSettings.Prime).ToString();
                 return response;
             }
             catch (Exception ex)
@@ -343,23 +354,23 @@ namespace AdvertisementService.Repository
         {
             try
             {
-                var advertisements = _context.Advertisements.Include(x => x.AdvertisementsIntervals).Include(x => x.AdvertisementsCampaigns).Where(x => x.AdvertisementId == Convert.ToInt32(model.AdvertisementId)).FirstOrDefault();
+                var advertisements = _context.Advertisements.Include(x => x.AdvertisementsIntervals).Include(x => x.AdvertisementsCampaigns).Where(x => x.AdvertisementId == ObfuscationClass.DecodeId(Convert.ToInt32(model.AdvertisementId), _appSettings.PrimeInverse)).FirstOrDefault();
                 if (advertisements == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
 
-                var media = _context.Medias.Where(x => x.MediaId == Convert.ToInt32(model.MediaId)).FirstOrDefault();
+                var media = _context.Medias.Where(x => x.MediaId == ObfuscationClass.DecodeId(Convert.ToInt32(model.MediaId), _appSettings.PrimeInverse)).FirstOrDefault();
                 if (media == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
 
-                var interval = _context.Intervals.Where(x => x.IntervalId == Convert.ToInt32(model.IntervalId)).FirstOrDefault();
+                var interval = _context.Intervals.Where(x => x.IntervalId == ObfuscationClass.DecodeId(Convert.ToInt32(model.IntervalId), _appSettings.PrimeInverse)).FirstOrDefault();
                 if (interval == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
 
-                var campaign = _context.Campaigns.Where(x => x.CampaignId == Convert.ToInt32(model.CampaignId)).FirstOrDefault();
+                var campaign = _context.Campaigns.Where(x => x.CampaignId == ObfuscationClass.DecodeId(Convert.ToInt32(model.CampaignId), _appSettings.PrimeInverse)).FirstOrDefault();
                 if (campaign == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.CampaignNotFound, StatusCodes.Status404NotFound);
 
-                var advertisementsinterval = advertisements.AdvertisementsIntervals.Where(x => x.AdvertisementId == Convert.ToInt32(model.AdvertisementId)).FirstOrDefault();
+                var advertisementsinterval = advertisements.AdvertisementsIntervals.Where(x => x.AdvertisementId == ObfuscationClass.DecodeId(Convert.ToInt32(model.AdvertisementId), _appSettings.PrimeInverse)).FirstOrDefault();
                 if (advertisementsinterval == null)
                 {
                     AdvertisementsIntervals objAdvertisementsintervals = new AdvertisementsIntervals()
@@ -376,7 +387,7 @@ namespace AdvertisementService.Repository
                     _context.AdvertisementsIntervals.Update(advertisementsinterval);
                 }
 
-                var advertisementscampaigns = advertisements.AdvertisementsCampaigns.Where(x => x.AdvertisementId == Convert.ToInt32(model.AdvertisementId)).FirstOrDefault();
+                var advertisementscampaigns = advertisements.AdvertisementsCampaigns.Where(x => x.AdvertisementId == ObfuscationClass.DecodeId(Convert.ToInt32(model.AdvertisementId), _appSettings.PrimeInverse)).FirstOrDefault();
                 if (advertisementscampaigns == null)
                 {
                     AdvertisementsCampaigns objAdvertisementsintervals = new AdvertisementsCampaigns()
@@ -393,8 +404,8 @@ namespace AdvertisementService.Repository
                     _context.AdvertisementsCampaigns.Update(advertisementscampaigns);
                 }
 
-                advertisements.InstitutionId = Convert.ToInt32(model.InstitutionId);
-                advertisements.MediaId = Convert.ToInt32(model.MediaId);
+                advertisements.InstitutionId = ObfuscationClass.DecodeId(Convert.ToInt32(model.InstitutionId), _appSettings.PrimeInverse);
+                advertisements.MediaId = ObfuscationClass.DecodeId(Convert.ToInt32(model.MediaId), _appSettings.PrimeInverse);
                 advertisements.ResourceName = model.ResourceName;
                 _context.Advertisements.Update(advertisements);
                 _context.SaveChanges();
