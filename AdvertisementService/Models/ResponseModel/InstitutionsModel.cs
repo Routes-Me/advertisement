@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace AdvertisementService.Models.ResponseModel
 {
@@ -7,7 +8,8 @@ namespace AdvertisementService.Models.ResponseModel
         public string InstitutionId { get; set; }
         public string Name { get; set; }
         public DateTime? CreatedAt { get; set; }
-        public int? PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
         public string CountryIso { get; set; }
+        public List<string> services { get; set; }
     }
 }
