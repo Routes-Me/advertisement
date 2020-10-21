@@ -20,6 +20,7 @@ namespace AdvertisementService.Models.ResponseModel
         public string MediaId { get; set; }
 
         public string CampaignId { get; set; }
+        public string IntervalId { get; set; }
     }
 
     public class AdvertisementsForContentModel
