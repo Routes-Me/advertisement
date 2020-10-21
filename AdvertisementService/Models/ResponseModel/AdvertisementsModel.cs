@@ -11,6 +11,17 @@ namespace AdvertisementService.Models.ResponseModel
         public string MediaId { get; set; }
     }
 
+    public class AdvertisementsGetModel
+    {
+        public string AdvertisementId { get; set; }
+        public string ResourceName { get; set; }
+        public string InstitutionId { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public string MediaId { get; set; }
+
+        public string CampaignId { get; set; }
+    }
+
     public class AdvertisementsForContentModel
     {
         public string ContentId { get; set; }

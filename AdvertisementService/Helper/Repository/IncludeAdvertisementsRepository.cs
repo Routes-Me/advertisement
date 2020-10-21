@@ -28,7 +28,7 @@ namespace AdvertisementService.Helper.Repository
             _dependencies = dependencies.Value;
         }
 
-        public dynamic GetCampaignIncludedData(List<AdvertisementsModel> advertisementsModel)
+        public dynamic GetCampaignIncludedData(List<AdvertisementsGetModel> advertisementsModel)
         {
             List<CampaignsModel> campaigns = new List<CampaignsModel>();
             foreach (var item in advertisementsModel)
@@ -57,7 +57,7 @@ namespace AdvertisementService.Helper.Repository
             return Common.SerializeJsonForIncludedRepo(campaigns.Cast<dynamic>().ToList());
         }
 
-        public dynamic GetInstitutionsIncludedData(List<AdvertisementsModel> advertisementsModel)
+        public dynamic GetInstitutionsIncludedData(List<AdvertisementsGetModel> advertisementsModel)
         {
             List<InstitutionsModel> institutions = new List<InstitutionsModel>();
             foreach (var item in advertisementsModel)
@@ -75,7 +75,7 @@ namespace AdvertisementService.Helper.Repository
             return Common.SerializeJsonForIncludedRepo(institutions.Cast<dynamic>().ToList());
         }
 
-        public dynamic GetIntervalIncludedData(List<AdvertisementsModel> advertisementsModel)
+        public dynamic GetIntervalIncludedData(List<AdvertisementsGetModel> advertisementsModel)
         {
             List<IntervalsModel> intervals = new List<IntervalsModel>();
             foreach (var item in advertisementsModel)
@@ -97,7 +97,7 @@ namespace AdvertisementService.Helper.Repository
             return Common.SerializeJsonForIncludedRepo(intervalList.Cast<dynamic>().ToList());
         }
 
-        public dynamic GetMediasIncludedData(List<AdvertisementsModel> advertisementsModel)
+        public dynamic GetMediasIncludedData(List<AdvertisementsGetModel> advertisementsModel)
         {
             List<GetMediasModel> medias = new List<GetMediasModel>();
             foreach (var item in advertisementsModel)
@@ -121,7 +121,7 @@ namespace AdvertisementService.Helper.Repository
             return Common.SerializeJsonForIncludedRepo(mediaList.Cast<dynamic>().ToList());
         }
 
-        public dynamic GetPromotionsIncludedData(List<AdvertisementsForContentModel> advertisementsModelList, string token)
+        public dynamic GetPromotionsIncludedData(List<AdvertisementsForContentModel> advertisementsModelList)
         {
             List<PromotionsGetModel> promotions = new List<PromotionsGetModel>();
             foreach (var item in advertisementsModelList)
@@ -129,7 +129,6 @@ namespace AdvertisementService.Helper.Repository
                 var client = new RestClient(_appSettings.Host + _dependencies.CouponsUrl + item.ContentId);
                 var request = new RestRequest(Method.GET);
                 IRestResponse response = client.Execute(request);
-                //request.AddHeader("Authorization", "Bearer " + token + "");
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     var result = response.Content;
@@ -137,7 +136,6 @@ namespace AdvertisementService.Helper.Repository
                     promotions.AddRange(promotionData.data);
                 }
             }
-            //return Common.SerializeJsonForIncludedRepo(promotions.Cast<dynamic>().ToList());
             return promotions;
         }
     }

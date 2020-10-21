@@ -60,7 +60,7 @@ namespace AdvertisementService.Models
     public class AdvertisementsGetResponse : Response
     {
         public Pagination pagination { get; set; }
-        public List<AdvertisementsModel> data { get; set; }
+        public List<AdvertisementsGetModel> data { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public JObject included { get; set; }
     }
