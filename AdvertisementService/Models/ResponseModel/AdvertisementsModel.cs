@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AdvertisementService.Models.DBModels;
+using System;
+using System.Collections.Generic;
 
 namespace AdvertisementService.Models.ResponseModel
 {
@@ -18,10 +20,14 @@ namespace AdvertisementService.Models.ResponseModel
         public string InstitutionId { get; set; }
         public DateTime? CreatedAt { get; set; }
         public string MediaId { get; set; }
-
-        public string CampaignId { get; set; }
+        public List<string> CampaignId { get; set; }
         public string IntervalId { get; set; }
     }
+    public class GetCampaignList
+    {
+        public Campaigns campaigns { get; set; }
+    }
+
 
     public class AdvertisementsForContentModel
     {

@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Obfuscation;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace AdvertisementService.Repository
 {
@@ -55,6 +57,7 @@ namespace AdvertisementService.Repository
 
         public dynamic GetAdvertisements(string institutionId, string advertisementId, string includeType, Pagination pageInfo)
         {
+          
             int totalCount = 0;
             try
             {
@@ -62,13 +65,25 @@ namespace AdvertisementService.Repository
                 int advertisementIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(advertisementId), _appSettings.PrimeInverse);
                 AdvertisementsGetResponse response = new AdvertisementsGetResponse();
                 List<AdvertisementsGetModel> advertisementsModelList = new List<AdvertisementsGetModel>();
+                List<string> campainIds = new List<string>();
                 if (institutionIdDecrypted == 0)
                 {
                     if (advertisementIdDecrypted == 0)
                     {
+                        var campaignList = (from advertisement in _context.Advertisements
+                                            join advertisementsCampaigns in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advertisementsCampaigns.AdvertisementId
+                                            join campaigns in _context.Campaigns on advertisementsCampaigns.CampaignId equals campaigns.CampaignId
+                                            select new GetCampaignList()
+                                            {
+                                                campaigns = campaigns
+                                            }).ToList();
+
+                        foreach (var item in campaignList)
+                        {
+                            string Ids = ObfuscationClass.EncodeId(Convert.ToInt32(item.campaigns.CampaignId), _appSettings.Prime).ToString();
+                            campainIds.Add(Ids);
+                        }
                         advertisementsModelList = (from advertisement in _context.Advertisements
-                                                   join advertisementsCampaigns in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advertisementsCampaigns.AdvertisementId
-                                                   join campaigns in _context.Campaigns on advertisementsCampaigns.CampaignId equals campaigns.CampaignId
                                                    join advertisementsIntervals in _context.AdvertisementsIntervals on advertisement.AdvertisementId equals advertisementsIntervals.AdvertisementId
                                                    join intervals in _context.Intervals on advertisementsIntervals.IntervalId equals intervals.IntervalId
                                                    select new AdvertisementsGetModel()
@@ -78,7 +93,7 @@ namespace AdvertisementService.Repository
                                                        InstitutionId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.InstitutionId), _appSettings.Prime).ToString(),
                                                        MediaId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.MediaId), _appSettings.Prime).ToString(),
                                                        ResourceName = advertisement.ResourceName,
-                                                       CampaignId = ObfuscationClass.EncodeId(Convert.ToInt32(campaigns.CampaignId), _appSettings.Prime).ToString(),
+                                                       CampaignId = campainIds,
                                                        IntervalId = ObfuscationClass.EncodeId(Convert.ToInt32(intervals.IntervalId), _appSettings.Prime).ToString(),
                                                    }).AsEnumerable().OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
@@ -91,9 +106,22 @@ namespace AdvertisementService.Repository
                     }
                     else
                     {
+                        var campaignList = (from advertisement in _context.Advertisements
+                                            join advertisementsCampaigns in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advertisementsCampaigns.AdvertisementId
+                                            join campaigns in _context.Campaigns on advertisementsCampaigns.CampaignId equals campaigns.CampaignId
+                                            where advertisement.AdvertisementId == advertisementIdDecrypted
+                                            select new GetCampaignList()
+                                            {
+                                                campaigns = campaigns
+                                            }).ToList();
+
+                        foreach (var item in campaignList)
+                        {
+                            string Ids = ObfuscationClass.EncodeId(Convert.ToInt32(item.campaigns.CampaignId), _appSettings.Prime).ToString();
+                            campainIds.Add(Ids);
+                        }
+
                         advertisementsModelList = (from advertisement in _context.Advertisements
-                                                   join advertisementsCampaigns in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advertisementsCampaigns.AdvertisementId
-                                                   join campaigns in _context.Campaigns on advertisementsCampaigns.CampaignId equals campaigns.CampaignId
                                                    join advertisementsIntervals in _context.AdvertisementsIntervals on advertisement.AdvertisementId equals advertisementsIntervals.AdvertisementId
                                                    join intervals in _context.Intervals on advertisementsIntervals.IntervalId equals intervals.IntervalId
                                                    where advertisement.AdvertisementId == advertisementIdDecrypted
@@ -104,7 +132,7 @@ namespace AdvertisementService.Repository
                                                        InstitutionId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.InstitutionId), _appSettings.Prime).ToString(),
                                                        MediaId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.MediaId), _appSettings.Prime).ToString(),
                                                        ResourceName = advertisement.ResourceName,
-                                                       CampaignId = ObfuscationClass.EncodeId(Convert.ToInt32(campaigns.CampaignId), _appSettings.Prime).ToString(),
+                                                       CampaignId = campainIds,
                                                        IntervalId = ObfuscationClass.EncodeId(Convert.ToInt32(intervals.IntervalId), _appSettings.Prime).ToString(),
                                                    }).AsEnumerable().OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
@@ -121,9 +149,23 @@ namespace AdvertisementService.Repository
                 {
                     if (advertisementIdDecrypted == 0)
                     {
+
+                        var campaignList = (from advertisement in _context.Advertisements
+                                            join advertisementsCampaigns in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advertisementsCampaigns.AdvertisementId
+                                            join campaigns in _context.Campaigns on advertisementsCampaigns.CampaignId equals campaigns.CampaignId
+                                            where advertisement.InstitutionId == institutionIdDecrypted
+                                            select new GetCampaignList()
+                                            {
+                                                campaigns = campaigns
+                                            }).ToList();
+
+                        foreach (var item in campaignList)
+                        {
+                            string Ids = ObfuscationClass.EncodeId(Convert.ToInt32(item.campaigns.CampaignId), _appSettings.Prime).ToString();
+                            campainIds.Add(Ids);
+                        }
+
                         advertisementsModelList = (from advertisement in _context.Advertisements
-                                                   join advertisementsCampaigns in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advertisementsCampaigns.AdvertisementId
-                                                   join campaigns in _context.Campaigns on advertisementsCampaigns.CampaignId equals campaigns.CampaignId
                                                    join advertisementsIntervals in _context.AdvertisementsIntervals on advertisement.AdvertisementId equals advertisementsIntervals.AdvertisementId
                                                    join intervals in _context.Intervals on advertisementsIntervals.IntervalId equals intervals.IntervalId
                                                    where advertisement.InstitutionId == institutionIdDecrypted
@@ -134,7 +176,7 @@ namespace AdvertisementService.Repository
                                                        InstitutionId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.InstitutionId), _appSettings.Prime).ToString(),
                                                        MediaId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.MediaId), _appSettings.Prime).ToString(),
                                                        ResourceName = advertisement.ResourceName,
-                                                       CampaignId = ObfuscationClass.EncodeId(Convert.ToInt32(campaigns.CampaignId), _appSettings.Prime).ToString(),
+                                                       CampaignId = campainIds,
                                                        IntervalId = ObfuscationClass.EncodeId(Convert.ToInt32(intervals.IntervalId), _appSettings.Prime).ToString(),
                                                    }).AsEnumerable().OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
@@ -148,9 +190,22 @@ namespace AdvertisementService.Repository
                     }
                     else
                     {
+                        var campaignList = (from advertisement in _context.Advertisements
+                                            join advertisementsCampaigns in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advertisementsCampaigns.AdvertisementId
+                                            join campaigns in _context.Campaigns on advertisementsCampaigns.CampaignId equals campaigns.CampaignId
+                                            where advertisement.AdvertisementId == advertisementIdDecrypted && advertisement.InstitutionId == institutionIdDecrypted
+                                            select new GetCampaignList()
+                                            {
+                                                campaigns = campaigns
+                                            }).ToList();
+
+                        foreach (var item in campaignList)
+                        {
+                            string Ids = ObfuscationClass.EncodeId(Convert.ToInt32(item.campaigns.CampaignId), _appSettings.Prime).ToString();
+                            campainIds.Add(Ids);
+                        }
+
                         advertisementsModelList = (from advertisement in _context.Advertisements
-                                                   join advertisementsCampaigns in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advertisementsCampaigns.AdvertisementId
-                                                   join campaigns in _context.Campaigns on advertisementsCampaigns.CampaignId equals campaigns.CampaignId
                                                    join advertisementsIntervals in _context.AdvertisementsIntervals on advertisement.AdvertisementId equals advertisementsIntervals.AdvertisementId
                                                    join intervals in _context.Intervals on advertisementsIntervals.IntervalId equals intervals.IntervalId
                                                    where advertisement.AdvertisementId == advertisementIdDecrypted && advertisement.InstitutionId == institutionIdDecrypted
@@ -161,7 +216,7 @@ namespace AdvertisementService.Repository
                                                        InstitutionId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.InstitutionId), _appSettings.Prime).ToString(),
                                                        MediaId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.MediaId), _appSettings.Prime).ToString(),
                                                        ResourceName = advertisement.ResourceName,
-                                                       CampaignId = ObfuscationClass.EncodeId(Convert.ToInt32(campaigns.CampaignId), _appSettings.Prime).ToString(),
+                                                       CampaignId = campainIds,
                                                        IntervalId = ObfuscationClass.EncodeId(Convert.ToInt32(intervals.IntervalId), _appSettings.Prime).ToString(),
                                                    }).AsEnumerable().OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
