@@ -25,8 +25,10 @@ namespace AdvertisementService.Models.ResponseModel
     }
     public class GetCampaignList
     {
-        public Campaigns campaigns { get; set; }
+        public string campaignId { get; set; }
     }
+
+
 
 
     public class AdvertisementsForContentModel
