@@ -20,19 +20,24 @@ namespace AdvertisementService.Helper.Repository
         {
             _webHostEnvironment = webHostEnvironment;
         }
-        public string ConvertVideo(IFormFile file, bool mute)
+        public async Task<string> ConvertVideoAsync(IFormFile file, bool mute)
         {
             string uniqueFileName = Path.GetFileNameWithoutExtension(file.FileName.Replace(" ", "_").Replace(".jpg", "").Replace(".png", "").Replace(".jpeg", "")) + "_" + Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            string keycode = AdvertisementService.Models.Common.Random.RandomUnique(10);
-            string uniqueFileNameForResizeImg = Path.GetFileNameWithoutExtension(file.FileName.Replace(" ", "_").Replace(".jpg", "").Replace(".png", "").Replace(".jpeg", "")) + "_" + Guid.NewGuid().ToString() + "_" + keycode + Path.GetExtension(file.FileName);
-            var uploads = Path.Combine(_webHostEnvironment.WebRootPath, "TempVideo");
-            string filePath = Path.Combine(uploads, uniqueFileName);
-            var path = _webHostEnvironment.WebRootPath + "\\TempVideo";
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+            var uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "TempVideo");
+            string filePath = Path.Combine(uploadPath, uniqueFileName);
+
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            DirectoryInfo di = new DirectoryInfo(uploadPath);
+            foreach (FileInfo files in di.GetFiles())
             {
-                file.CopyTo(fileStream);
+                files.Delete();
+            }
+
+            using (var stream = File.Create(filePath))
+            {
+                await file.CopyToAsync(stream);
             }
 
             // Set input file and output file
@@ -51,9 +56,6 @@ namespace AdvertisementService.Helper.Repository
             {
                 engine.Convert(inputFile, outputFile, conversionOptions);
             }
-
-            if (File.Exists(filePath))
-                File.Delete(filePath);
 
             if (mute)
             {
