@@ -52,10 +52,14 @@ namespace AdvertisementService.Helper.Repository
             conversionOptions.AudioSampleRate = AudioSampleRate.Default;
 
             // Convert video using MediaToolKit
-            using (var engine = new Engine())
+            try
             {
-                engine.Convert(inputFile, outputFile, conversionOptions);
+                using (var engine = new Engine())
+                {
+                    engine.Convert(inputFile, outputFile, conversionOptions);
+                }
             }
+            catch (Exception) { return filePath; }
 
             if (mute)
             {
