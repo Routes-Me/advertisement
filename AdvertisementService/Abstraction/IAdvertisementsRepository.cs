@@ -9,6 +9,6 @@ namespace AdvertisementService.Abstraction
         dynamic UpdateAdvertisements(PostAdvertisementsModel model);
         dynamic DeleteAdvertisements(string id);
         dynamic InsertAdvertisements(PostAdvertisementsModel model);
-        dynamic GetContents(string advertisementsId, Pagination pageInfo, string token);
+        dynamic GetContents(string advertisementsId, Pagination pageInfo);
     }
 }

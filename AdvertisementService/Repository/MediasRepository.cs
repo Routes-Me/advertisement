@@ -145,6 +145,10 @@ namespace AdvertisementService.Repository
             MediasInsertResponse response = new MediasInsertResponse();
             try
             {
+                if (string.IsNullOrEmpty(model.MediaType))
+                    return ReturnResponse.ErrorResponse(CommonMessage.MediaTypeNotFound, StatusCodes.Status400BadRequest);
+
+
                 if (model.MediaType == "video")
                 {
                     var videoPath = _videoConversionRepository.ConvertVideo(model.media, model.Mute);

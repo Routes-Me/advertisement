@@ -69,8 +69,7 @@ namespace AdvertisementService.Controllers
         [Route("contents/{id=0}")]
         public async Task<IActionResult> GetAdvertisementsByPromotions(string id, [FromQuery] Pagination pageInfo)
         {
-            string token = await HttpContext.GetTokenAsync("access_token");
-            dynamic response = _advertisementsRepository.GetContents(id, pageInfo, token);
+            dynamic response = _advertisementsRepository.GetContents(id, pageInfo);
             return StatusCode((int)response.statusCode, response);
         }
     }

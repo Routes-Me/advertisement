@@ -263,7 +263,7 @@ namespace AdvertisementService.Repository
             advertisementsModelList = advertisementsList;
             return advertisementsModelList;
         }
-        public dynamic GetContents(string advertisementId, Pagination pageInfo, string token)
+        public dynamic GetContents(string advertisementId, Pagination pageInfo)
         {
             int totalCount = 0;
             try

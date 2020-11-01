@@ -32,5 +32,8 @@
 
         public static string InstitutionNotFound = "Institutions not found.";
         public static string GenericException = "You are not authorized to access this content.";
+
+        public static string MediaTypeNotFound = "Pass valid media type.";
+        
     }
 }
