@@ -20,7 +20,7 @@ namespace AdvertisementService.Models
             Response response = new Response();
             response.status = false;
             response.message = CommonMessage.GenericException + ex.Message;
-            response.statusCode = StatusCodes.Status401Unauthorized ;
+            response.statusCode = StatusCodes.Status500InternalServerError ;
             return response;
         }
 
