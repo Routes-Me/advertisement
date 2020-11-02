@@ -44,7 +44,7 @@ namespace AdvertisementService.Models.ResponseModel
         public string ResourceName { get; set; }
         public string InstitutionId { get; set; }
         public string IntervalId { get; set; }
-        public string CampaignId { get; set; }
+        public List<string> CampaignId { get; set; }
         public string MediaId { get; set; }
     }
 
