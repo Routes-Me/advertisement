@@ -351,7 +351,8 @@ namespace AdvertisementService.Repository
                                         Title = promotion.Title,
                                         Subtitle = promotion.Subtitle,
                                         PromotionId = promotion.PromotionId,
-                                        LogoUrl = promotion.LogoUrl
+                                        LogoUrl = promotion.LogoUrl,
+                                        Type = promotion.Type
                                     };
                                 }
                             }
@@ -420,6 +421,7 @@ namespace AdvertisementService.Repository
                     IntervalId = interval.IntervalId
                 };
                 _context.AdvertisementsIntervals.Add(advertisementsintervals);
+
 
                 foreach (var item in lstCampaign)
                 {

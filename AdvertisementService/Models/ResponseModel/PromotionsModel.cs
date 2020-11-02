@@ -11,6 +11,7 @@ namespace AdvertisementService.Models.ResponseModel
         public string Title { get; set; }
         public string Subtitle { get; set; }
         public string LogoUrl { get; set; }
+        public string Type { get; set; }
     }
 
     public class PromotionsGetModel
@@ -20,5 +21,6 @@ namespace AdvertisementService.Models.ResponseModel
         public string Subtitle { get; set; }
         public string LogoUrl { get; set; }
         public string AdvertisementId { get; set; }
+        public string Type { get; set; }
     }
 }
