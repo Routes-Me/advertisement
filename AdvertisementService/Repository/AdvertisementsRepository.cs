@@ -292,7 +292,7 @@ namespace AdvertisementService.Repository
                                              ContentId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString(),
                                              Type = media.MediaType,
                                              Url = media.Url
-                                         }).AsEnumerable().OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                                         }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = (from advertisement in _context.Advertisements
                                   join media in _context.Medias on advertisement.MediaId equals media.MediaId
@@ -302,7 +302,7 @@ namespace AdvertisementService.Repository
                                   select new AdvertisementsForContentModel()
                                   {
                                       ContentId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString()
-                                  }).AsEnumerable().ToList().Count();
+                                  }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).ToList().Count();
                 }
                 else
                 {
@@ -316,7 +316,7 @@ namespace AdvertisementService.Repository
                                              ContentId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString(),
                                              Type = media.MediaType,
                                              Url = media.Url
-                                         }).AsEnumerable().OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                                         }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = (from advertisement in _context.Advertisements
                                   join media in _context.Medias on advertisement.MediaId equals media.MediaId
@@ -326,7 +326,7 @@ namespace AdvertisementService.Repository
                                   select new AdvertisementsForContentModel()
                                   {
                                       ContentId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString()
-                                  }).AsEnumerable().ToList().Count();
+                                  }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).ToList().Count();
                 }
 
                 foreach (var content in contentsModelList)
