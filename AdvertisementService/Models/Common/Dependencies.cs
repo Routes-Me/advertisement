@@ -10,5 +10,8 @@ namespace AdvertisementService.Models.Common
         public string UserUrl { get; set; }
         public string InstitutionUrl { get; set; }
         public string CouponsUrl { get; set; }
+        public string PromotionsUrl { get; set; }
+
+        
     }
 }

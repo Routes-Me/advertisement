@@ -147,6 +147,10 @@ namespace AdvertisementService.Repository
                             {
                                 includeData.interval = _includeAdvertisements.GetIntervalIncludedData(advertisementsModelList);
                             }
+                            else if (item.ToLower() == "promotion" || item.ToLower() == "promotions")
+                            {
+                                includeData.promotion = _includeAdvertisements.GetPromotionsForAdvertisementIncludedData(advertisementsModelList);
+                            }
                         }
                     }
                 }
@@ -177,6 +181,7 @@ namespace AdvertisementService.Repository
 
         public List<AdvertisementsGetModel> GetAdvertisementData(List<AdvertisementsGetModel> advertisementsModelList)
         {
+            var promotions = _includeAdvertisements.GetPromotionsData();
             List<AdvertisementsGetModel> advertisementsList = new List<AdvertisementsGetModel>();
             foreach (var item in advertisementsModelList)
             {
@@ -200,6 +205,7 @@ namespace AdvertisementService.Repository
                 }
                 advertisements.CampaignId = lstItems;
                 advertisements.IntervalId = item.IntervalId;
+                advertisements.PromotionsId = promotions.Where(x => x.AdvertisementId == item.AdvertisementId).Select(x => x.PromotionId).FirstOrDefault();
                 advertisementsList.Add(advertisements);
             }
             advertisementsModelList = new List<AdvertisementsGetModel>();

@@ -22,6 +22,7 @@ namespace AdvertisementService.Models.ResponseModel
         public string MediaId { get; set; }
         public List<string> CampaignId { get; set; }
         public string IntervalId { get; set; }
+        public string PromotionsId { get; set; }
     }
     public class GetCampaignList
     {

@@ -23,9 +23,10 @@ namespace AdvertisementService.Controllers
             dynamic response = _mediasRepository.GetMedias(id, include, pageInfo);
             return StatusCode((int)response.statusCode, response);
         }
-
+        
         [HttpPost]
         [Route("medias")]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> Post([FromForm] MediasModel model)
         {
             dynamic response = await _mediasRepository.InsertMedias(model);
@@ -34,6 +35,7 @@ namespace AdvertisementService.Controllers
 
         [HttpPut]
         [Route("medias")]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> Put([FromForm] MediasModel model)
         {
             dynamic response = await _mediasRepository.UpdateMedias(model);

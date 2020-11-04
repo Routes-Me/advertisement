@@ -138,5 +138,42 @@ namespace AdvertisementService.Helper.Repository
             }
             return promotions;
         }
+
+        public List<PromotionsGetModel> GetPromotionsData()
+        {
+            List<PromotionsGetModel> promotions = new List<PromotionsGetModel>();
+            var client = new RestClient(_appSettings.Host + _dependencies.PromotionsUrl);
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = client.Execute(request);
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var result = response.Content;
+                var promotionData = JsonConvert.DeserializeObject<PromotionsGetResponse>(result);
+                promotions.AddRange(promotionData.data);
+            }
+            return promotions;
+        }
+
+        public dynamic GetPromotionsForAdvertisementIncludedData(List<AdvertisementsGetModel> advertisementsModelList)
+        {
+            List<PromotionsGetModel> promotions = new List<PromotionsGetModel>();
+            foreach (var item in advertisementsModelList)
+            {
+                if (!string.IsNullOrEmpty(item.PromotionsId))
+                {
+                    var client = new RestClient(_appSettings.Host + _dependencies.PromotionsUrl + item.PromotionsId);
+                    var request = new RestRequest(Method.GET);
+                    IRestResponse response = client.Execute(request);
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        var result = response.Content;
+                        var promotionData = JsonConvert.DeserializeObject<PromotionsGetResponse>(result);
+                        promotions.AddRange(promotionData.data);
+                    }
+                }
+            }
+            var promotionsList = promotions.GroupBy(x => x.PromotionId).Select(a => a.First()).ToList();
+            return Common.SerializeJsonForIncludedRepo(promotionsList.Cast<dynamic>().ToList());
+        }
     }
 }
