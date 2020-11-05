@@ -61,7 +61,7 @@ namespace AdvertisementService.Models.ResponseModel
         public string ContentId { get; set; }
         public string Type { get; set; }
         public string Url { get; set; }
-        public PromotionsModel promotion { get; set; }
+        public PromotionsModelForContent promotion { get; set; }
 
     }
 }

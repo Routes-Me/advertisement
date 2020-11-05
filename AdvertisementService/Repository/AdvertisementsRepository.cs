@@ -16,6 +16,7 @@ using Obfuscation;
 using System.Text;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Azure;
+using Microsoft.AspNetCore.Hosting;
 
 namespace AdvertisementService.Repository
 {
@@ -24,11 +25,14 @@ namespace AdvertisementService.Repository
         private readonly advertisementserviceContext _context;
         private readonly IIncludeAdvertisementsRepository _includeAdvertisements;
         private readonly AppSettings _appSettings;
-        public AdvertisementsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements)
+        private IWebHostEnvironment _hostingEnv;
+
+        public AdvertisementsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements, IWebHostEnvironment hostingEnv)
         {
             _appSettings = appSettings.Value;
             _context = context;
             _includeAdvertisements = includeAdvertisements;
+            _hostingEnv = hostingEnv;
         }
 
         public dynamic DeleteAdvertisements(string id)
@@ -352,14 +356,29 @@ namespace AdvertisementService.Repository
                             {
                                 if (content.ContentId == promotion.AdvertisementId)
                                 {
-                                    content.promotion = new PromotionsModel()
+                                    PromotionsModelForContent promotionsModelForContent = new PromotionsModelForContent();
+                                    promotionsModelForContent.Title = promotion.Title;
+                                    promotionsModelForContent.Subtitle = promotion.Subtitle;
+                                    promotionsModelForContent.PromotionId = promotion.PromotionId;
+                                    promotionsModelForContent.LogoUrl = promotion.LogoUrl;
+                                    promotionsModelForContent.Code = promotion.Code;
+                                    if (promotion.Type.ToLower() == "links")
                                     {
-                                        Title = promotion.Title,
-                                        Subtitle = promotion.Subtitle,
-                                        PromotionId = promotion.PromotionId,
-                                        LogoUrl = promotion.LogoUrl,
-                                        Type = promotion.Type
-                                    };
+                                        promotionsModelForContent.Link = _appSettings.LinkUrlForContent + promotion.PromotionId;
+                                    }
+                                    else if (promotion.Type.ToLower() == "coupons")
+                                    {
+                                        promotionsModelForContent.Link = _appSettings.CouponUrlForContent + promotion.PromotionId;
+                                    }
+                                    else if (promotion.Type.ToLower() == "places")
+                                    {
+                                        promotionsModelForContent.Link = null;
+                                    }
+                                    else
+                                    {
+                                        promotionsModelForContent.Link = null;
+                                    }
+                                    content.promotion = promotionsModelForContent;
                                 }
                             }
                         }
