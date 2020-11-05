@@ -414,11 +414,13 @@ namespace AdvertisementService.Repository
                 if (media == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
 
-                var interval = _context.Intervals.Where(x => x.IntervalId == ObfuscationClass.DecodeId(Convert.ToInt32(model.IntervalId), _appSettings.PrimeInverse)).FirstOrDefault();
-                if (interval == null)
-                    return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
-
-
+                Intervals intervals = new Intervals();
+                if (!string.IsNullOrEmpty(model.IntervalId))
+                {
+                    intervals = _context.Intervals.Where(x => x.IntervalId == ObfuscationClass.DecodeId(Convert.ToInt32(model.IntervalId), _appSettings.PrimeInverse)).FirstOrDefault();
+                    if (intervals == null)
+                        return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
+                }
 
                 List<Campaigns> lstCampaign = new List<Campaigns>();
                 foreach (var item in model.CampaignId)
@@ -440,13 +442,16 @@ namespace AdvertisementService.Repository
                 _context.Advertisements.Add(advertisements);
                 _context.SaveChanges();
 
-                AdvertisementsIntervals advertisementsintervals = new AdvertisementsIntervals()
+                if (!string.IsNullOrEmpty(model.IntervalId))
                 {
-                    AdvertisementId = advertisements.AdvertisementId,
-                    IntervalId = interval.IntervalId
-                };
-                _context.AdvertisementsIntervals.Add(advertisementsintervals);
-
+                    AdvertisementsIntervals advertisementsintervals = new AdvertisementsIntervals()
+                    {
+                        AdvertisementId = advertisements.AdvertisementId,
+                        IntervalId = intervals.IntervalId
+                    };
+                    _context.AdvertisementsIntervals.Add(advertisementsintervals);
+                    _context.SaveChanges();
+                }
 
                 foreach (var item in lstCampaign)
                 {
@@ -483,9 +488,14 @@ namespace AdvertisementService.Repository
                 if (media == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
 
-                var interval = _context.Intervals.Where(x => x.IntervalId == ObfuscationClass.DecodeId(Convert.ToInt32(model.IntervalId), _appSettings.PrimeInverse)).FirstOrDefault();
-                if (interval == null)
-                    return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
+                Intervals intervals = new Intervals();
+                if (!string.IsNullOrEmpty(model.IntervalId))
+                {
+                    intervals = _context.Intervals.Where(x => x.IntervalId == ObfuscationClass.DecodeId(Convert.ToInt32(model.IntervalId), _appSettings.PrimeInverse)).FirstOrDefault();
+                    if (intervals == null)
+                        return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
+
+                }
 
                 List<Campaigns> lstCampaign = new List<Campaigns>();
                 foreach (var item in model.CampaignId)
@@ -504,23 +514,26 @@ namespace AdvertisementService.Repository
                     _context.SaveChanges();
                 }
 
-                var advertisementsinterval = advertisements.AdvertisementsIntervals.Where(x => x.AdvertisementId == ObfuscationClass.DecodeId(Convert.ToInt32(model.AdvertisementId), _appSettings.PrimeInverse)).FirstOrDefault();
-                if (advertisementsinterval == null)
+                if (!string.IsNullOrEmpty(model.IntervalId))
                 {
-                    AdvertisementsIntervals objAdvertisementsintervals = new AdvertisementsIntervals()
+                    var advertisementsinterval = advertisements.AdvertisementsIntervals.Where(x => x.AdvertisementId == ObfuscationClass.DecodeId(Convert.ToInt32(model.AdvertisementId), _appSettings.PrimeInverse)).FirstOrDefault();
+                    if (advertisementsinterval == null)
                     {
-                        AdvertisementId = advertisements.AdvertisementId,
-                        IntervalId = interval.IntervalId
-                    };
-                    _context.AdvertisementsIntervals.Add(advertisementsinterval);
-                    _context.SaveChanges();
-                }
-                else
-                {
-                    advertisementsinterval.AdvertisementId = advertisements.AdvertisementId;
-                    advertisementsinterval.IntervalId = interval.IntervalId;
-                    _context.AdvertisementsIntervals.Update(advertisementsinterval);
-                    _context.SaveChanges();
+                        AdvertisementsIntervals objAdvertisementsintervals = new AdvertisementsIntervals()
+                        {
+                            AdvertisementId = advertisements.AdvertisementId,
+                            IntervalId = intervals.IntervalId
+                        };
+                        _context.AdvertisementsIntervals.Add(advertisementsinterval);
+                        _context.SaveChanges();
+                    }
+                    else
+                    {
+                        advertisementsinterval.AdvertisementId = advertisements.AdvertisementId;
+                        advertisementsinterval.IntervalId = intervals.IntervalId;
+                        _context.AdvertisementsIntervals.Update(advertisementsinterval);
+                        _context.SaveChanges();
+                    }
                 }
 
                 foreach (var item in lstCampaign)
