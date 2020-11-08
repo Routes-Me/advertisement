@@ -362,21 +362,24 @@ namespace AdvertisementService.Repository
                                     promotionsModelForContent.PromotionId = promotion.PromotionId;
                                     promotionsModelForContent.LogoUrl = promotion.LogoUrl;
                                     promotionsModelForContent.Code = promotion.Code;
-                                    if (promotion.Type.ToLower() == "links")
+                                    if (!string.IsNullOrEmpty(promotion.Type))
                                     {
-                                        promotionsModelForContent.Link = _appSettings.LinkUrlForContent + promotion.PromotionId;
-                                    }
-                                    else if (promotion.Type.ToLower() == "coupons")
-                                    {
-                                        promotionsModelForContent.Link = _appSettings.CouponUrlForContent + promotion.PromotionId;
-                                    }
-                                    else if (promotion.Type.ToLower() == "places")
-                                    {
-                                        promotionsModelForContent.Link = null;
-                                    }
-                                    else
-                                    {
-                                        promotionsModelForContent.Link = null;
+                                        if (promotion.Type.ToLower() == "links")
+                                        {
+                                            promotionsModelForContent.Link = _appSettings.LinkUrlForContent + promotion.PromotionId;
+                                        }
+                                        else if (promotion.Type.ToLower() == "coupons")
+                                        {
+                                            promotionsModelForContent.Link = _appSettings.CouponUrlForContent + promotion.PromotionId;
+                                        }
+                                        else if (promotion.Type.ToLower() == "places")
+                                        {
+                                            promotionsModelForContent.Link = null;
+                                        }
+                                        else
+                                        {
+                                            promotionsModelForContent.Link = null;
+                                        }
                                     }
                                     content.promotion = promotionsModelForContent;
                                 }
