@@ -29,11 +29,15 @@
         public static string CampaignUpdate = "Campaign updated successfully.";
 
         public static string ExceptionMessage = "Something went wrong. Error Message - ";
-
         public static string InstitutionNotFound = "Institutions not found.";
         public static string GenericException = "Something went wrong. Error - ";
-
         public static string MediaTypeNotFound = "Pass valid media type.";
+
+        public static string AdvertisementCampaignNotFound = "Advertisement campaign not found.";
+        public static string CampaignRequired = "Campaign id required.";
+        public static string AdvertisementRequired = "Advertisement id required.";
         
+        public static string EmptyModel = "Pass valid model.";
+
     }
 }

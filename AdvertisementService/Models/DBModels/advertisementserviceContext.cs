@@ -71,6 +71,8 @@ namespace AdvertisementService.Models.DBModels
 
                 entity.Property(e => e.CampaignId).HasColumnName("campaign_id");
 
+                entity.Property(e => e.SortIndex).HasColumnName("sort_index");
+
                 entity.HasOne(d => d.Advertisement)
                     .WithMany(p => p.AdvertisementsCampaigns)
                     .HasForeignKey(d => d.AdvertisementId)

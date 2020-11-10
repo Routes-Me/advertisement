@@ -37,6 +37,7 @@ namespace AdvertisementService.Models.ResponseModel
         public string ContentId { get; set; }
         public string Type { get; set; }
         public string Url { get; set; }
+        public int? SortIndex { get; set; }
     }
 
     public class PostAdvertisementsModel
@@ -64,4 +65,21 @@ namespace AdvertisementService.Models.ResponseModel
         public PromotionsModelForContent promotion { get; set; }
 
     }
+
+    public class PatchSort
+    {
+        public int? Sort { get; set; }
+    }
+
+    public class PatchSortList
+    {
+        public List<PatchSortListItem> SortItem{ get; set; }
+    }
+
+    public class PatchSortListItem
+    {
+        public string AdvertisementId { get; set; }
+        public int Sort { get; set; }
+    }
+
 }

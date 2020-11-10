@@ -290,19 +290,21 @@ namespace AdvertisementService.Repository
                                          join media in _context.Medias on advertisement.MediaId equals media.MediaId
                                          join advtcamp in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advtcamp.AdvertisementId
                                          join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
-                                         where camp.Status == "active" && camp.StartAt < DateTime.Now && camp.EndAt > DateTime.Now
+                                         where camp.Status == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now
                                          select new AdvertisementsForContentModel()
                                          {
                                              ContentId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString(),
                                              Type = media.MediaType,
-                                             Url = media.Url
-                                         }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                                             Url = media.Url,
+                                             SortIndex = advtcamp.SortIndex
+                                         }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).OrderBy(a => a.SortIndex)
+                                         .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = (from advertisement in _context.Advertisements
                                   join media in _context.Medias on advertisement.MediaId equals media.MediaId
                                   join advtcamp in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advtcamp.AdvertisementId
                                   join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
-                                  where camp.Status == "active" && camp.StartAt < DateTime.Now && camp.EndAt > DateTime.Now
+                                  where camp.Status == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now
                                   select new AdvertisementsForContentModel()
                                   {
                                       ContentId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString()
@@ -314,19 +316,21 @@ namespace AdvertisementService.Repository
                                          join media in _context.Medias on advertisement.MediaId equals media.MediaId
                                          join advtcamp in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advtcamp.AdvertisementId
                                          join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
-                                         where camp.Status == "active" && camp.StartAt < DateTime.Now && camp.EndAt > DateTime.Now && advertisement.AdvertisementId == advertisementIdDecrypted
+                                         where camp.Status == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now && advertisement.AdvertisementId == advertisementIdDecrypted
                                          select new AdvertisementsForContentModel()
                                          {
                                              ContentId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString(),
                                              Type = media.MediaType,
-                                             Url = media.Url
-                                         }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).OrderBy(a => a.ContentId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                                             Url = media.Url,
+                                             SortIndex = advtcamp.SortIndex
+                                         }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).OrderBy(a => a.SortIndex)
+                                         .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
                     totalCount = (from advertisement in _context.Advertisements
                                   join media in _context.Medias on advertisement.MediaId equals media.MediaId
                                   join advtcamp in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advtcamp.AdvertisementId
                                   join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
-                                  where camp.Status == "active" && camp.StartAt < DateTime.Now && camp.EndAt > DateTime.Now && advertisement.AdvertisementId == advertisementIdDecrypted
+                                  where camp.Status == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now && advertisement.AdvertisementId == advertisementIdDecrypted
                                   select new AdvertisementsForContentModel()
                                   {
                                       ContentId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString()
@@ -555,6 +559,85 @@ namespace AdvertisementService.Repository
                 advertisements.ResourceName = model.ResourceName;
                 _context.Advertisements.Update(advertisements);
                 _context.SaveChanges();
+                return ReturnResponse.SuccessResponse(CommonMessage.AdvertisementUpdate, false);
+            }
+            catch (Exception ex)
+            {
+                return ReturnResponse.ExceptionResponse(ex);
+            }
+        }
+
+        public dynamic UpdateCampaignAdvertisement(string campaignsId, string advertisementsId, PatchSort model)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(campaignsId))
+                    return ReturnResponse.ErrorResponse(CommonMessage.CampaignRequired, StatusCodes.Status400BadRequest);
+
+                if (string.IsNullOrEmpty(advertisementsId))
+                    return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementRequired, StatusCodes.Status400BadRequest);
+
+                int campaignsIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(campaignsId), _appSettings.PrimeInverse);
+                int advertisementIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(advertisementsId), _appSettings.PrimeInverse);
+
+                var campaign = _context.Campaigns.Where(x => x.CampaignId == campaignsIdDecrypted).FirstOrDefault();
+                if (campaign == null)
+                    return ReturnResponse.ErrorResponse(CommonMessage.CampaignNotFound, StatusCodes.Status404NotFound);
+
+                var advertisement = _context.Advertisements.Where(x => x.AdvertisementId == advertisementIdDecrypted).FirstOrDefault();
+                if (advertisement == null)
+                    return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
+
+                var camp_ads = _context.AdvertisementsCampaigns.Where(x => x.AdvertisementId == advertisementIdDecrypted && x.CampaignId == campaignsIdDecrypted).FirstOrDefault();
+                if (camp_ads == null)
+                    return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementCampaignNotFound, StatusCodes.Status404NotFound);
+
+                camp_ads.SortIndex = model.Sort;
+                _context.AdvertisementsCampaigns.Update(camp_ads);
+                _context.SaveChanges();
+                return ReturnResponse.SuccessResponse(CommonMessage.AdvertisementUpdate, false);
+            }
+            catch (Exception ex)
+            {
+                return ReturnResponse.ExceptionResponse(ex);
+            }
+        }
+
+        public dynamic UpdateCampaignAdvertisementList(string campaignsId, PatchSortList model)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(campaignsId))
+                    return ReturnResponse.ErrorResponse(CommonMessage.CampaignRequired, StatusCodes.Status400BadRequest);
+
+                if (model == null)
+                    return ReturnResponse.ErrorResponse(CommonMessage.EmptyModel, StatusCodes.Status400BadRequest);
+
+                int campaignsIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(campaignsId), _appSettings.PrimeInverse);
+                
+                var campaign = _context.Campaigns.Where(x => x.CampaignId == campaignsIdDecrypted).FirstOrDefault();
+                if (campaign == null)
+                    return ReturnResponse.ErrorResponse(CommonMessage.CampaignNotFound, StatusCodes.Status404NotFound);
+
+                foreach (var item in model.SortItem)
+                {
+                    if (string.IsNullOrEmpty(item.AdvertisementId))
+                        return ReturnResponse.ErrorResponse(CommonMessage.CampaignRequired, StatusCodes.Status400BadRequest);
+
+                    int advertisementIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(item.AdvertisementId), _appSettings.PrimeInverse);
+
+                    var advertisement = _context.Advertisements.Where(x => x.AdvertisementId == advertisementIdDecrypted).FirstOrDefault();
+                    if (advertisement == null)
+                        return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
+
+                    var camp_ads = _context.AdvertisementsCampaigns.Where(x => x.AdvertisementId == advertisementIdDecrypted && x.CampaignId == campaignsIdDecrypted).FirstOrDefault();
+                    if (camp_ads == null)
+                        return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementCampaignNotFound, StatusCodes.Status404NotFound);
+
+                    camp_ads.SortIndex = item.Sort;
+                    _context.AdvertisementsCampaigns.Update(camp_ads);
+                    _context.SaveChanges();
+                }
                 return ReturnResponse.SuccessResponse(CommonMessage.AdvertisementUpdate, false);
             }
             catch (Exception ex)

@@ -67,9 +67,25 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("contents/{id=0}")]
-        public async Task<IActionResult> GetAdvertisementsByPromotions(string id, [FromQuery] Pagination pageInfo)
+        public IActionResult GetAdvertisementsByPromotions(string id, [FromQuery] Pagination pageInfo)
         {
             dynamic response = _advertisementsRepository.GetContents(id, pageInfo);
+            return StatusCode((int)response.statusCode, response);
+        }
+
+        [HttpPatch]
+        [Route("campaigns/{campaignsId}/advertisements/{advertisementsId}")]
+        public IActionResult UpdateCampaignAdvertisement(string campaignsId, string advertisementsId, PatchSort model )
+        {
+            dynamic response = _advertisementsRepository.UpdateCampaignAdvertisement(campaignsId, advertisementsId, model);
+            return StatusCode((int)response.statusCode, response);
+        }
+
+        [HttpPatch]
+        [Route("campaigns/{campaignsId}/advertisements")]
+        public IActionResult UpdateCampaignAdvertisementList(string campaignsId, PatchSortList model)
+        {
+            dynamic response = _advertisementsRepository.UpdateCampaignAdvertisementList(campaignsId, model);
             return StatusCode((int)response.statusCode, response);
         }
     }
