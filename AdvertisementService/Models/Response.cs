@@ -112,4 +112,32 @@ namespace AdvertisementService.Models
     {
         public List<PromotionsGetModel> data { get; set; }
     }
+
+    public class LinkResponse : Response
+    {
+        public Pagination pagination { get; set; }
+        public List<LinksModel> data { get; set; }
+    }
+
+    public class LinksModel
+    {
+        public string LinkId { get; set; }
+        public string PromotionId { get; set; }
+        public string Web { get; set; }
+        public string Ios { get; set; }
+        public string Android { get; set; }
+    }
+
+    public class CouponResponse : Response
+    {
+        public Pagination pagination { get; set; }
+        public List<CouponsModel> data { get; set; }
+    }
+    public class CouponsModel
+    {
+        public string CouponId { get; set; }
+        public string PromotionId { get; set; }
+        public string UserId { get; set; }
+        public DateTime? CreatedAt { get; set; }
+    }
 }

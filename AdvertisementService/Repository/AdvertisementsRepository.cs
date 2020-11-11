@@ -17,6 +17,11 @@ using System.Text;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Azure;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Blob;
+using System.Threading.Tasks;
+using RestSharp;
+using System.Net;
 
 namespace AdvertisementService.Repository
 {
@@ -27,22 +32,25 @@ namespace AdvertisementService.Repository
         private readonly AppSettings _appSettings;
         private IWebHostEnvironment _hostingEnv;
         private ICommonFunctions _commonFunctions;
-
-        public AdvertisementsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements, IWebHostEnvironment hostingEnv, ICommonFunctions commonFunctions)
+        private readonly AzureStorageBlobConfig _config;
+        private readonly Dependencies _dependencies;
+        public AdvertisementsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements, IWebHostEnvironment hostingEnv, ICommonFunctions commonFunctions, IOptions<AzureStorageBlobConfig> config, IOptions<Dependencies> dependencies)
         {
             _appSettings = appSettings.Value;
             _context = context;
             _includeAdvertisements = includeAdvertisements;
             _hostingEnv = hostingEnv;
             _commonFunctions = commonFunctions;
+            _config = config.Value;
+            _dependencies = dependencies.Value;
         }
 
-        public dynamic DeleteAdvertisements(string id)
+        public async Task<dynamic> DeleteAdvertisementsAsync(string id)
         {
             try
             {
                 int advertisementIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(id), _appSettings.PrimeInverse);
-                var advertisements = _context.Advertisements.Include(x => x.AdvertisementsIntervals).Include(x => x.AdvertisementsCampaigns).Where(x => x.AdvertisementId == advertisementIdDecrypted).FirstOrDefault();
+                var advertisements = _context.Advertisements.Include(x => x.AdvertisementsIntervals).Include(x => x.AdvertisementsCampaigns).Include(x => x.Media).Where(x => x.AdvertisementId == advertisementIdDecrypted).FirstOrDefault();
                 if (advertisements == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
 
@@ -51,6 +59,50 @@ namespace AdvertisementService.Repository
 
                 if (advertisements.AdvertisementsCampaigns != null)
                     _context.AdvertisementsCampaigns.RemoveRange(advertisements.AdvertisementsCampaigns);
+
+                if (advertisements.Media != null)
+                {
+                    var mediaReferenceName = advertisements.Media.Url.Split('/');
+                    if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
+                    {
+                        CloudBlobClient BlobClient = storageAccount.CreateCloudBlobClient();
+                        CloudBlobContainer container = BlobClient.GetContainerReference(_config.Container);
+                        if (await container.ExistsAsync())
+                        {
+                            CloudBlob file = container.GetBlobReference(mediaReferenceName.LastOrDefault());
+                            if (await file.ExistsAsync())
+                                await file.DeleteAsync();
+                        }
+                    }
+                    _context.Medias.Remove(advertisements.Media);
+                }
+
+                var promotionIds = GetPromotionsIds(id);
+                var linkIds = GetLinksIds(promotionIds);
+                if (linkIds != null && linkIds.Count > 0)
+                {
+                    foreach (var item in linkIds)
+                    {
+                        DeleteLinks(item);
+                    }
+                }
+
+                var couponIds = GetCouponsIds(promotionIds);
+                if (couponIds != null && couponIds.Count > 0)
+                {
+                    foreach (var item in couponIds)
+                    {
+                        DeleteCoupons(item);
+                    }
+                }
+
+                if (promotionIds != null && promotionIds.Count > 0)
+                {
+                    foreach (var item in promotionIds)
+                    {
+                        DeletePromotions(item);
+                    }
+                }
 
                 _context.Advertisements.Remove(advertisements);
                 _context.SaveChanges();
@@ -548,6 +600,129 @@ namespace AdvertisementService.Repository
             catch (Exception ex)
             {
                 return ReturnResponse.ExceptionResponse(ex);
+            }
+        }
+
+        private void DeletePromotions(string promotionId)
+        {
+            try
+            {
+                var client = new RestClient(_appSettings.Host + _dependencies.PromotionsUrl + promotionId);
+                var request = new RestRequest(Method.DELETE);
+                IRestResponse response = client.Execute(request);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private void DeleteCoupons(string couponId)
+        {
+            try
+            {
+                var client = new RestClient(_appSettings.Host + _dependencies.DeleteCouponsUrl + couponId);
+                var request = new RestRequest(Method.DELETE);
+                IRestResponse response = client.Execute(request);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private void DeleteLinks(string linkId)
+        {
+            try
+            {
+                var client = new RestClient(_appSettings.Host + _dependencies.DeleteLinksUrl + linkId);
+                var request = new RestRequest(Method.DELETE);
+                IRestResponse response = client.Execute(request);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private List<string> GetPromotionsIds(string advertisementId)
+        {
+            try
+            {
+                List<string> promotionIds = new List<string>();
+                var client = new RestClient(_appSettings.Host + _dependencies.PromotionsByAdvertisementUrl + advertisementId);
+                var request = new RestRequest(Method.GET);
+                IRestResponse response = client.Execute(request);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var result = response.Content;
+                    var promotionData = JsonConvert.DeserializeObject<PromotionsGetResponse>(result);
+                    foreach (var item in promotionData.data)
+                    {
+                        promotionIds.Add(item.PromotionId);
+                    }
+                }
+                return promotionIds;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private List<string> GetCouponsIds(List<string> promotionsIds)
+        {
+            try
+            {
+                List<string> couponsIds = new List<string>();
+                foreach (var item in promotionsIds)
+                {
+                    var client = new RestClient(_appSettings.Host + _dependencies.GetCouponsUrl + item);
+                    var request = new RestRequest(Method.GET);
+                    IRestResponse response = client.Execute(request);
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        var result = response.Content;
+                        var coupons = JsonConvert.DeserializeObject<CouponResponse>(result);
+                        foreach (var innerItem in coupons.data)
+                        {
+                            couponsIds.Add(innerItem.CouponId);
+                        }
+                    }
+                }
+                return couponsIds;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private List<string> GetLinksIds(List<string> promotionsIds)
+        {
+            try
+            {
+                List<string> linksIds = new List<string>();
+                foreach (var item in promotionsIds)
+                {
+                    var client = new RestClient(_appSettings.Host + _dependencies.GetLinksUrl + item);
+                    var request = new RestRequest(Method.GET);
+                    IRestResponse response = client.Execute(request);
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        var result = response.Content;
+                        var links = JsonConvert.DeserializeObject<LinkResponse>(result);
+                        foreach (var innerItem in links.data)
+                        {
+                            linksIds.Add(innerItem.LinkId);
+                        }
+                    }
+                }
+                return linksIds;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }

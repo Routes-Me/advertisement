@@ -46,9 +46,9 @@ namespace AdvertisementService.Controllers
 
         [HttpDelete]
         [Route("advertisements/{id}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
-            dynamic response = _advertisementsRepository.DeleteAdvertisements(id);
+            dynamic response = await _advertisementsRepository.DeleteAdvertisementsAsync(id);
             return StatusCode((int)response.statusCode, response);
         }
 
@@ -75,7 +75,7 @@ namespace AdvertisementService.Controllers
 
         [HttpPatch]
         [Route("campaigns/{campaignsId}/advertisements/{advertisementsId}")]
-        public IActionResult UpdateCampaignAdvertisement(string campaignsId, string advertisementsId, PatchSort model )
+        public IActionResult UpdateCampaignAdvertisement(string campaignsId, string advertisementsId, PatchSort model)
         {
             dynamic response = _advertisementsRepository.UpdateCampaignAdvertisement(campaignsId, advertisementsId, model);
             return StatusCode((int)response.statusCode, response);

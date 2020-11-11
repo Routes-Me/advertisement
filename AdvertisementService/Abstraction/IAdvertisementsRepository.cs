@@ -1,5 +1,6 @@
 ﻿using AdvertisementService.Models;
 using AdvertisementService.Models.ResponseModel;
+using System.Threading.Tasks;
 
 namespace AdvertisementService.Abstraction
 {
@@ -7,7 +8,7 @@ namespace AdvertisementService.Abstraction
     {
         dynamic GetAdvertisements(string institutionId, string advertisementId, string includeType, Pagination pageInfo);
         dynamic UpdateAdvertisements(PostAdvertisementsModel model);
-        dynamic DeleteAdvertisements(string id);
+        Task<dynamic> DeleteAdvertisementsAsync(string id);
         dynamic InsertAdvertisements(PostAdvertisementsModel model);
         dynamic GetContents(string advertisementsId, Pagination pageInfo);
         dynamic UpdateCampaignAdvertisement(string campaignsId, string advertisementsId, PatchSort model);
