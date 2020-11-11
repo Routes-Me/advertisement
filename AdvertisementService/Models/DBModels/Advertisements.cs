@@ -16,6 +16,8 @@ namespace AdvertisementService.Models.DBModels
         public string ResourceName { get; set; }
         public DateTime? CreatedAt { get; set; }
         public int? MediaId { get; set; }
+        public int? TintColor { get; set; }
+        public int? InvertedTintColor { get; set; }
 
         public virtual Medias Media { get; set; }
         public virtual ICollection<AdvertisementsCampaigns> AdvertisementsCampaigns { get; set; }

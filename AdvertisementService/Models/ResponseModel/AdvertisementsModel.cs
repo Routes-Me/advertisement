@@ -23,6 +23,8 @@ namespace AdvertisementService.Models.ResponseModel
         public List<string> CampaignId { get; set; }
         public string IntervalId { get; set; }
         public string PromotionsId { get; set; }
+        public int? TintColor { get; set; }
+        public int? InvertedTintColor { get; set; }
     }
     public class GetCampaignList
     {
@@ -35,6 +37,8 @@ namespace AdvertisementService.Models.ResponseModel
         public string Type { get; set; }
         public string Url { get; set; }
         public int? SortIndex { get; set; }
+        public int? TintColor { get; set; }
+        public int? InvertedTintColor { get; set; }
     }
 
     public class PostAdvertisementsModel
@@ -45,6 +49,8 @@ namespace AdvertisementService.Models.ResponseModel
         public string IntervalId { get; set; }
         public List<string> CampaignId { get; set; }
         public string MediaId { get; set; }
+        public int? TintColor { get; set; }
+        public int? InvertedTintColor { get; set; }
     }
 
     public class GetActiveCampAdModel
@@ -59,6 +65,8 @@ namespace AdvertisementService.Models.ResponseModel
         public string ContentId { get; set; }
         public string Type { get; set; }
         public string Url { get; set; }
+        public int? TintColor { get; set; }
+        public int? InvertedTintColor { get; set; }
         public PromotionsModelForContent promotion { get; set; }
 
     }
@@ -89,5 +97,7 @@ namespace AdvertisementService.Models.ResponseModel
         public List<AdvertisementsCampaigns> Campaigns { get; set; }
         public string IntervalId { get; set; }
         public string PromotionsId { get; set; }
+        public int? TintColor { get; set; }
+        public int? InvertedTintColor { get; set; }
     }
 }

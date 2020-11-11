@@ -39,8 +39,6 @@ namespace AdvertisementService.Helper.Repository
                 advertisements.InstitutionId = item.InstitutionId;
                 advertisements.MediaId = item.MediaId;
                 advertisements.ResourceName = item.ResourceName;
-                //int AdvertisementIdDecoded = ObfuscationClass.DecodeId(Convert.ToInt32(item.AdvertisementId), _appSettings.PrimeInverse);
-                //var campaignList = _context.Advertisements.Include(x => x.AdvertisementsCampaigns).Where(x => x.AdvertisementId == AdvertisementIdDecoded).Select(x => x.AdvertisementsCampaigns).FirstOrDefault();
                 List<string> lstItems = new List<string>();
                 foreach (var innerItem in item.Campaigns)
                 {
@@ -49,6 +47,8 @@ namespace AdvertisementService.Helper.Repository
                 advertisements.CampaignId = lstItems;
                 advertisements.IntervalId = item.IntervalId;
                 advertisements.PromotionsId = promotions.Where(x => x.AdvertisementId == item.AdvertisementId).Select(x => x.PromotionId).FirstOrDefault();
+                advertisements.TintColor = item.TintColor;
+                advertisements.InvertedTintColor = item.InvertedTintColor;
                 advertisementsList.Add(advertisements);
             }
             var advertisementsModelList = new List<AdvertisementsGetModel>();
@@ -70,6 +70,8 @@ namespace AdvertisementService.Helper.Repository
                         ResourceName = advertisement.ResourceName,
                         IntervalId = m == null ? null : ObfuscationClass.EncodeId(Convert.ToInt32(m.IntervalId), _appSettings.Prime).ToString(),
                         Campaigns = advertisement.AdvertisementsCampaigns.ToList(),
+                        TintColor = advertisement.TintColor,
+                        InvertedTintColor = advertisement.InvertedTintColor
                     }).AsEnumerable().OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
         }
     }

@@ -169,41 +169,6 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public List<AdvertisementsGetModel> GetAdvertisementData(List<AdvertisementsGetModel> advertisementsModelList)
-        {
-            var promotions = _includeAdvertisements.GetPromotionsData();
-            List<AdvertisementsGetModel> advertisementsList = new List<AdvertisementsGetModel>();
-            foreach (var item in advertisementsModelList)
-            {
-                AdvertisementsGetModel advertisements = new AdvertisementsGetModel();
-                advertisements.AdvertisementId = item.AdvertisementId;
-                advertisements.CreatedAt = item.CreatedAt;
-                advertisements.InstitutionId = item.InstitutionId;
-                advertisements.MediaId = item.MediaId;
-                advertisements.ResourceName = item.ResourceName;
-                var campaignList = (from advertisement in _context.Advertisements
-                                    join advertisementsCampaigns in _context.AdvertisementsCampaigns on advertisement.AdvertisementId equals advertisementsCampaigns.AdvertisementId
-                                    join campaigns in _context.Campaigns on advertisementsCampaigns.CampaignId equals campaigns.CampaignId
-                                    where advertisement.AdvertisementId == ObfuscationClass.DecodeId(Convert.ToInt32(item.AdvertisementId), _appSettings.PrimeInverse)
-                                    select new
-                                    {
-                                        campaignId = ObfuscationClass.EncodeId(Convert.ToInt32(campaigns.CampaignId), _appSettings.Prime).ToString()
-                                    }).ToList();
-
-                List<string> lstItems = new List<string>();
-                foreach (var innerItem in campaignList)
-                {
-                    lstItems.Add(innerItem.campaignId);
-                }
-                advertisements.CampaignId = lstItems;
-                advertisements.IntervalId = item.IntervalId;
-                advertisements.PromotionsId = promotions.Where(x => x.AdvertisementId == item.AdvertisementId).Select(x => x.PromotionId).FirstOrDefault();
-                advertisementsList.Add(advertisements);
-            }
-            advertisementsModelList = new List<AdvertisementsGetModel>();
-            advertisementsModelList = advertisementsList;
-            return advertisementsModelList;
-        }
         public dynamic GetContents(string advertisementId, Pagination pageInfo)
         {
             int totalCount = 0;
@@ -227,7 +192,9 @@ namespace AdvertisementService.Repository
                                              ContentId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString(),
                                              Type = media.MediaType,
                                              Url = media.Url,
-                                             SortIndex = advtcamp.SortIndex
+                                             SortIndex = advtcamp.SortIndex,
+                                             TintColor = advertisement.TintColor,
+                                             InvertedTintColor = advertisement.InvertedTintColor
                                          }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).OrderBy(a => a.SortIndex)
                                          .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
@@ -253,7 +220,9 @@ namespace AdvertisementService.Repository
                                              ContentId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString(),
                                              Type = media.MediaType,
                                              Url = media.Url,
-                                             SortIndex = advtcamp.SortIndex
+                                             SortIndex = advtcamp.SortIndex,
+                                             TintColor = advertisement.TintColor,
+                                             InvertedTintColor = advertisement.InvertedTintColor
                                          }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).OrderBy(a => a.SortIndex)
                                          .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
@@ -274,7 +243,9 @@ namespace AdvertisementService.Repository
                     {
                         ContentId = content.ContentId,
                         Type = content.Type,
-                        Url = content.Url
+                        Url = content.Url,
+                        TintColor = content.TintColor,
+                        InvertedTintColor = content.InvertedTintColor
                     };
                     contents.Add(contentsModel);
                 }
@@ -374,7 +345,9 @@ namespace AdvertisementService.Repository
                     CreatedAt = DateTime.UtcNow,
                     InstitutionId = ObfuscationClass.DecodeId(Convert.ToInt32(model.InstitutionId), _appSettings.PrimeInverse),
                     MediaId = ObfuscationClass.DecodeId(Convert.ToInt32(model.MediaId), _appSettings.PrimeInverse),
-                    ResourceName = model.ResourceName
+                    ResourceName = model.ResourceName,
+                    TintColor = model.TintColor,
+                    InvertedTintColor = model.InvertedTintColor
                 };
                 _context.Advertisements.Add(advertisements);
                 _context.SaveChanges();
@@ -487,6 +460,8 @@ namespace AdvertisementService.Repository
                 advertisements.InstitutionId = ObfuscationClass.DecodeId(Convert.ToInt32(model.InstitutionId), _appSettings.PrimeInverse);
                 advertisements.MediaId = ObfuscationClass.DecodeId(Convert.ToInt32(model.MediaId), _appSettings.PrimeInverse);
                 advertisements.ResourceName = model.ResourceName;
+                advertisements.TintColor = model.TintColor;
+                advertisements.InvertedTintColor = model.InvertedTintColor;
                 _context.Advertisements.Update(advertisements);
                 _context.SaveChanges();
                 return ReturnResponse.SuccessResponse(CommonMessage.AdvertisementUpdate, false);

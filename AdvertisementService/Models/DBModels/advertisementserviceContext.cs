@@ -43,6 +43,8 @@ namespace AdvertisementService.Models.DBModels
 
                 entity.Property(e => e.InstitutionId).HasColumnName("institution_id");
 
+                entity.Property(e => e.InvertedTintColor).HasColumnName("inverted_tint_color");
+
                 entity.Property(e => e.MediaId).HasColumnName("media_id");
 
                 entity.Property(e => e.ResourceName)
@@ -50,6 +52,8 @@ namespace AdvertisementService.Models.DBModels
                     .HasColumnType("varchar(25)")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.Property(e => e.TintColor).HasColumnName("tint_color");
 
                 entity.HasOne(d => d.Media)
                     .WithMany(p => p.Advertisements)
