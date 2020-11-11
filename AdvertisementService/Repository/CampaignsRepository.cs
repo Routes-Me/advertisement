@@ -18,13 +18,15 @@ namespace AdvertisementService.Repository
     public class CampaignsRepository : ICampaignsRepository
     {
         private readonly advertisementserviceContext _context;
-        private readonly IIncludeAdvertisementsRepository _includeAdvertisements; 
+        private readonly IIncludeAdvertisementsRepository _includeAdvertisements;
         private readonly AppSettings _appSettings;
-        public CampaignsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements)
+        private ICommonFunctions _commonFunctions;
+        public CampaignsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements, ICommonFunctions commonFunctions)
         {
             _appSettings = appSettings.Value;
             _context = context;
             _includeAdvertisements = includeAdvertisements;
+            _commonFunctions = commonFunctions;
         }
 
         public dynamic DeleteCampaigns(string id)
@@ -68,6 +70,54 @@ namespace AdvertisementService.Repository
 
                 if (advertisementsIdDecrypted == 0)
                 {
+                    var advertisements = _context.Advertisements.ToList();
+                    var advertisementsCampaignsData = _context.AdvertisementsIntervals.ToList();
+                    var campaignAdvertisement = _context.AdvertisementsCampaigns.Where(x => x.CampaignId == campaignIdDecrypted).ToList();
+                    var advBasedOnCampaign = (from advertisement in advertisements
+                                              join campAd in campaignAdvertisement on advertisement.AdvertisementId equals campAd.AdvertisementId into Details
+                                              from m in Details.DefaultIfEmpty()
+                                              select new Advertisements()
+                                              {
+                                                  AdvertisementId = advertisement.AdvertisementId,
+                                                  InstitutionId = advertisement.InstitutionId,
+                                                  ResourceName = advertisement.ResourceName,
+                                                  CreatedAt = advertisement.CreatedAt,
+                                                  MediaId = advertisement.MediaId,
+                                                  Media = advertisement.Media,
+                                                  AdvertisementsCampaigns = advertisement.AdvertisementsCampaigns,
+                                                  AdvertisementsIntervals = advertisement.AdvertisementsIntervals,
+                                              }).ToList();
+                    advertisementsModelList = _commonFunctions.GetAllAdvertisements(advertisements, advertisementsCampaignsData, pageInfo);
+                    advertisementsModelList = _commonFunctions.GetAdvertisementWithCampaigns(advertisementsModelList);
+                    totalCount = advertisements.Count();
+                }
+                else
+                {
+                    var advertisements = _context.Advertisements.Where(x => x.AdvertisementId == advertisementsIdDecrypted).ToList();
+                    var advertisementsCampaignsData = _context.AdvertisementsIntervals.Where(x => x.AdvertisementId == advertisementsIdDecrypted).ToList();
+                    var campaignAdvertisement = _context.AdvertisementsCampaigns.Where(x => x.CampaignId == campaignIdDecrypted).ToList();
+                    var advBasedOnCampaign = (from advertisement in advertisements
+                                              join campAd in campaignAdvertisement on advertisement.AdvertisementId equals campAd.AdvertisementId into Details
+                                              from m in Details.DefaultIfEmpty()
+                                              select new Advertisements()
+                                              {
+                                                  AdvertisementId = advertisement.AdvertisementId,
+                                                  InstitutionId = advertisement.InstitutionId,
+                                                  ResourceName = advertisement.ResourceName,
+                                                  CreatedAt = advertisement.CreatedAt,
+                                                  MediaId = advertisement.MediaId,
+                                                  Media = advertisement.Media,
+                                                  AdvertisementsCampaigns = advertisement.AdvertisementsCampaigns,
+                                                  AdvertisementsIntervals = advertisement.AdvertisementsIntervals,
+                                              }).ToList();
+
+                    advertisementsModelList = _commonFunctions.GetAllAdvertisements(advBasedOnCampaign, advertisementsCampaignsData, pageInfo);
+                    advertisementsModelList = _commonFunctions.GetAdvertisementWithCampaigns(advertisementsModelList);
+                    totalCount = advertisements.Count();
+                }
+
+                if (advertisementsIdDecrypted == 0)
+                {
                     advertisementsModelList = (from campaign in _context.Campaigns
                                                join advertiseincampaign in _context.AdvertisementsCampaigns on campaign.CampaignId equals advertiseincampaign.CampaignId
                                                join advertisement in _context.Advertisements on advertiseincampaign.AdvertisementId equals advertisement.AdvertisementId
@@ -92,7 +142,7 @@ namespace AdvertisementService.Repository
                                   join advertisementsIntervals in _context.AdvertisementsIntervals on advertisement.AdvertisementId equals advertisementsIntervals.AdvertisementId
                                   join intervals in _context.Intervals on advertisementsIntervals.IntervalId equals intervals.IntervalId
                                   where campaign.CampaignId == campaignIdDecrypted
-                                  select new AdvertisementsGetModel(){}).AsEnumerable().ToList().Count();
+                                  select new AdvertisementsGetModel() { }).AsEnumerable().ToList().Count();
                 }
                 else
                 {
@@ -120,7 +170,7 @@ namespace AdvertisementService.Repository
                                   join advertisementsIntervals in _context.AdvertisementsIntervals on advertisement.AdvertisementId equals advertisementsIntervals.AdvertisementId
                                   join intervals in _context.Intervals on advertisementsIntervals.IntervalId equals intervals.IntervalId
                                   where campaign.CampaignId == campaignIdDecrypted && advertisement.AdvertisementId == advertisementsIdDecrypted
-                                  select new AdvertisementsGetModel(){}).AsEnumerable().ToList().Count();
+                                  select new AdvertisementsGetModel() { }).AsEnumerable().ToList().Count();
                 }
 
                 dynamic includeData = new JObject();

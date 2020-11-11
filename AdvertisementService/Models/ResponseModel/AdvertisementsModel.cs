@@ -82,4 +82,9 @@ namespace AdvertisementService.Models.ResponseModel
         public int Sort { get; set; }
     }
 
+    public class MyArray
+    {
+        public int advertisementId { get; set; }
+        public int sort { get; set; }
+    }
 }
