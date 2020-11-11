@@ -70,7 +70,7 @@ namespace AdvertisementService.Repository
 
                 if (advertisementsIdDecrypted == 0)
                 {
-                    var advertisements = _context.Advertisements.ToList();
+                    var advertisements = _context.Advertisements.Include(x => x.AdvertisementsCampaigns).ToList();
                     var advertisementsCampaignsData = _context.AdvertisementsIntervals.ToList();
                     var campaignAdvertisement = _context.AdvertisementsCampaigns.Where(x => x.CampaignId == campaignIdDecrypted).ToList();
                     var advBasedOnCampaign = (from advertisement in advertisements
@@ -87,13 +87,13 @@ namespace AdvertisementService.Repository
                                                   AdvertisementsCampaigns = advertisement.AdvertisementsCampaigns,
                                                   AdvertisementsIntervals = advertisement.AdvertisementsIntervals,
                                               }).ToList();
-                    advertisementsModelList = _commonFunctions.GetAllAdvertisements(advertisements, advertisementsCampaignsData, pageInfo);
-                    advertisementsModelList = _commonFunctions.GetAdvertisementWithCampaigns(advertisementsModelList);
+                    var advertisementsModelListWithCampaign = _commonFunctions.GetAllAdvertisements(advertisements, advertisementsCampaignsData, pageInfo);
+                    advertisementsModelList = _commonFunctions.GetAdvertisementWithCampaigns(advertisementsModelListWithCampaign);
                     totalCount = advertisements.Count();
                 }
                 else
                 {
-                    var advertisements = _context.Advertisements.Where(x => x.AdvertisementId == advertisementsIdDecrypted).ToList();
+                    var advertisements = _context.Advertisements.Include(x => x.AdvertisementsCampaigns).Where(x => x.AdvertisementId == advertisementsIdDecrypted).ToList();
                     var advertisementsCampaignsData = _context.AdvertisementsIntervals.Where(x => x.AdvertisementId == advertisementsIdDecrypted).ToList();
                     var campaignAdvertisement = _context.AdvertisementsCampaigns.Where(x => x.CampaignId == campaignIdDecrypted).ToList();
                     var advBasedOnCampaign = (from advertisement in advertisements
@@ -111,8 +111,8 @@ namespace AdvertisementService.Repository
                                                   AdvertisementsIntervals = advertisement.AdvertisementsIntervals,
                                               }).ToList();
 
-                    advertisementsModelList = _commonFunctions.GetAllAdvertisements(advBasedOnCampaign, advertisementsCampaignsData, pageInfo);
-                    advertisementsModelList = _commonFunctions.GetAdvertisementWithCampaigns(advertisementsModelList);
+                    var advertisementsModelListWithCampaign = _commonFunctions.GetAllAdvertisements(advBasedOnCampaign, advertisementsCampaignsData, pageInfo);
+                    advertisementsModelList = _commonFunctions.GetAdvertisementWithCampaigns(advertisementsModelListWithCampaign);
                     totalCount = advertisements.Count();
                 }
 

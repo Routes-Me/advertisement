@@ -10,8 +10,8 @@ namespace AdvertisementService.Helper.Abstraction
 {
     public interface ICommonFunctions
     {
-        List<AdvertisementsGetModel> GetAllAdvertisements(List<Advertisements> advertisements, List<AdvertisementsIntervals> advertisementsCampaignsData, Pagination pageInfo);
-        List<AdvertisementsGetModel> GetAdvertisementWithCampaigns(List<AdvertisementsGetModel> advertisementsModelList);
+        List<AdvertisementsGetModelWithCampaign> GetAllAdvertisements(List<Advertisements> advertisements, List<AdvertisementsIntervals> advertisementsCampaignsData, Pagination pageInfo);
+        List<AdvertisementsGetModel> GetAdvertisementWithCampaigns(List<AdvertisementsGetModelWithCampaign> advertisementsModelListWithCampaign);
   
     }
 }
