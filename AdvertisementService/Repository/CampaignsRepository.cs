@@ -131,23 +131,23 @@ namespace AdvertisementService.Repository
                         {
                             if (item.ToLower() == "institution" || item.ToLower() == "institutions")
                             {
-                                includeData.institution = await _includeAdvertisements.GetInstitutionsIncludedData(advertisementsModelList);
+                                includeData.institution = _includeAdvertisements.GetInstitutionsIncludedData(advertisementsModelList);
                             }
                             else if (item.ToLower() == "media" || item.ToLower() == "medias")
                             {
-                                includeData.media = await _includeAdvertisements.GetMediasIncludedData(advertisementsModelList);
+                                includeData.media = _includeAdvertisements.GetMediasIncludedData(advertisementsModelList);
                             }
                             else if (item.ToLower() == "campaign" || item.ToLower() == "campaigns")
                             {
-                                includeData.campaign = await _includeAdvertisements.GetCampaignIncludedData(advertisementsModelList);
+                                includeData.campaign = _includeAdvertisements.GetCampaignIncludedData(advertisementsModelList);
                             }
                             else if (item.ToLower() == "interval" || item.ToLower() == "intervals")
                             {
-                                includeData.interval = await _includeAdvertisements.GetIntervalIncludedData(advertisementsModelList);
+                                includeData.interval = _includeAdvertisements.GetIntervalIncludedData(advertisementsModelList);
                             }
                             else if (item.ToLower() == "promotion" || item.ToLower() == "promotions")
                             {
-                                includeData.promotion = await _includeAdvertisements.GetPromotionsForAdvertisementIncludedData(advertisementsModelList);
+                                includeData.promotion = _includeAdvertisements.GetPromotionsForAdvertisementIncludedData(advertisementsModelList);
                             }
                         }
                     }
