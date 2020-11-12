@@ -12,6 +12,7 @@ using Obfuscation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AdvertisementService.Repository
 {
@@ -51,7 +52,7 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public dynamic GetAdvertisements(string campaignId, string advertisementsId, string includeType, Pagination pageInfo)
+        public async Task<dynamic> GetAdvertisementsAsync(string campaignId, string advertisementsId, string includeType, Pagination pageInfo)
         {
             AdvertisementsGetResponse response = new AdvertisementsGetResponse();
             int totalCount = 0;
@@ -130,23 +131,23 @@ namespace AdvertisementService.Repository
                         {
                             if (item.ToLower() == "institution" || item.ToLower() == "institutions")
                             {
-                                includeData.institution = _includeAdvertisements.GetInstitutionsIncludedData(advertisementsModelList);
+                                includeData.institution = await _includeAdvertisements.GetInstitutionsIncludedData(advertisementsModelList);
                             }
                             else if (item.ToLower() == "media" || item.ToLower() == "medias")
                             {
-                                includeData.media = _includeAdvertisements.GetMediasIncludedData(advertisementsModelList);
+                                includeData.media = await _includeAdvertisements.GetMediasIncludedData(advertisementsModelList);
                             }
                             else if (item.ToLower() == "campaign" || item.ToLower() == "campaigns")
                             {
-                                includeData.campaign = _includeAdvertisements.GetCampaignIncludedData(advertisementsModelList);
+                                includeData.campaign = await _includeAdvertisements.GetCampaignIncludedData(advertisementsModelList);
                             }
                             else if (item.ToLower() == "interval" || item.ToLower() == "intervals")
                             {
-                                includeData.interval = _includeAdvertisements.GetIntervalIncludedData(advertisementsModelList);
+                                includeData.interval = await _includeAdvertisements.GetIntervalIncludedData(advertisementsModelList);
                             }
                             else if (item.ToLower() == "promotion" || item.ToLower() == "promotions")
                             {
-                                includeData.promotion = _includeAdvertisements.GetPromotionsForAdvertisementIncludedData(advertisementsModelList);
+                                includeData.promotion = await _includeAdvertisements.GetPromotionsForAdvertisementIncludedData(advertisementsModelList);
                             }
                         }
                     }

@@ -2,6 +2,7 @@
 using AdvertisementService.Models;
 using AdvertisementService.Models.ResponseModel;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace AdvertisementService.Controllers
 {
@@ -25,9 +26,9 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("campaigns/{id=0}/advertisements/{advertisementsId=0}")]
-        public IActionResult GetAdvertisementsById(string id, string advertisementsId, string include, [FromQuery] Pagination pageInfo)
+        public async Task<IActionResult> GetAdvertisementsByIdAsync(string id, string advertisementsId, string include, [FromQuery] Pagination pageInfo)
         {
-            dynamic response = _campaignsRepository.GetAdvertisements(id, advertisementsId, include, pageInfo);
+            dynamic response = await _campaignsRepository.GetAdvertisementsAsync(id, advertisementsId, include, pageInfo);
             return StatusCode((int)response.statusCode, response);
         }
 
