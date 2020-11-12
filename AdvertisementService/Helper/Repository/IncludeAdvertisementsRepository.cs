@@ -90,7 +90,8 @@ namespace AdvertisementService.Helper.Repository
                                             IntervalId = ObfuscationClass.EncodeId(interval.IntervalId, _appSettings.Prime).ToString(),
                                             Title = interval.Title
                                         }).ToList().FirstOrDefault();
-                intervals.Add(intervalsDetails);
+                if (intervalsDetails != null)
+                    intervals.Add(intervalsDetails);
 
             }
             var intervalList = intervals.GroupBy(x => x.IntervalId).Select(a => a.First()).ToList();
