@@ -50,11 +50,10 @@ namespace AdvertisementService.Helper.Repository
                                         }).ToList().FirstOrDefault();
 
                 if (campaignsDetails != null)
-                    if (campaigns.Where(x => x.CampaignId == campaignsDetails.CampaignId).FirstOrDefault() == null)
-                        campaigns.Add(campaignsDetails);
-
+                    campaigns.Add(campaignsDetails);
             }
-            return Common.SerializeJsonForIncludedRepo(campaigns.Cast<dynamic>().ToList());
+            var campaignsList = campaigns.GroupBy(x => x.CampaignId).Select(a => a.First()).ToList();
+            return Common.SerializeJsonForIncludedRepo(campaignsList.Cast<dynamic>().ToList());
         }
 
         public dynamic GetInstitutionsIncludedData(List<AdvertisementsGetModel> advertisementsModel)
@@ -72,7 +71,8 @@ namespace AdvertisementService.Helper.Repository
                     institutions.AddRange(institutionsData.data);
                 }
             }
-            return Common.SerializeJsonForIncludedRepo(institutions.Cast<dynamic>().ToList());
+            var institutionsList = institutions.GroupBy(x => x.InstitutionId).Select(a => a.First()).ToList();
+            return Common.SerializeJsonForIncludedRepo(institutionsList.Cast<dynamic>().ToList());
         }
 
         public dynamic GetIntervalIncludedData(List<AdvertisementsGetModel> advertisementsModel)
@@ -116,7 +116,8 @@ namespace AdvertisementService.Helper.Repository
                                          Duration = metadata.Duration,
                                          Size = metadata.Size
                                      }).ToList().FirstOrDefault();
-                medias.Add(mediasDetails);
+                if (mediasDetails != null)
+                    medias.Add(mediasDetails);
             }
             var mediaList = medias.GroupBy(x => x.MediaId).Select(a => a.First()).ToList();
             return Common.SerializeJsonForIncludedRepo(mediaList.Cast<dynamic>().ToList());
