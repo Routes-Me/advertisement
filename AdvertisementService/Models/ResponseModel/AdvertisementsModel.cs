@@ -48,7 +48,7 @@ namespace AdvertisementService.Models.ResponseModel
         public string InstitutionId { get; set; }
         public string IntervalId { get; set; }
         public List<string> CampaignId { get; set; }
-        public string MediaId { get; set; }
+        public string MediaUrl { get; set; }
         public int? TintColor { get; set; }
         public int? InvertedTintColor { get; set; }
     }

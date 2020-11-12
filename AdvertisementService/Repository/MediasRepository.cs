@@ -150,7 +150,7 @@ namespace AdvertisementService.Repository
 
                 if (model.MediaType == "video")
                 {
-                    var videoPath = await _videoConversionRepository.ConvertVideoAsync(model.media, model.Mute);
+                    var videoPath = string.Empty; //await _videoConversionRepository.ConvertVideoAsync(model.media, model.Mute);
                     string mediaReferenceName = videoPath.Split("\\").LastOrDefault();
                     if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
                     {
@@ -231,7 +231,7 @@ namespace AdvertisementService.Repository
 
                         if (model.MediaType == "video")
                         {
-                            var videoPath = await _videoConversionRepository.ConvertVideoAsync(model.media, model.Mute);
+                            var videoPath = string.Empty; //await _videoConversionRepository.ConvertVideoAsync(model.media, model.Mute);
                             mediaReferenceName = videoPath.Split("\\").LastOrDefault();
                             CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
                             await blockBlob.UploadFromStreamAsync(File.OpenRead(videoPath));
@@ -253,7 +253,7 @@ namespace AdvertisementService.Repository
                 {
                     if (model.MediaType == "video")
                     {
-                        var videoPath = await _videoConversionRepository.ConvertVideoAsync(model.media, model.Mute);
+                        var videoPath = string.Empty; //await _videoConversionRepository.ConvertVideoAsync(model.media, model.Mute);
                         mediaReferenceName = videoPath.Split("\\").LastOrDefault();
                         if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
                         {

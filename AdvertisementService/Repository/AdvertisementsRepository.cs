@@ -22,6 +22,7 @@ using Microsoft.Azure.Storage.Blob;
 using System.Threading.Tasks;
 using RestSharp;
 using System.Net;
+using System.IO;
 
 namespace AdvertisementService.Repository
 {
@@ -34,7 +35,8 @@ namespace AdvertisementService.Repository
         private ICommonFunctions _commonFunctions;
         private readonly AzureStorageBlobConfig _config;
         private readonly Dependencies _dependencies;
-        public AdvertisementsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements, IWebHostEnvironment hostingEnv, ICommonFunctions commonFunctions, IOptions<AzureStorageBlobConfig> config, IOptions<Dependencies> dependencies)
+        private readonly IVideoConversionRepository _videoConversionRepository;
+        public AdvertisementsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements, IWebHostEnvironment hostingEnv, ICommonFunctions commonFunctions, IOptions<AzureStorageBlobConfig> config, IOptions<Dependencies> dependencies, IVideoConversionRepository videoConversionRepository)
         {
             _appSettings = appSettings.Value;
             _context = context;
@@ -43,6 +45,7 @@ namespace AdvertisementService.Repository
             _commonFunctions = commonFunctions;
             _config = config.Value;
             _dependencies = dependencies.Value;
+            _videoConversionRepository = videoConversionRepository;
         }
 
         public async Task<dynamic> DeleteAdvertisementsAsync(string id)
@@ -365,15 +368,13 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public dynamic InsertAdvertisements(PostAdvertisementsModel model)
+        public async Task<dynamic> InsertAdvertisementsAsync(PostAdvertisementsModel model)
         {
             AdvertisementsPostResponse response = new AdvertisementsPostResponse();
             try
             {
-                var media = _context.Medias.Where(x => x.MediaId == ObfuscationClass.DecodeId(Convert.ToInt32(model.MediaId), _appSettings.PrimeInverse)).FirstOrDefault();
-                if (media == null)
-                    return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
-
+                string mediaReferenceName = string.Empty, ext = string.Empty;
+                int? mediaId = null;
                 Intervals intervals = new Intervals();
                 if (!string.IsNullOrEmpty(model.IntervalId))
                 {
@@ -392,11 +393,60 @@ namespace AdvertisementService.Repository
                     lstCampaign.Add(campaign);
                 }
 
+                if (!string.IsNullOrEmpty(model.MediaUrl))
+                {
+                    var existingMediaReferenceName = model.MediaUrl.Split('/');
+                    ext = existingMediaReferenceName.Last().Split('.').Last();
+                    if (ext == "mp4")
+                    {
+                        if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
+                        {
+                            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+                            CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
+                            if (await container.ExistsAsync())
+                            {
+                                CloudBlob file = container.GetBlobReference(existingMediaReferenceName.LastOrDefault());
+                                if (await file.ExistsAsync())
+                                    await file.DeleteAsync();
+                            }
+                            var videoPath = await _videoConversionRepository.ConvertVideoAsync(model.MediaUrl);
+                            mediaReferenceName = videoPath.Split("\\").LastOrDefault();
+                            CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
+                            await blockBlob.UploadFromStreamAsync(File.OpenRead(videoPath));
+                            model.MediaUrl = blockBlob.Uri.AbsoluteUri;
+                            try
+                            {
+                                if (File.Exists(videoPath))
+                                    File.Delete(videoPath);
+                            }
+                            catch (Exception ex) { }
+                        }
+                    }
+
+                    MediaMetadata mediaMetadata = new MediaMetadata();
+                    mediaMetadata.Duration = 0;
+                    mediaMetadata.Size = 0;
+                    _context.MediaMetadata.Add(mediaMetadata);
+                    _context.SaveChanges();
+
+                    Medias media = new Medias();
+                    media.Url = model.MediaUrl;
+                    media.CreatedAt = DateTime.Now;
+                    if (ext == "mp4")
+                        media.MediaType = "video";
+                    else if (ext == "jpg" || ext == "png" || ext == "jpeg")
+                        media.MediaType = "image";
+                    media.MediaMetadataId = mediaMetadata.MediaMetadataId;
+                    _context.Medias.Add(media);
+                    _context.SaveChanges();
+                    mediaId = media.MediaId;
+                }
+
                 Advertisements advertisements = new Advertisements()
                 {
                     CreatedAt = DateTime.UtcNow,
                     InstitutionId = ObfuscationClass.DecodeId(Convert.ToInt32(model.InstitutionId), _appSettings.PrimeInverse),
-                    MediaId = ObfuscationClass.DecodeId(Convert.ToInt32(model.MediaId), _appSettings.PrimeInverse),
+                    MediaId = mediaId,
                     ResourceName = model.ResourceName,
                     TintColor = model.TintColor,
                     InvertedTintColor = model.InvertedTintColor
@@ -438,17 +488,15 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public dynamic UpdateAdvertisements(PostAdvertisementsModel model)
+        public async Task<dynamic> UpdateAdvertisementsAsync(PostAdvertisementsModel model)
         {
             try
             {
+                string mediaReferenceName = string.Empty, ext = string.Empty;
+                int? mediaId = null;
                 var advertisements = _context.Advertisements.Include(x => x.AdvertisementsIntervals).Include(x => x.AdvertisementsCampaigns).Where(x => x.AdvertisementId == ObfuscationClass.DecodeId(Convert.ToInt32(model.AdvertisementId), _appSettings.PrimeInverse)).FirstOrDefault();
                 if (advertisements == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
-
-                var media = _context.Medias.Where(x => x.MediaId == ObfuscationClass.DecodeId(Convert.ToInt32(model.MediaId), _appSettings.PrimeInverse)).FirstOrDefault();
-                if (media == null)
-                    return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
 
                 Intervals intervals = new Intervals();
                 if (!string.IsNullOrEmpty(model.IntervalId))
@@ -456,7 +504,13 @@ namespace AdvertisementService.Repository
                     intervals = _context.Intervals.Where(x => x.IntervalId == ObfuscationClass.DecodeId(Convert.ToInt32(model.IntervalId), _appSettings.PrimeInverse)).FirstOrDefault();
                     if (intervals == null)
                         return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
-
+                }
+                Medias mediaData = new Medias();
+                if (model.MediaUrl != null)
+                {
+                    mediaData = _context.Medias.Include(x => x.MediaMetadata).Where(x => x.Url == model.MediaUrl).FirstOrDefault();
+                    if (mediaData == null)
+                        return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
                 }
 
                 List<Campaigns> lstCampaign = new List<Campaigns>();
@@ -509,8 +563,69 @@ namespace AdvertisementService.Repository
                     _context.SaveChanges();
                 }
 
+                if (!string.IsNullOrEmpty(model.MediaUrl))
+                {
+                    var existingMediaReferenceName = model.MediaUrl.Split('/');
+                    ext = existingMediaReferenceName.Last().Split('.').Last();
+                    if (ext == "mp4")
+                    {
+                        if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
+                        {
+                            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+                            CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
+                            if (await container.ExistsAsync())
+                            {
+                                CloudBlob file = container.GetBlobReference(existingMediaReferenceName.LastOrDefault());
+                                if (await file.ExistsAsync())
+                                    await file.DeleteAsync();
+                            }
+                            var videoPath = await _videoConversionRepository.ConvertVideoAsync(model.MediaUrl);
+                            mediaReferenceName = videoPath.Split("\\").LastOrDefault();
+                            CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
+                            await blockBlob.UploadFromStreamAsync(File.OpenRead(videoPath));
+                            model.MediaUrl = blockBlob.Uri.AbsoluteUri;
+                            try
+                            {
+                                if (File.Exists(videoPath))
+                                    File.Delete(videoPath);
+                            }
+                            catch (Exception ex) { }
+                        }
+                    }
+
+                    if (mediaData.MediaMetadata == null)
+                    {
+                        MediaMetadata mediaMetadata = new MediaMetadata()
+                        {
+                            Duration = 0,
+                            Size = 0
+                        };
+                        _context.MediaMetadata.Add(mediaMetadata);
+                        _context.SaveChanges();
+                        mediaData.MediaMetadataId = mediaMetadata.MediaMetadataId;
+                    }
+                    else
+                    {
+                        mediaData.MediaMetadata.Duration = 0;
+                        mediaData.MediaMetadata.Size = 0;
+                        _context.MediaMetadata.Update(mediaData.MediaMetadata);
+                        _context.SaveChanges();
+                    }
+
+                    mediaData.Url = model.MediaUrl;
+                    if (ext == "mp4")
+                        mediaData.MediaType = "video";
+                    else if (ext == "jpg" || ext == "png" || ext == "jpeg")
+                        mediaData.MediaType = "image";
+                    _context.Medias.Add(mediaData);
+                    _context.SaveChanges();
+                }
+
                 advertisements.InstitutionId = ObfuscationClass.DecodeId(Convert.ToInt32(model.InstitutionId), _appSettings.PrimeInverse);
-                advertisements.MediaId = ObfuscationClass.DecodeId(Convert.ToInt32(model.MediaId), _appSettings.PrimeInverse);
+                if (mediaData != null)
+                    advertisements.MediaId = ObfuscationClass.DecodeId(Convert.ToInt32(mediaData.MediaId), _appSettings.PrimeInverse);
+                else
+                    advertisements.MediaId = null;
                 advertisements.ResourceName = model.ResourceName;
                 advertisements.TintColor = model.TintColor;
                 advertisements.InvertedTintColor = model.InvertedTintColor;

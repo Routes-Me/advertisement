@@ -5,6 +5,7 @@ using MediaToolkit.Model;
 using MediaToolkit.Options;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Storage.Blob;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,11 +21,15 @@ namespace AdvertisementService.Helper.Repository
         {
             _webHostEnvironment = webHostEnvironment;
         }
-        public async Task<string> ConvertVideoAsync(IFormFile file, bool mute)
+        public async Task<string> ConvertVideoAsync(string file)
         {
-            string uniqueFileName = Path.GetFileNameWithoutExtension(file.FileName.Replace(" ", "_").Replace(".jpg", "").Replace(".png", "").Replace(".jpeg", "")) + "_" + Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            CloudBlockBlob blockBlob = new CloudBlockBlob(new Uri(file));
             var uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "TempVideo");
-            string filePath = Path.Combine(uploadPath, uniqueFileName);
+            var fileName = blockBlob.Name.Split('/');
+            var updatedFileName = fileName.Last().Split('.');
+            string inputFilePath = Path.Combine(uploadPath, updatedFileName.First() + "_input" + ".mp4");
+            string outputFilePath = Path.Combine(uploadPath, updatedFileName.First() + "_output" + ".mp4");
+            string originalFilePath = Path.Combine(uploadPath, fileName.Last());
 
             if (!Directory.Exists(uploadPath))
                 Directory.CreateDirectory(uploadPath);
@@ -35,14 +40,13 @@ namespace AdvertisementService.Helper.Repository
                 files.Delete();
             }
 
-            using (var stream = File.Create(filePath))
+            using (var fs = new FileStream(inputFilePath, FileMode.Create))
             {
-                await file.CopyToAsync(stream);
+                await blockBlob.DownloadToStreamAsync(fs);
             }
 
             // Set input file and output file
-            var inputFile = new MediaFile { Filename = filePath };
-            var outputFilePath = filePath.Split('.')[0] + "_" + Guid.NewGuid() + ".mp4";
+            var inputFile = new MediaFile { Filename = inputFilePath };
             var outputFile = new MediaFile { Filename = outputFilePath };
 
             // Set Video conversion options
@@ -59,29 +63,16 @@ namespace AdvertisementService.Helper.Repository
                     engine.Convert(inputFile, outputFile, conversionOptions);
                 }
             }
-            catch (Exception) { return filePath; }
+            catch (Exception) { return inputFilePath; }
 
-            if (mute)
-            {
-                var muteFile = outputFile.Filename.Split('.')[0] + "_" + Guid.NewGuid() + ".mp4";
-                // Mutes output video file from MediaToolKit conversion and produces another muted video file
-                FFMpegOptions options = new FFMpegOptions { RootDirectory = _webHostEnvironment.WebRootPath + "\\FFMpeg" };
-                FFMpegOptions.Configure(options);
-                FFMpeg.Mute(outputFile.Filename, muteFile);
+            // Mutes output video file from MediaToolKit conversion and produces another muted video file
+            FFMpegOptions options = new FFMpegOptions { RootDirectory = _webHostEnvironment.WebRootPath + "\\FFMpeg" };
+            FFMpegOptions.Configure(options);
+            FFMpeg.Mute(outputFile.Filename, originalFilePath);
 
-                // Delete first output file with audio
-                if (System.IO.File.Exists(outputFile.Filename))
-                {
-                    System.IO.File.Delete(outputFile.Filename);
-                }
+        
 
-                if (File.Exists(outputFilePath))
-                    File.Delete(filePath);
-
-                return muteFile;
-            }
-
-            return outputFile.Filename;
+            return originalFilePath;
         }
     }
 }

@@ -30,17 +30,17 @@ namespace AdvertisementService.Controllers
 
         [HttpPost]
         [Route("advertisements")]
-        public IActionResult Post(PostAdvertisementsModel model)
+        public async Task<IActionResult> PostAsync(PostAdvertisementsModel model)
         {
-            dynamic response = _advertisementsRepository.InsertAdvertisements(model);
+            dynamic response = await _advertisementsRepository.InsertAdvertisementsAsync(model);
             return StatusCode((int)response.statusCode, response);
         }
 
         [HttpPut]
         [Route("advertisements")]
-        public IActionResult Put(PostAdvertisementsModel model)
+        public async Task<IActionResult> PutAsync(PostAdvertisementsModel model)
         {
-            dynamic response = _advertisementsRepository.UpdateAdvertisements(model);
+            dynamic response = await _advertisementsRepository.UpdateAdvertisementsAsync(model);
             return StatusCode((int)response.statusCode, response);
         }
 

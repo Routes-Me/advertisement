@@ -8,6 +8,6 @@ namespace AdvertisementService.Helper.Abstraction
 {
     public interface IVideoConversionRepository
     {
-       Task <string> ConvertVideoAsync(IFormFile filepath, bool mute);
+       Task <string> ConvertVideoAsync(string filepath);
     }
 }
