@@ -10,5 +10,6 @@ namespace AdvertisementService.Helper.Abstraction
     public interface IVideoConversionRepository
     {
         Task<VideoMetadata> ConvertVideoAsync(string filepath);
+        Task<float> ConvertImageAsync(string mediaUrl);
     }
 }

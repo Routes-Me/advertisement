@@ -36,12 +36,6 @@ namespace AdvertisementService.Helper.Repository
             if (!Directory.Exists(uploadPath))
                 Directory.CreateDirectory(uploadPath);
 
-            DirectoryInfo di = new DirectoryInfo(uploadPath);
-            foreach (FileInfo files in di.GetFiles())
-            {
-                files.Delete();
-            }
-
             using (var fs = new FileStream(inputFilePath, FileMode.Create))
             {
                 await blockBlob.DownloadToStreamAsync(fs);
@@ -77,12 +71,37 @@ namespace AdvertisementService.Helper.Repository
             FileInfo fInfo = new FileInfo(originalFilePath);
             // Length/1024 = kb
             // kb/1024 = mb
-            var videoSize = (fInfo.Length / 1024) / 1024;   //display size in mb
-
+            var videoSize = Convert.ToDecimal(Convert.ToDecimal((fInfo.Length / 1024)) / 1024).ToString("0.##");   //display size in mb
             videoMetadata.CompressedFile = originalFilePath;
             videoMetadata.Duration = (float)duration.TotalSeconds;
-            videoMetadata.VideoSize = videoSize;
+            videoMetadata.VideoSize = (float)Convert.ToDecimal(videoSize);
+            FileInfo inputFileInfo = new FileInfo(inputFilePath);
+            FileInfo outputFileInfo = new FileInfo(outputFilePath);
+            inputFileInfo.Delete();
+            outputFileInfo.Delete();
             return videoMetadata;
+        }
+
+        public async Task<float> ConvertImageAsync(string file)
+        {
+            CloudBlockBlob blockBlob = new CloudBlockBlob(new Uri(file));
+            var uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "TempImage");
+            var fileName = blockBlob.Name.Split('/');
+            string originalFilePath = Path.Combine(uploadPath, fileName.Last());
+
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            using (var fs = new FileStream(originalFilePath, FileMode.Create))
+            {
+                await blockBlob.DownloadToStreamAsync(fs);
+            }
+            FileInfo fInfo = new FileInfo(originalFilePath);
+            // Length/1024 = kb
+            // kb/1024 = mb
+            var size = Convert.ToDecimal(Convert.ToDecimal((fInfo.Length / 1024)) / 1024).ToString("0.##");   //display size in mb
+            fInfo.Delete();
+            return (float)Convert.ToDecimal(size); 
         }
     }
 }

@@ -413,14 +413,13 @@ namespace AdvertisementService.Repository
                             videoMetadata = await _videoConversionRepository.ConvertVideoAsync(model.MediaUrl);
                             mediaReferenceName = videoMetadata.CompressedFile.Split("\\").LastOrDefault();
                             CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
-                            await blockBlob.UploadFromStreamAsync(File.OpenRead(videoMetadata.CompressedFile));
-                            model.MediaUrl = blockBlob.Uri.AbsoluteUri;
-                            try
+                            using (var stream = File.OpenRead(videoMetadata.CompressedFile))
                             {
-                                if (File.Exists(videoMetadata.CompressedFile))
-                                    File.Delete(videoMetadata.CompressedFile);
+                                await blockBlob.UploadFromStreamAsync(stream);
                             }
-                            catch (Exception ex) { }
+                            model.MediaUrl = blockBlob.Uri.AbsoluteUri;
+                            FileInfo fInfo = new FileInfo(videoMetadata.CompressedFile);
+                            fInfo.Delete();
                         }
 
                         MediaMetadata mediaMetadata = new MediaMetadata();
@@ -430,10 +429,9 @@ namespace AdvertisementService.Repository
                         _context.SaveChanges();
                         MediaMetadataId = mediaMetadata.MediaMetadataId;
                     }
-                    else if(ext == "jpg" || ext == "png" || ext == "jpeg")
+                    else if (ext == "jpg" || ext == "png" || ext == "jpeg")
                     {
-                        FileInfo fInfo = new FileInfo(model.MediaUrl);
-                        var imagesize = (fInfo.Length / 1024) / 1024;
+                        var imagesize = await _videoConversionRepository.ConvertImageAsync(model.MediaUrl);
                         MediaMetadata mediaMetadata = new MediaMetadata();
                         mediaMetadata.Duration = 0;
                         mediaMetadata.Size = imagesize;
@@ -441,7 +439,7 @@ namespace AdvertisementService.Repository
                         _context.SaveChanges();
                         MediaMetadataId = mediaMetadata.MediaMetadataId;
                     }
-                   
+
                     Medias media = new Medias();
                     media.Url = model.MediaUrl;
                     media.CreatedAt = DateTime.Now;
@@ -596,29 +594,27 @@ namespace AdvertisementService.Repository
                             videoMetadata = await _videoConversionRepository.ConvertVideoAsync(model.MediaUrl);
                             mediaReferenceName = videoMetadata.CompressedFile.Split("\\").LastOrDefault();
                             CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
-                            await blockBlob.UploadFromStreamAsync(File.OpenRead(videoMetadata.CompressedFile));
-                            model.MediaUrl = blockBlob.Uri.AbsoluteUri;
-                            try
+                            using (var stream = File.OpenRead(videoMetadata.CompressedFile))
                             {
-                                if (File.Exists(videoMetadata.CompressedFile))
-                                    File.Delete(videoMetadata.CompressedFile);
+                                await blockBlob.UploadFromStreamAsync(stream);
                             }
-                            catch (Exception ex) { }
+                            model.MediaUrl = blockBlob.Uri.AbsoluteUri;
+                            FileInfo fInfo = new FileInfo(videoMetadata.CompressedFile);
+                            fInfo.Delete();
                         }
                     }
 
                     if (mediaData.MediaMetadata == null)
                     {
                         MediaMetadata metadataItem = new MediaMetadata();
-                        if (ext == "jpg" || ext == "png" || ext == "jpeg")
+                        if (ext == "mp4")
                         {
                             metadataItem.Duration = videoMetadata.Duration;
                             metadataItem.Size = videoMetadata.VideoSize;
                         }
-                        else
+                        else if (ext == "jpg" || ext == "png" || ext == "jpeg")
                         {
-                            FileInfo fInfo = new FileInfo(model.MediaUrl);
-                            var imagesize = (fInfo.Length / 1024) / 1024;
+                            var imagesize = await _videoConversionRepository.ConvertImageAsync(model.MediaUrl);
                             metadataItem.Duration = 0;
                             metadataItem.Size = imagesize;
                         }
@@ -628,15 +624,14 @@ namespace AdvertisementService.Repository
                     }
                     else
                     {
-                        if (ext == "jpg" || ext == "png" || ext == "jpeg")
+                        if (ext == "mp4")
                         {
                             mediaData.MediaMetadata.Duration = videoMetadata.Duration;
                             mediaData.MediaMetadata.Size = videoMetadata.VideoSize;
                         }
-                        else
+                        else if (ext == "jpg" || ext == "png" || ext == "jpeg")
                         {
-                            FileInfo fInfo = new FileInfo(model.MediaUrl);
-                            var imagesize = (fInfo.Length / 1024) / 1024;
+                            var imagesize = await _videoConversionRepository.ConvertImageAsync(model.MediaUrl);
                             mediaData.MediaMetadata.Duration = 0;
                             mediaData.MediaMetadata.Size = imagesize;
                         }
@@ -648,13 +643,13 @@ namespace AdvertisementService.Repository
                         mediaData.MediaType = "video";
                     else if (ext == "jpg" || ext == "png" || ext == "jpeg")
                         mediaData.MediaType = "image";
-                    _context.Medias.Add(mediaData);
+                    _context.Medias.Update(mediaData);
                     _context.SaveChanges();
                 }
 
                 advertisements.InstitutionId = ObfuscationClass.DecodeId(Convert.ToInt32(model.InstitutionId), _appSettings.PrimeInverse);
                 if (mediaData != null)
-                    advertisements.MediaId = ObfuscationClass.DecodeId(Convert.ToInt32(mediaData.MediaId), _appSettings.PrimeInverse);
+                    advertisements.MediaId = mediaData.MediaId;
                 else
                     advertisements.MediaId = null;
                 advertisements.ResourceName = model.ResourceName;
