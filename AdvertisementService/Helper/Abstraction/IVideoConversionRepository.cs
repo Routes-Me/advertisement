@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AdvertisementService.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,6 @@ namespace AdvertisementService.Helper.Abstraction
 {
     public interface IVideoConversionRepository
     {
-       Task <string> ConvertVideoAsync(string filepath);
+        Task<VideoMetadata> ConvertVideoAsync(string filepath);
     }
 }

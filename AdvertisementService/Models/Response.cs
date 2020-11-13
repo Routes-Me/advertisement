@@ -20,7 +20,7 @@ namespace AdvertisementService.Models
             Response response = new Response();
             response.status = false;
             response.message = CommonMessage.GenericException + ex.Message;
-            response.statusCode = StatusCodes.Status500InternalServerError ;
+            response.statusCode = StatusCodes.Status500InternalServerError;
             return response;
         }
 
@@ -139,5 +139,12 @@ namespace AdvertisementService.Models
         public string PromotionId { get; set; }
         public string UserId { get; set; }
         public DateTime? CreatedAt { get; set; }
+    }
+
+    public class VideoMetadata
+    {
+        public string CompressedFile { get; set; }
+        public float Duration { get; set; }
+        public float VideoSize { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AdvertisementService.Helper.Abstraction;
+using AdvertisementService.Models;
 using FFMpegCore;
 using MediaToolkit;
 using MediaToolkit.Model;
@@ -21,8 +22,9 @@ namespace AdvertisementService.Helper.Repository
         {
             _webHostEnvironment = webHostEnvironment;
         }
-        public async Task<string> ConvertVideoAsync(string file)
+        public async Task<VideoMetadata> ConvertVideoAsync(string file)
         {
+            VideoMetadata videoMetadata = new VideoMetadata();
             CloudBlockBlob blockBlob = new CloudBlockBlob(new Uri(file));
             var uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "TempVideo");
             var fileName = blockBlob.Name.Split('/');
@@ -61,18 +63,26 @@ namespace AdvertisementService.Helper.Repository
                 using (var engine = new Engine())
                 {
                     engine.Convert(inputFile, outputFile, conversionOptions);
+                    engine.GetMetadata(outputFile);
+
                 }
             }
-            catch (Exception) { return inputFilePath; }
+            catch (Exception) { return videoMetadata; }
 
             // Mutes output video file from MediaToolKit conversion and produces another muted video file
             FFMpegOptions options = new FFMpegOptions { RootDirectory = _webHostEnvironment.WebRootPath + "\\FFMpeg" };
             FFMpegOptions.Configure(options);
             FFMpeg.Mute(outputFile.Filename, originalFilePath);
+            var duration = outputFile.Metadata.Duration;
+            FileInfo fInfo = new FileInfo(originalFilePath);
+            // Length/1024 = kb
+            // kb/1024 = mb
+            var videoSize = (fInfo.Length / 1024) / 1024;   //display size in mb
 
-        
-
-            return originalFilePath;
+            videoMetadata.CompressedFile = originalFilePath;
+            videoMetadata.Duration = (float)duration.TotalSeconds;
+            videoMetadata.VideoSize = videoSize;
+            return videoMetadata;
         }
     }
 }
