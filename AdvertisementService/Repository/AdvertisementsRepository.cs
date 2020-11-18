@@ -117,7 +117,7 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public async Task<dynamic> GetAdvertisementsAsync(string institutionId, string advertisementId, string includeType, Pagination pageInfo)
+        public dynamic GetAdvertisements(string institutionId, string advertisementId, string includeType, Pagination pageInfo)
         {
 
             int totalCount = 0;
@@ -637,6 +637,7 @@ namespace AdvertisementService.Repository
                         }
                         _context.MediaMetadata.Update(mediaData.MediaMetadata);
                         _context.SaveChanges();
+
                     }
                     mediaData.Url = model.MediaUrl;
                     if (ext == "mp4")
