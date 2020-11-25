@@ -405,21 +405,24 @@ namespace AdvertisementService.Repository
                             videoMetadata = await _videoConversionRepository.ConvertVideoAsync(model.MediaUrl);
                             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
                             CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
-                            if (await container.ExistsAsync())
+                            if (!string.IsNullOrEmpty(videoMetadata.CompressedFile))
                             {
-                                CloudBlob file = container.GetBlobReference(existingMediaReferenceName.LastOrDefault());
-                                if (await file.ExistsAsync())
-                                    await file.DeleteAsync();
+                                if (await container.ExistsAsync())
+                                {
+                                    CloudBlob file = container.GetBlobReference(existingMediaReferenceName.LastOrDefault());
+                                    if (await file.ExistsAsync())
+                                        await file.DeleteAsync();
+                                }
+                                mediaReferenceName = videoMetadata.CompressedFile.Split("\\").LastOrDefault();
+                                CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
+                                using (var stream = File.OpenRead(videoMetadata.CompressedFile))
+                                {
+                                    await blockBlob.UploadFromStreamAsync(stream);
+                                }
+                                model.MediaUrl = blockBlob.Uri.AbsoluteUri;
+                                FileInfo fInfo = new FileInfo(videoMetadata.CompressedFile);
+                                fInfo.Delete();
                             }
-                            mediaReferenceName = videoMetadata.CompressedFile.Split("\\").LastOrDefault();
-                            CloudBlockBlob blockBlob = container.GetBlockBlobReference(mediaReferenceName);
-                            using (var stream = File.OpenRead(videoMetadata.CompressedFile))
-                            {
-                                await blockBlob.UploadFromStreamAsync(stream);
-                            }
-                            model.MediaUrl = blockBlob.Uri.AbsoluteUri;
-                            FileInfo fInfo = new FileInfo(videoMetadata.CompressedFile);
-                            fInfo.Delete();
                         }
 
                         MediaMetadata mediaMetadata = new MediaMetadata();

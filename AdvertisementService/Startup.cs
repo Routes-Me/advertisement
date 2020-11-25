@@ -137,6 +137,8 @@ namespace AdvertisementService
             
             app.UseHttpsRedirection();
             app.UseRouting();
+            // Add Static Files Middleware  
+            app.UseStaticFiles();
             app.UseAuthorization();
             app.UseCors("MyPolicy");
             app.UseEndpoints(endpoints =>
