@@ -19,7 +19,7 @@ namespace AdvertisementService.Models
         {
             Response response = new Response();
             response.status = false;
-            response.message = CommonMessage.GenericException + ex.Message;
+            response.message = CommonMessage.GenericException + ex.Message + "******** Stack Trace ***********" + ex.StackTrace;
             response.statusCode = StatusCodes.Status500InternalServerError;
             return response;
         }
