@@ -52,7 +52,7 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public async Task<dynamic> GetAdvertisementsAsync(string campaignId, string advertisementsId, string includeType, Pagination pageInfo)
+        public dynamic GetAdvertisementsAsync(string campaignId, string advertisementsId, string includeType, Pagination pageInfo)
         {
             AdvertisementsGetResponse response = new AdvertisementsGetResponse();
             int totalCount = 0;

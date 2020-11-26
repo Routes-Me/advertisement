@@ -6,7 +6,7 @@ namespace AdvertisementService.Abstraction
 {
     public interface ICampaignsRepository
     {
-        Task<dynamic> GetAdvertisementsAsync(string campaignId, string advertisementsId, string includeType, Pagination pageInfo);
+        dynamic GetAdvertisementsAsync(string campaignId, string advertisementsId, string includeType, Pagination pageInfo);
         dynamic GetCampaigns(string campaignId, string includeType, Pagination pageInfo);
         dynamic UpdateCampaigns(CampaignsModel model);
         dynamic DeleteCampaigns(string id);

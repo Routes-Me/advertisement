@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using RestSharp;
 using System.Net;
 using System.IO;
+using Microsoft.Extensions.Logging;
 
 namespace AdvertisementService.Repository
 {
@@ -36,7 +37,8 @@ namespace AdvertisementService.Repository
         private readonly AzureStorageBlobConfig _config;
         private readonly Dependencies _dependencies;
         private readonly IVideoConversionRepository _videoConversionRepository;
-        public AdvertisementsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements, IWebHostEnvironment hostingEnv, ICommonFunctions commonFunctions, IOptions<AzureStorageBlobConfig> config, IOptions<Dependencies> dependencies, IVideoConversionRepository videoConversionRepository)
+        private readonly ILogger<AdvertisementsRepository> _logger;
+        public AdvertisementsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements, IWebHostEnvironment hostingEnv, ICommonFunctions commonFunctions, IOptions<AzureStorageBlobConfig> config, IOptions<Dependencies> dependencies, IVideoConversionRepository videoConversionRepository, ILogger<AdvertisementsRepository> logger)
         {
             _appSettings = appSettings.Value;
             _context = context;
@@ -46,6 +48,7 @@ namespace AdvertisementService.Repository
             _config = config.Value;
             _dependencies = dependencies.Value;
             _videoConversionRepository = videoConversionRepository;
+            _logger = logger;
         }
 
         public async Task<dynamic> DeleteAdvertisementsAsync(string id)
@@ -420,6 +423,7 @@ namespace AdvertisementService.Repository
                                     await blockBlob.UploadFromStreamAsync(stream);
                                 }
                                 model.MediaUrl = blockBlob.Uri.AbsoluteUri;
+                                _logger.LogInformation(blockBlob.Uri.AbsoluteUri);
                                 FileInfo fInfo = new FileInfo(videoMetadata.CompressedFile);
                                 fInfo.Delete();
                             }

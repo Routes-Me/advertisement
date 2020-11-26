@@ -7,6 +7,7 @@ using MediaToolkit.Options;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Storage.Blob;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,9 +19,11 @@ namespace AdvertisementService.Helper.Repository
     public class VideoConversionRepository : IVideoConversionRepository
     {
         private readonly IWebHostEnvironment _env;
-        public VideoConversionRepository(IWebHostEnvironment webHostEnvironment)
+        private readonly ILogger<VideoConversionRepository> _logger;
+        public VideoConversionRepository(IWebHostEnvironment webHostEnvironment, ILogger<VideoConversionRepository> logger)
         {
             _env = webHostEnvironment;
+            _logger = logger;
         }
         public async Task<VideoMetadata> ConvertVideoAsync(string file)
         {
@@ -28,12 +31,11 @@ namespace AdvertisementService.Helper.Repository
             {
                 VideoMetadata videoMetadata = new VideoMetadata();
                 CloudBlockBlob blockBlob = new CloudBlockBlob(new Uri(file));
-                var uploadPath = Path.Combine(_env.WebRootPath, "TempVideo");
+                var uploadPath = Path.Combine(_env.ContentRootPath, "CompressedFiles");
                 var fileName = blockBlob.Name.Split('/');
                 var updatedFileName = fileName.Last().Split('.');
                 string inputFilePath = Path.Combine(uploadPath, updatedFileName.First() + "_input" + ".mp4");
-                string outputFilePath = Path.Combine(uploadPath, updatedFileName.First() + "_output" + ".mp4");
-                string originalFilePath = Path.Combine(uploadPath, fileName.Last());
+                string outputFilePath = Path.Combine(uploadPath, fileName.Last());
 
                 if (!Directory.Exists(uploadPath))
                     Directory.CreateDirectory(uploadPath);
@@ -60,41 +62,42 @@ namespace AdvertisementService.Helper.Repository
                     {
                         engine.Convert(inputFile, outputFile, conversionOptions);
                         engine.GetMetadata(outputFile);
+                        engine.Dispose();
                     }
                 }
-                catch (Exception) { return videoMetadata; }
+                catch (Exception ex) { _logger.LogError(ex.Message); }
 
-                // Mutes output video file from MediaToolKit conversion and produces another muted video file
-                FFMpegOptions options = new FFMpegOptions { RootDirectory = _env.WebRootPath + "\\FFMpeg" };
-                FFMpegOptions.Configure(options);
-                FFMpeg.Mute(outputFile.Filename, originalFilePath);
-                var duration = outputFile.Metadata.Duration;
-                FileInfo fInfo = new FileInfo(originalFilePath);
+                if (outputFile != null)
+                {
+                    if (outputFile.Metadata != null)
+                    {
+                        var duration = outputFile.Metadata.Duration;
+                        videoMetadata.Duration = (float)duration.TotalSeconds;
+                    }
+                }
+                FileInfo outputFileInfo = new FileInfo(outputFile.Filename);
                 // Length/1024 = kb
                 // kb/1024 = mb
-                var videoSize = Convert.ToDecimal(Convert.ToDecimal((fInfo.Length / 1024)) / 1024).ToString("0.##");   //display size in mb
-                videoMetadata.CompressedFile = originalFilePath;
-                videoMetadata.Duration = (float)duration.TotalSeconds;
+                var videoSize = Convert.ToDecimal(Convert.ToDecimal((outputFileInfo.Length / 1024)) / 1024).ToString("0.##");   //display size in mb
+                videoMetadata.CompressedFile = outputFileInfo.FullName;
                 videoMetadata.VideoSize = (float)Convert.ToDecimal(videoSize);
                 FileInfo inputFileInfo = new FileInfo(inputFilePath);
-                FileInfo outputFileInfo = new FileInfo(outputFilePath);
                 inputFileInfo.Delete();
-                outputFileInfo.Delete();
                 return videoMetadata;
-               
+
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        
+
         public async Task<float> ConvertImageAsync(string file)
         {
             try
             {
                 CloudBlockBlob blockBlob = new CloudBlockBlob(new Uri(file));
-                var uploadPath = Path.Combine(_env.WebRootPath, "TempImage");
+                var uploadPath = Path.Combine(_env.ContentRootPath, "CompressedFiles");
                 var fileName = blockBlob.Name.Split('/');
                 string originalFilePath = Path.Combine(uploadPath, fileName.Last());
 
@@ -119,3 +122,4 @@ namespace AdvertisementService.Helper.Repository
         }
     }
 }
+

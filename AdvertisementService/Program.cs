@@ -15,9 +15,6 @@ namespace AdvertisementService
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseKestrel();
-                    webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
-                    webBuilder.UseWebRoot("wwwroot");
                     webBuilder.UseStartup<Startup>();
                 });
     }
