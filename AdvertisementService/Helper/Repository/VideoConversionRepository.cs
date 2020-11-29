@@ -10,6 +10,7 @@ using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,14 +32,14 @@ namespace AdvertisementService.Helper.Repository
             {
                 VideoMetadata videoMetadata = new VideoMetadata();
                 CloudBlockBlob blockBlob = new CloudBlockBlob(new Uri(file));
-                var uploadPath = Path.Combine(_env.ContentRootPath, "CompressedFiles");
+               // var uploadPath = Path.Combine(_env.ContentRootPath, "CompressedFiles");
                 var fileName = blockBlob.Name.Split('/');
                 var updatedFileName = fileName.Last().Split('.');
-                string inputFilePath = Path.Combine(uploadPath, updatedFileName.First() + "_input" + ".mp4");
-                string outputFilePath = Path.Combine(uploadPath, fileName.Last());
+                string inputFilePath = Path.Combine(_env.ContentRootPath, updatedFileName.First() + "_input" + ".mp4");
+                string outputFilePath = Path.Combine(_env.ContentRootPath, fileName.Last());
 
-                if (!Directory.Exists(uploadPath))
-                    Directory.CreateDirectory(uploadPath);
+                //if (!Directory.Exists(uploadPath))
+                //    Directory.CreateDirectory(uploadPath);
 
                 using (var fs = new FileStream(inputFilePath, FileMode.Create))
                 {
@@ -55,6 +56,8 @@ namespace AdvertisementService.Helper.Repository
                 conversionOptions.VideoBitRate = 800;
                 conversionOptions.AudioSampleRate = AudioSampleRate.Default;
 
+                _logger.LogInformation("inputFile -" + inputFile.Filename);
+                _logger.LogInformation("outputFile -" + outputFile.Filename);
                 // Convert video using MediaToolKit
                 try
                 {
@@ -97,12 +100,12 @@ namespace AdvertisementService.Helper.Repository
             try
             {
                 CloudBlockBlob blockBlob = new CloudBlockBlob(new Uri(file));
-                var uploadPath = Path.Combine(_env.ContentRootPath, "CompressedFiles");
+                //var uploadPath = Path.Combine(_env.ContentRootPath, "CompressedFiles");
                 var fileName = blockBlob.Name.Split('/');
-                string originalFilePath = Path.Combine(uploadPath, fileName.Last());
+                string originalFilePath = Path.Combine(_env.ContentRootPath, fileName.Last());
 
-                if (!Directory.Exists(uploadPath))
-                    Directory.CreateDirectory(uploadPath);
+                //if (!Directory.Exists(uploadPath))
+                //    Directory.CreateDirectory(uploadPath);
 
                 using (var fs = new FileStream(originalFilePath, FileMode.Create))
                 {
