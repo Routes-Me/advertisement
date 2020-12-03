@@ -52,7 +52,7 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public dynamic GetAdvertisementsAsync(string campaignId, string advertisementsId, string includeType, Pagination pageInfo)
+        public dynamic GetAdvertisementsAsync(string campaignId, string advertisementsId, string includeType, string embed, Pagination pageInfo)
         {
             AdvertisementsGetResponse response = new AdvertisementsGetResponse();
             int totalCount = 0;
@@ -90,7 +90,7 @@ namespace AdvertisementService.Repository
                                                   TintColor = advertisement.TintColor,
                                                   InvertedTintColor = advertisement.InvertedTintColor,
                                               }).ToList();
-                    var advertisementsModelListWithCampaign = _commonFunctions.GetAllAdvertisements(advertisements, advertisementsCampaignsData, pageInfo);
+                    var advertisementsModelListWithCampaign = _commonFunctions.GetAllAdvertisements(advBasedOnCampaign, advertisementsCampaignsData, pageInfo);
                     advertisementsModelList = _commonFunctions.GetAdvertisementWithCampaigns(advertisementsModelListWithCampaign);
                     totalCount = advertisements.Count();
                 }
@@ -119,6 +119,16 @@ namespace AdvertisementService.Repository
                     var advertisementsModelListWithCampaign = _commonFunctions.GetAllAdvertisements(advBasedOnCampaign, advertisementsCampaignsData, pageInfo);
                     advertisementsModelList = _commonFunctions.GetAdvertisementWithCampaigns(advertisementsModelListWithCampaign);
                     totalCount = advertisements.Count();
+                }
+
+                if (!string.IsNullOrEmpty(embed) && embed.ToLower() == "sort")
+                {
+                    foreach (var item in advertisementsModelList)
+                    {
+                        int adsId = ObfuscationClass.DecodeId(Convert.ToInt32(item.AdvertisementId), _appSettings.PrimeInverse);
+                        int campId = ObfuscationClass.DecodeId(Convert.ToInt32(item.CampaignId.FirstOrDefault()), _appSettings.PrimeInverse);
+                        item.SortIndex = _context.AdvertisementsCampaigns.Where(x => x.AdvertisementId == adsId && x.CampaignId == campId).Select(x => x.SortIndex).FirstOrDefault();
+                    }
                 }
 
                 dynamic includeData = new JObject();

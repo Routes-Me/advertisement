@@ -1,4 +1,5 @@
 ﻿using AdvertisementService.Models.DBModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -25,6 +26,9 @@ namespace AdvertisementService.Models.ResponseModel
         public string PromotionsId { get; set; }
         public int? TintColor { get; set; }
         public int? InvertedTintColor { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public int? SortIndex { get; set; }
     }
     public class GetCampaignList
     {

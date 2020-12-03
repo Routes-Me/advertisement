@@ -120,7 +120,7 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public dynamic GetAdvertisements(string institutionId, string advertisementId, string includeType, Pagination pageInfo)
+        public dynamic GetAdvertisements(string institutionId, string advertisementId, string includeType, string embed, Pagination pageInfo)
         {
 
             int totalCount = 0;
@@ -168,6 +168,16 @@ namespace AdvertisementService.Repository
                         var advertisementsModelListWithCampaign = _commonFunctions.GetAllAdvertisements(advertisements, advertisementsCampaignsData, pageInfo);
                         advertisementsModelList = _commonFunctions.GetAdvertisementWithCampaigns(advertisementsModelListWithCampaign);
                         totalCount = advertisements.Count();
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(embed) && embed.ToLower() == "sort")
+                {
+                    foreach (var item in advertisementsModelList)
+                    {
+                        int adsId = ObfuscationClass.DecodeId(Convert.ToInt32(item.AdvertisementId), _appSettings.PrimeInverse);
+                        int campId = ObfuscationClass.DecodeId(Convert.ToInt32(item.CampaignId.FirstOrDefault()), _appSettings.PrimeInverse);
+                        item.SortIndex = _context.AdvertisementsCampaigns.Where(x => x.AdvertisementId == adsId && x.CampaignId == campId).Select(x => x.SortIndex).FirstOrDefault();
                     }
                 }
 
