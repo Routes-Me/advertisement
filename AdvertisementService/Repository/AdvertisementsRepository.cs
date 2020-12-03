@@ -120,7 +120,7 @@ namespace AdvertisementService.Repository
             }
         }
 
-        public dynamic GetAdvertisements(string institutionId, string advertisementId, string includeType, string embed, Pagination pageInfo)
+        public dynamic GetAdvertisements(string institutionId, string advertisementId, string includeType, string embed, string sort_by, Pagination pageInfo)
         {
 
             int totalCount = 0;
@@ -178,6 +178,51 @@ namespace AdvertisementService.Repository
                         int adsId = ObfuscationClass.DecodeId(Convert.ToInt32(item.AdvertisementId), _appSettings.PrimeInverse);
                         int campId = ObfuscationClass.DecodeId(Convert.ToInt32(item.CampaignId.FirstOrDefault()), _appSettings.PrimeInverse);
                         item.SortIndex = _context.AdvertisementsCampaigns.Where(x => x.AdvertisementId == adsId && x.CampaignId == campId).Select(x => x.SortIndex).FirstOrDefault();
+                    }
+                }
+                if (!string.IsNullOrEmpty(sort_by))
+                {
+                    var sortItem = sort_by.Split('.');
+                    if (sortItem != null && !string.IsNullOrEmpty(sortItem.FirstOrDefault().ToLower()) && !string.IsNullOrEmpty(sortItem.LastOrDefault().ToLower()))
+                    {
+                        if (sortItem.LastOrDefault().ToLower() == "asc")
+                        {
+                            if (sortItem.FirstOrDefault().ToLower() == "advertisement" || sortItem.FirstOrDefault().ToLower() == "advertisements")
+                                advertisementsModelList = advertisementsModelList.OrderBy(x => x.AdvertisementId).ToList();
+                            else if (sortItem.FirstOrDefault().ToLower() == "resourcename " || sortItem.FirstOrDefault().ToLower() == "resourcename")
+                                advertisementsModelList = advertisementsModelList.OrderBy(x => x.ResourceName).ToList();
+                            else if (sortItem.FirstOrDefault().ToLower() == "institution" || sortItem.FirstOrDefault().ToLower() == "institutions")
+                                advertisementsModelList = advertisementsModelList.OrderBy(x => x.InstitutionId).ToList();
+                            else if (sortItem.FirstOrDefault().ToLower() == "media" || sortItem.FirstOrDefault().ToLower() == "medias")
+                                advertisementsModelList = advertisementsModelList.OrderBy(x => x.MediaId).ToList();
+                            else if (sortItem.FirstOrDefault().ToLower() == "campaign" || sortItem.FirstOrDefault().ToLower() == "campaigns")
+                                advertisementsModelList = advertisementsModelList.OrderBy(x => x.CampaignId).ToList();
+                            else if (sortItem.FirstOrDefault().ToLower() == "interval" || sortItem.FirstOrDefault().ToLower() == "intervals")
+                                advertisementsModelList = advertisementsModelList.OrderBy(x => x.IntervalId).ToList();
+                            else if (sortItem.FirstOrDefault().ToLower() == "promotion" || sortItem.FirstOrDefault().ToLower() == "promotions")
+                                advertisementsModelList = advertisementsModelList.OrderBy(x => x.PromotionsId).ToList();
+                            else if (sortItem.FirstOrDefault().ToLower() == "sort")
+                                advertisementsModelList = advertisementsModelList.OrderBy(x => x.SortIndex).ToList();
+                        }
+                        else if (sortItem.LastOrDefault().ToLower() == "desc")
+                        {
+                            if (sortItem.FirstOrDefault().ToLower() == "advertisement" || sortItem.FirstOrDefault().ToLower() == "advertisements")
+                                advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.AdvertisementId).ToList();
+                            else if (sortItem.FirstOrDefault().ToLower() == "resourcename " || sortItem.FirstOrDefault().ToLower() == "resourcename")
+                                advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.ResourceName).ToList();
+                            else if (sortItem.FirstOrDefault().ToLower() == "institution" || sortItem.FirstOrDefault().ToLower() == "institutions")
+                                advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.InstitutionId).ToList();
+                            else if (sortItem.FirstOrDefault().ToLower() == "media" || sortItem.FirstOrDefault().ToLower() == "medias")
+                                advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.MediaId).ToList();
+                            else if (sortItem.FirstOrDefault().ToLower() == "campaign" || sortItem.FirstOrDefault().ToLower() == "campaigns")
+                                advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.CampaignId).ToList();
+                            else if (sortItem.FirstOrDefault().ToLower() == "interval" || sortItem.FirstOrDefault().ToLower() == "intervals")
+                                advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.IntervalId).ToList();
+                            else if (sortItem.FirstOrDefault().ToLower() == "promotion" || sortItem.FirstOrDefault().ToLower() == "promotions")
+                                advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.PromotionsId).ToList();
+                            else if (sortItem.FirstOrDefault().ToLower() == "sort")
+                                advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.SortIndex).ToList();
+                        }
                     }
                 }
 

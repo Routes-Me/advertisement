@@ -21,10 +21,10 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("advertisements/{advertisementsId=0}")]
-        public IActionResult GetAsync(string advertisementsId, string include, string embed, [FromQuery] Pagination pageInfo)
+        public IActionResult GetAsync(string advertisementsId, string include, string embed, string sort_by, [FromQuery] Pagination pageInfo)
         {
             string institutionId = "0";
-            dynamic response = _advertisementsRepository.GetAdvertisements(institutionId, advertisementsId, include, embed, pageInfo);
+            dynamic response = _advertisementsRepository.GetAdvertisements(institutionId, advertisementsId, include, embed, sort_by, pageInfo);
             return StatusCode((int)response.statusCode, response);
         }
 
@@ -54,14 +54,14 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("institutions/{institutionId}/advertisements/{advertisementsId=0}")]
-        public IActionResult GetAdvertisementsByInstitutionsIdAsync(string institutionId, string advertisementsId, string include, string embed, [FromQuery] Pagination pageInfo)
+        public IActionResult GetAdvertisementsByInstitutionsIdAsync(string institutionId, string advertisementsId, string include, string embed, string sort_by, [FromQuery] Pagination pageInfo)
         {
             if (Convert.ToInt32(institutionId) <= 0)
             {
                 dynamic resp = ReturnResponse.ErrorResponse(CommonMessage.InstitutionNotFound, StatusCodes.Status404NotFound);
                 return StatusCode((int)resp.statusCode, resp);
             }
-            dynamic response = _advertisementsRepository.GetAdvertisements(institutionId, advertisementsId, include, embed, pageInfo);
+            dynamic response = _advertisementsRepository.GetAdvertisements(institutionId, advertisementsId, include, embed, sort_by, pageInfo);
             return StatusCode((int)response.statusCode, response);
         }
 

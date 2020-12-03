@@ -26,9 +26,9 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("campaigns/{id=0}/advertisements/{advertisementsId=0}")]
-        public IActionResult GetAdvertisementsByIdAsync(string id, string advertisementsId, string include, string embed, [FromQuery] Pagination pageInfo)
+        public IActionResult GetAdvertisementsByIdAsync(string id, string advertisementsId, string include, string embed,string sort_by, [FromQuery] Pagination pageInfo)
         {
-            dynamic response = _campaignsRepository.GetAdvertisementsAsync(id, advertisementsId, include, embed, pageInfo);
+            dynamic response = _campaignsRepository.GetAdvertisementsAsync(id, advertisementsId, include, embed, sort_by, pageInfo);
             return StatusCode((int)response.statusCode, response);
         }
 
