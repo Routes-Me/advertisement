@@ -35,8 +35,8 @@ namespace AdvertisementService.Helper.Repository
                // var uploadPath = Path.Combine(_env.ContentRootPath, "CompressedFiles");
                 var fileName = blockBlob.Name.Split('/');
                 var updatedFileName = fileName.Last().Split('.');
-                string inputFilePath = Path.Combine(_env.ContentRootPath, updatedFileName.First() + "_input" + ".mp4");
-                string outputFilePath = Path.Combine(_env.ContentRootPath, fileName.Last());
+                string inputFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, updatedFileName.First() + "_input" + ".mp4");
+                string outputFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName.Last());
 
                 //if (!Directory.Exists(uploadPath))
                 //    Directory.CreateDirectory(uploadPath);
@@ -47,8 +47,10 @@ namespace AdvertisementService.Helper.Repository
                 }
 
                 // Set input file and output file
-                var inputFile = new MediaFile { Filename = inputFilePath };
-                var outputFile = new MediaFile { Filename = outputFilePath };
+                var inputFile = new MediaFile(inputFilePath);
+                var outputFile = new MediaFile(outputFilePath);
+
+                var videoSize = Convert.ToDecimal(Convert.ToDecimal((new FileInfo(inputFilePath).Length / 1024)) / 1024).ToString("0.##");   //display size in mb
 
                 // Set Video conversion options
                 var conversionOptions = new ConversionOptions();
@@ -63,7 +65,10 @@ namespace AdvertisementService.Helper.Repository
                 {
                     using (var engine = new Engine())
                     {
-                        engine.Convert(inputFile, outputFile, conversionOptions);
+                        if (Convert.ToDecimal(videoSize) >= 3)
+                            engine.Convert(inputFile, outputFile, conversionOptions);
+                        else
+                            engine.Convert(inputFile, outputFile, null);
                         engine.GetMetadata(outputFile);
                         engine.Dispose();
                     }
@@ -78,16 +83,11 @@ namespace AdvertisementService.Helper.Repository
                         videoMetadata.Duration = (float)duration.TotalSeconds;
                     }
                 }
-                FileInfo outputFileInfo = new FileInfo(outputFile.Filename);
-                // Length/1024 = kb
-                // kb/1024 = mb
-                var videoSize = Convert.ToDecimal(Convert.ToDecimal((outputFileInfo.Length / 1024)) / 1024).ToString("0.##");   //display size in mb
-                videoMetadata.CompressedFile = outputFileInfo.FullName;
-                videoMetadata.VideoSize = (float)Convert.ToDecimal(videoSize);
-                FileInfo inputFileInfo = new FileInfo(inputFilePath);
-                inputFileInfo.Delete();
-                return videoMetadata;
 
+                videoMetadata.CompressedFile = outputFilePath;
+                videoMetadata.VideoSize = (float)Convert.ToDecimal(videoSize);
+                File.Delete(inputFilePath);
+                return videoMetadata;
             }
             catch (Exception ex)
             {
