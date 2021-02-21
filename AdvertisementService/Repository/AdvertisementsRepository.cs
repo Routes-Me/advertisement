@@ -460,7 +460,7 @@ namespace AdvertisementService.Repository
                     {
                         if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
                         {
-                            videoMetadata = await _videoConversionRepository.ConvertVideoAsync(model.MediaUrl);
+                            // videoMetadata = await _videoConversionRepository.ConvertVideoAsync(model.MediaUrl);
                             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
                             CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
                             if (!string.IsNullOrEmpty(videoMetadata.CompressedFile))
@@ -645,7 +645,7 @@ namespace AdvertisementService.Repository
                     {
                         if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
                         {
-                            videoMetadata = await _videoConversionRepository.ConvertVideoAsync(model.MediaUrl);
+                            // videoMetadata = await _videoConversionRepository.ConvertVideoAsync(model.MediaUrl);
                             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
                             CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
                             if (await container.ExistsAsync())
