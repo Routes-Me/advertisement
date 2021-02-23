@@ -751,7 +751,7 @@ namespace AdvertisementService.Repository
 
                 var camp_ads = _context.Broadcasts.Where(x => x.AdvertisementId == advertisementIdDecrypted && x.CampaignId == campaignsIdDecrypted).FirstOrDefault();
                 if (camp_ads == null)
-                    return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementCampaignNotFound, StatusCodes.Status404NotFound);
+                    return ReturnResponse.ErrorResponse(CommonMessage.BroadcastNotFound, StatusCodes.Status404NotFound);
 
                 camp_ads.Sort = model.Sort;
                 _context.Broadcasts.Update(camp_ads);
@@ -793,7 +793,7 @@ namespace AdvertisementService.Repository
 
                     var camp_ads = _context.Broadcasts.Where(x => x.AdvertisementId == advertisementIdDecrypted && x.CampaignId == campaignsIdDecrypted).FirstOrDefault();
                     if (camp_ads == null)
-                        return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementCampaignNotFound, StatusCodes.Status404NotFound);
+                        return ReturnResponse.ErrorResponse(CommonMessage.BroadcastNotFound, StatusCodes.Status404NotFound);
 
                     camp_ads.Sort = item.Sort;
                     _context.Broadcasts.Update(camp_ads);

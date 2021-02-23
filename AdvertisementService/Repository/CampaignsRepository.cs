@@ -356,5 +356,20 @@ namespace AdvertisementService.Repository
                 CreatedAt = DateTime.Now
             };
         }
+
+        public dynamic DeleteBroadcasts(string campaignId, string broadcastId)
+        {
+            if (string.IsNullOrEmpty(campaignId) || string.IsNullOrEmpty(broadcastId))
+                throw new ArgumentNullException(CommonMessage.InvalidData);
+
+            int campaignIdDecoded = ObfuscationClass.DecodeId(Convert.ToInt32(campaignId), _appSettings.PrimeInverse);
+            int broadcastIdDecoded = ObfuscationClass.DecodeId(Convert.ToInt32(broadcastId), _appSettings.PrimeInverse);
+
+            Broadcasts broadcast = _context.Broadcasts.Where(b => b.CampaignId == campaignIdDecoded && b.BroadcastId ==broadcastIdDecoded).FirstOrDefault();
+            if (broadcast == null)
+                throw new NullReferenceException(CommonMessage.BroadcastNotFound);
+
+            return broadcast;
+        }
     }
 }
