@@ -35,7 +35,7 @@ namespace AdvertisementService.Helper.Repository
             {
                 var advertisementIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(item.AdvertisementId), _appSettings.PrimeInverse);
                 var campaignsDetails = (from campaign in _context.Campaigns
-                                        join campadvt in _context.AdvertisementsCampaigns on campaign.CampaignId equals campadvt.CampaignId
+                                        join campadvt in _context.Broadcasts on campaign.CampaignId equals campadvt.CampaignId
                                         join advt in _context.Advertisements on campadvt.AdvertisementId equals advt.AdvertisementId
                                         where advt.AdvertisementId == advertisementIdDecrypted
                                         select new CampaignsModel()
