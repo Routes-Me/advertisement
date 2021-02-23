@@ -147,4 +147,9 @@ namespace AdvertisementService.Models
         public float Duration { get; set; }
         public float VideoSize { get; set; }
     }
+
+    public class BroadcastsResponse
+    {
+        public int BroadcastId { get; set; }
+    }
 }
