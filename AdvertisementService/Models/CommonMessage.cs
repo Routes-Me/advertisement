@@ -37,7 +37,7 @@
         public static string CampaignRequired = "Campaign id required.";
         public static string AdvertisementRequired = "Advertisement id required.";
         public static string SortUpdate = "Sort index updated successfully.";
-        public static string EmptyModel = "Pass valid model.";
+        public static string InvalidData = "Pass valid data.";
 
     }
 }

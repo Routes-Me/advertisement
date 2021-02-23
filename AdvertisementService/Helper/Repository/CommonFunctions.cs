@@ -56,10 +56,10 @@ namespace AdvertisementService.Helper.Repository
             return advertisementsModelList;
         }
 
-        public List<AdvertisementsGetModelWithCampaign> GetAllAdvertisements(List<Advertisements> advertisements, List<AdvertisementsIntervals> advertisementsCampaignsData, Pagination pageInfo)
+        public List<AdvertisementsGetModelWithCampaign> GetAllAdvertisements(List<Advertisements> advertisements, List<AdvertisementsIntervals> BroadcastsData, Pagination pageInfo)
         {
             return (from advertisement in advertisements
-                    join advertisementsIntervals in advertisementsCampaignsData on advertisement.AdvertisementId equals advertisementsIntervals.AdvertisementId into Details
+                    join advertisementsIntervals in BroadcastsData on advertisement.AdvertisementId equals advertisementsIntervals.AdvertisementId into Details
                     from m in Details.DefaultIfEmpty()
                     select new AdvertisementsGetModelWithCampaign()
                     {
@@ -69,7 +69,7 @@ namespace AdvertisementService.Helper.Repository
                         MediaId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.MediaId), _appSettings.Prime).ToString(),
                         ResourceName = advertisement.ResourceName,
                         IntervalId = m == null ? null : ObfuscationClass.EncodeId(Convert.ToInt32(m.IntervalId), _appSettings.Prime).ToString(),
-                        Campaigns = advertisement.AdvertisementsCampaigns.ToList(),
+                        Campaigns = advertisement.Broadcasts.ToList(),
                         TintColor = advertisement.TintColor,
                         InvertedTintColor = advertisement.InvertedTintColor
                     }).AsEnumerable().OrderBy(a => a.AdvertisementId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();

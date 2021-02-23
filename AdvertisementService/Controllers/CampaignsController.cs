@@ -1,8 +1,14 @@
 ﻿using AdvertisementService.Abstraction;
 using AdvertisementService.Models;
+using AdvertisementService.Models.Common;
+using AdvertisementService.Models.DBModels;
 using AdvertisementService.Models.ResponseModel;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Obfuscation;
 
 namespace AdvertisementService.Controllers
 {
@@ -11,9 +17,13 @@ namespace AdvertisementService.Controllers
     public class CampaignsController : ControllerBase
     {
         private readonly ICampaignsRepository _campaignsRepository;
-        public CampaignsController(ICampaignsRepository campaignsRepository)
+        private readonly advertisementserviceContext _context;
+        private readonly AppSettings _appSettings;
+        public CampaignsController(ICampaignsRepository campaignsRepository, advertisementserviceContext context, IOptions<AppSettings> appSettings)
         {
             _campaignsRepository = campaignsRepository;
+            _context = context;
+            _appSettings = appSettings.Value;
         }
 
         [HttpGet]
@@ -54,6 +64,32 @@ namespace AdvertisementService.Controllers
         {
             dynamic response = _campaignsRepository.DeleteCampaigns(id);
             return StatusCode((int)response.statusCode, response);
+        }
+
+        [HttpPost]
+        [Route("campaigns/{campaignId}/broadcasts")]
+        public async Task<IActionResult> CreateBroadcasts(string campaignId, BroadcastsDto broadcastsDto)
+        {
+            Broadcasts broadcast= new Broadcasts();
+            try
+            {
+                broadcast = _campaignsRepository.CreateBroadcasts(campaignId, broadcastsDto);
+                await _context.Broadcasts.AddAsync(broadcast);
+                await _context.SaveChangesAsync();
+            }
+            catch (ArgumentNullException ex)
+            {
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, CommonMessage.ExceptionMessage + ex.Message);
+            }
+            BroadcastsResponse broadcastsResponse = new BroadcastsResponse
+            {
+                BroadcastId =ObfuscationClass.EncodeId(broadcast.BroadcastId, _appSettings.Prime)
+            };
+            return StatusCode(StatusCodes.Status201Created, broadcastsResponse);
         }
     }
 }

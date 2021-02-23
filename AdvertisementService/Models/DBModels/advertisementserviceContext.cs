@@ -16,7 +16,7 @@ namespace AdvertisementService.Models.DBModels
         }
 
         public virtual DbSet<Advertisements> Advertisements { get; set; }
-        public virtual DbSet<AdvertisementsCampaigns> AdvertisementsCampaigns { get; set; }
+        public virtual DbSet<Broadcasts> Broadcasts { get; set; }
         public virtual DbSet<AdvertisementsIntervals> AdvertisementsIntervals { get; set; }
         public virtual DbSet<Campaigns> Campaigns { get; set; }
         public virtual DbSet<Intervals> Intervals { get; set; }
@@ -61,30 +61,36 @@ namespace AdvertisementService.Models.DBModels
                     .HasConstraintName("advertisements_ibfk_1");
             });
 
-            modelBuilder.Entity<AdvertisementsCampaigns>(entity =>
+            modelBuilder.Entity<Broadcasts>(entity =>
             {
-                entity.HasKey(e => new { e.AdvertisementId, e.CampaignId })
+                entity.HasKey(e => e.BroadcastId)
                     .HasName("PRIMARY");
 
-                entity.ToTable("advertisements_campaigns");
+                entity.ToTable("broadcasts");
 
                 entity.HasIndex(e => e.CampaignId)
                     .HasName("campaign_id");
+
+                entity.Property(e => e.BroadcastId).HasColumnName("broadcast_id");
 
                 entity.Property(e => e.AdvertisementId).HasColumnName("advertisement_id");
 
                 entity.Property(e => e.CampaignId).HasColumnName("campaign_id");
 
-                entity.Property(e => e.SortIndex).HasColumnName("sort");
+                entity.Property(e => e.Sort).HasColumnName("sort");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnName("created_at")
+                    .HasColumnType("timestamp");
 
                 entity.HasOne(d => d.Advertisement)
-                    .WithMany(p => p.AdvertisementsCampaigns)
+                    .WithMany(p => p.Broadcasts)
                     .HasForeignKey(d => d.AdvertisementId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("advertisements_campaigns_ibfk_2");
 
                 entity.HasOne(d => d.Campaign)
-                    .WithMany(p => p.AdvertisementsCampaigns)
+                    .WithMany(p => p.Broadcasts)
                     .HasForeignKey(d => d.CampaignId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("advertisements_campaigns_ibfk_1");

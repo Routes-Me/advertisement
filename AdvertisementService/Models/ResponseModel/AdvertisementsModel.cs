@@ -98,7 +98,7 @@ namespace AdvertisementService.Models.ResponseModel
         public string InstitutionId { get; set; }
         public DateTime? CreatedAt { get; set; }
         public string MediaId { get; set; }
-        public List<AdvertisementsCampaigns> Campaigns { get; set; }
+        public List<Broadcasts> Campaigns { get; set; }
         public string IntervalId { get; set; }
         public string PromotionsId { get; set; }
         public int? TintColor { get; set; }

@@ -35,12 +35,12 @@ namespace AdvertisementService.Repository
             try
             {
                 int campaignIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(id), _appSettings.PrimeInverse);
-                var campaigns = _context.Campaigns.Include(x => x.AdvertisementsCampaigns).Where(x => x.CampaignId == campaignIdDecrypted).FirstOrDefault();
+                var campaigns = _context.Campaigns.Include(x => x.Broadcasts).Where(x => x.CampaignId == campaignIdDecrypted).FirstOrDefault();
                 if (campaigns == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.CampaignNotFound, StatusCodes.Status404NotFound);
 
-                if (campaigns.AdvertisementsCampaigns != null)
-                    _context.AdvertisementsCampaigns.RemoveRange(campaigns.AdvertisementsCampaigns);
+                if (campaigns.Broadcasts != null)
+                    _context.Broadcasts.RemoveRange(campaigns.Broadcasts);
 
                 _context.Campaigns.Remove(campaigns);
                 _context.SaveChanges();
@@ -71,9 +71,9 @@ namespace AdvertisementService.Repository
 
                 if (advertisementsIdDecrypted == 0)
                 {
-                    var advertisements = _context.Advertisements.Include(x => x.AdvertisementsCampaigns).ToList();
-                    var advertisementsCampaignsData = _context.AdvertisementsIntervals.ToList();
-                    var campaignAdvertisement = _context.AdvertisementsCampaigns.Where(x => x.CampaignId == campaignIdDecrypted).ToList();
+                    var advertisements = _context.Advertisements.Include(x => x.Broadcasts).ToList();
+                    var BroadcastsData = _context.AdvertisementsIntervals.ToList();
+                    var campaignAdvertisement = _context.Broadcasts.Where(x => x.CampaignId == campaignIdDecrypted).ToList();
                     var advBasedOnCampaign = (from advertisement in advertisements
                                               join campAd in campaignAdvertisement on advertisement.AdvertisementId equals campAd.AdvertisementId into Details
                                               from m in Details.DefaultIfEmpty()
@@ -85,20 +85,20 @@ namespace AdvertisementService.Repository
                                                   CreatedAt = advertisement.CreatedAt,
                                                   MediaId = advertisement.MediaId,
                                                   Media = advertisement.Media,
-                                                  AdvertisementsCampaigns = advertisement.AdvertisementsCampaigns,
+                                                  Broadcasts = advertisement.Broadcasts,
                                                   AdvertisementsIntervals = advertisement.AdvertisementsIntervals,
                                                   TintColor = advertisement.TintColor,
                                                   InvertedTintColor = advertisement.InvertedTintColor,
                                               }).ToList();
-                    var advertisementsModelListWithCampaign = _commonFunctions.GetAllAdvertisements(advBasedOnCampaign, advertisementsCampaignsData, pageInfo);
+                    var advertisementsModelListWithCampaign = _commonFunctions.GetAllAdvertisements(advBasedOnCampaign, BroadcastsData, pageInfo);
                     advertisementsModelList = _commonFunctions.GetAdvertisementWithCampaigns(advertisementsModelListWithCampaign);
                     totalCount = advertisements.Count();
                 }
                 else
                 {
-                    var advertisements = _context.Advertisements.Include(x => x.AdvertisementsCampaigns).Where(x => x.AdvertisementId == advertisementsIdDecrypted).ToList();
-                    var advertisementsCampaignsData = _context.AdvertisementsIntervals.Where(x => x.AdvertisementId == advertisementsIdDecrypted).ToList();
-                    var campaignAdvertisement = _context.AdvertisementsCampaigns.Where(x => x.CampaignId == campaignIdDecrypted).ToList();
+                    var advertisements = _context.Advertisements.Include(x => x.Broadcasts).Where(x => x.AdvertisementId == advertisementsIdDecrypted).ToList();
+                    var BroadcastsData = _context.AdvertisementsIntervals.Where(x => x.AdvertisementId == advertisementsIdDecrypted).ToList();
+                    var campaignAdvertisement = _context.Broadcasts.Where(x => x.CampaignId == campaignIdDecrypted).ToList();
                     var advBasedOnCampaign = (from advertisement in advertisements
                                               join campAd in campaignAdvertisement on advertisement.AdvertisementId equals campAd.AdvertisementId into Details
                                               from m in Details.DefaultIfEmpty()
@@ -110,13 +110,13 @@ namespace AdvertisementService.Repository
                                                   CreatedAt = advertisement.CreatedAt,
                                                   MediaId = advertisement.MediaId,
                                                   Media = advertisement.Media,
-                                                  AdvertisementsCampaigns = advertisement.AdvertisementsCampaigns,
+                                                  Broadcasts = advertisement.Broadcasts,
                                                   AdvertisementsIntervals = advertisement.AdvertisementsIntervals,
                                                   TintColor = advertisement.TintColor,
                                                   InvertedTintColor = advertisement.InvertedTintColor,
                                               }).ToList();
 
-                    var advertisementsModelListWithCampaign = _commonFunctions.GetAllAdvertisements(advBasedOnCampaign, advertisementsCampaignsData, pageInfo);
+                    var advertisementsModelListWithCampaign = _commonFunctions.GetAllAdvertisements(advBasedOnCampaign, BroadcastsData, pageInfo);
                     advertisementsModelList = _commonFunctions.GetAdvertisementWithCampaigns(advertisementsModelListWithCampaign);
                     totalCount = advertisements.Count();
                 }
@@ -127,7 +127,7 @@ namespace AdvertisementService.Repository
                     {
                         int adsId = ObfuscationClass.DecodeId(Convert.ToInt32(item.AdvertisementId), _appSettings.PrimeInverse);
                         int campId = ObfuscationClass.DecodeId(Convert.ToInt32(item.CampaignId.FirstOrDefault()), _appSettings.PrimeInverse);
-                        item.SortIndex = _context.AdvertisementsCampaigns.Where(x => x.AdvertisementId == adsId && x.CampaignId == campId).Select(x => x.SortIndex).FirstOrDefault();
+                        item.SortIndex = _context.Broadcasts.Where(x => x.AdvertisementId == adsId && x.CampaignId == campId).Select(x => x.Sort).FirstOrDefault();
                     }
                 }
 
@@ -338,6 +338,23 @@ namespace AdvertisementService.Repository
             {
                 return ReturnResponse.ExceptionResponse(ex);
             }
+        }
+
+        public dynamic CreateBroadcasts(string campaignId, BroadcastsDto broadcastsDto)
+        {
+            if (string.IsNullOrEmpty(campaignId) || string.IsNullOrEmpty(broadcastsDto.AdvertisementId))
+                throw new ArgumentNullException(CommonMessage.InvalidData);
+
+            int campaignIdDecoded = ObfuscationClass.DecodeId(Convert.ToInt32(campaignId), _appSettings.PrimeInverse);
+            int advertisementIdDecoded = ObfuscationClass.DecodeId(Convert.ToInt32(broadcastsDto.AdvertisementId), _appSettings.PrimeInverse);
+
+            return new Broadcasts
+            {
+                AdvertisementId = advertisementIdDecoded,
+                CampaignId = campaignIdDecoded,
+                Sort = broadcastsDto.Sort,
+                CreatedAt = DateTime.Now
+            };
         }
     }
 }

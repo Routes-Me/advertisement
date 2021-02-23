@@ -7,7 +7,7 @@ namespace AdvertisementService.Models.DBModels
     {
         public Advertisements()
         {
-            AdvertisementsCampaigns = new HashSet<AdvertisementsCampaigns>();
+            Broadcasts = new HashSet<Broadcasts>();
             AdvertisementsIntervals = new HashSet<AdvertisementsIntervals>();
         }
 
@@ -20,7 +20,7 @@ namespace AdvertisementService.Models.DBModels
         public int? InvertedTintColor { get; set; }
 
         public virtual Medias Media { get; set; }
-        public virtual ICollection<AdvertisementsCampaigns> AdvertisementsCampaigns { get; set; }
+        public virtual ICollection<Broadcasts> Broadcasts { get; set; }
         public virtual ICollection<AdvertisementsIntervals> AdvertisementsIntervals { get; set; }
     }
 }
