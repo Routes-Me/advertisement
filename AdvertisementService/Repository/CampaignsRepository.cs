@@ -127,7 +127,7 @@ namespace AdvertisementService.Repository
                     {
                         int adsId = ObfuscationClass.DecodeId(Convert.ToInt32(item.AdvertisementId), _appSettings.PrimeInverse);
                         int campId = ObfuscationClass.DecodeId(Convert.ToInt32(item.CampaignId.FirstOrDefault()), _appSettings.PrimeInverse);
-                        item.SortIndex = _context.Broadcasts.Where(x => x.AdvertisementId == adsId && x.CampaignId == campId).Select(x => x.Sort).FirstOrDefault();
+                        item.Sort = _context.Broadcasts.Where(x => x.AdvertisementId == adsId && x.CampaignId == campId).Select(x => x.Sort).FirstOrDefault();
                     }
                 }
 
@@ -153,7 +153,7 @@ namespace AdvertisementService.Repository
                             else if (sortItem.FirstOrDefault().ToLower() == "promotion" || sortItem.FirstOrDefault().ToLower() == "promotions")
                                 advertisementsModelList = advertisementsModelList.OrderBy(x => x.PromotionsId).ToList();
                             else if (sortItem.FirstOrDefault().ToLower() == "sort")
-                                advertisementsModelList = advertisementsModelList.OrderBy(x => x.SortIndex).ToList();
+                                advertisementsModelList = advertisementsModelList.OrderBy(x => x.Sort).ToList();
                         }
                         else if (sortItem.LastOrDefault().ToLower() == "desc")
                         {
@@ -172,7 +172,7 @@ namespace AdvertisementService.Repository
                             else if (sortItem.FirstOrDefault().ToLower() == "promotion" || sortItem.FirstOrDefault().ToLower() == "promotions")
                                 advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.PromotionsId).ToList();
                             else if (sortItem.FirstOrDefault().ToLower() == "sort")
-                                advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.SortIndex).ToList();
+                                advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.Sort).ToList();
                         }
                     }
                 }
