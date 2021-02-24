@@ -311,6 +311,13 @@ namespace AdvertisementService.Repository
                                          }).AsEnumerable().OrderBy(a => a.Sort)
                                          .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
+                    // temp fix for frontend as screens cannot handle duplicate contentIds
+                    int counter = 1;
+                    foreach (var contentsModel in contentsModelList)
+                    {
+                        contentsModel.ContentId += counter++;
+                    }
+
                     totalCount = (from advertisement in _context.Advertisements
                                   join media in _context.Medias on advertisement.MediaId equals media.MediaId
                                   join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
