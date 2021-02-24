@@ -12,5 +12,6 @@ namespace AdvertisementService.Abstraction
         dynamic DeleteCampaigns(string id);
         dynamic InsertCampaigns(CampaignsModel model);
         dynamic CreateBroadcasts(string campaignId, BroadcastsDto broadcastsDto);
+        dynamic DeleteBroadcasts(string campaignId, string broadcastId);
     }
 }

@@ -28,7 +28,7 @@ namespace AdvertisementService.Models.ResponseModel
         public int? InvertedTintColor { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public int? SortIndex { get; set; }
+        public int? Sort { get; set; }
     }
     public class GetCampaignList
     {
@@ -40,7 +40,7 @@ namespace AdvertisementService.Models.ResponseModel
         public string ContentId { get; set; }
         public string Type { get; set; }
         public string Url { get; set; }
-        public int? SortIndex { get; set; }
+        public int? Sort { get; set; }
         public int? TintColor { get; set; }
         public int? InvertedTintColor { get; set; }
     }

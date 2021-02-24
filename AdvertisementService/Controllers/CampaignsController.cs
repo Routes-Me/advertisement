@@ -91,5 +91,31 @@ namespace AdvertisementService.Controllers
             };
             return StatusCode(StatusCodes.Status201Created, broadcastsResponse);
         }
+
+        [HttpDelete]
+        [Route("campaigns/{campaignId}/broadcasts/{broadcastId}")]
+        public async Task<IActionResult> DeleteBroadcasts(string campaignId, string broadcastId)
+        {
+            Broadcasts broadcast= new Broadcasts();
+            try
+            {
+                broadcast = _campaignsRepository.DeleteBroadcasts(campaignId, broadcastId);
+                _context.Broadcasts.Remove(broadcast);
+                await _context.SaveChangesAsync();
+            }
+            catch (ArgumentNullException ex)
+            {
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, ex.Message);
+            }
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, CommonMessage.ExceptionMessage + ex.Message);
+            }
+            return StatusCode(StatusCodes.Status204NoContent);
+        }
     }
 }
