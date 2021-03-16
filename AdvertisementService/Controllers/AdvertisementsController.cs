@@ -20,12 +20,12 @@ namespace AdvertisementService.Controllers
         }
 
         [HttpGet]
-        [Route("advertisements/{advertisementsId=0}")]
+        [Route("advertisements/{advertisementsId?}")]
         public IActionResult GetAsync(string advertisementsId, string include, string embed, string sort_by, [FromQuery] Pagination pageInfo)
         {
             string institutionId = "0";
             dynamic response = _advertisementsRepository.GetAdvertisements(institutionId, advertisementsId, include, embed, sort_by, pageInfo);
-            return StatusCode((int)response.statusCode, response);
+            return StatusCode(response.statusCode, response);
         }
 
         [HttpPost]
