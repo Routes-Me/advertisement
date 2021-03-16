@@ -311,13 +311,6 @@ namespace AdvertisementService.Repository
                                          }).AsEnumerable().OrderBy(a => a.Sort)
                                          .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
-                    // temp fix for frontend as screens cannot handle duplicate contentIds
-                    int counter = 1;
-                    foreach (var contentsModel in contentsModelList)
-                    {
-                        contentsModel.ContentId += counter++;
-                    }
-
                     totalCount = (from advertisement in _context.Advertisements
                                   join media in _context.Medias on advertisement.MediaId equals media.MediaId
                                   join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
@@ -411,6 +404,12 @@ namespace AdvertisementService.Repository
                             }
                         }
                     }
+                }
+                // temp fix for frontend as screens cannot handle duplicate contentIds
+                int counter = 1;
+                foreach (var contentsModel in contents)
+                {
+                    contentsModel.ContentId += counter++;
                 }
 
                 var page = new Pagination
@@ -550,7 +549,8 @@ namespace AdvertisementService.Repository
                     Broadcasts objBroadcasts = new Broadcasts()
                     {
                         AdvertisementId = advertisements.AdvertisementId,
-                        CampaignId = item.CampaignId
+                        CampaignId = item.CampaignId,
+                        CreatedAt = DateTime.Now
                     };
                     _context.Broadcasts.Add(objBroadcasts);
                     _context.SaveChanges();
