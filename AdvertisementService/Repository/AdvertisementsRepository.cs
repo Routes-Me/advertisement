@@ -405,12 +405,6 @@ namespace AdvertisementService.Repository
                         }
                     }
                 }
-                // temp fix for frontend as screens cannot handle duplicate contentIds
-                int counter = 1;
-                foreach (var contentsModel in contents)
-                {
-                    contentsModel.ContentId += counter++;
-                }
 
                 var page = new Pagination
                 {
