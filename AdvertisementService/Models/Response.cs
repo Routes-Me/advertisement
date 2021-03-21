@@ -150,6 +150,6 @@ namespace AdvertisementService.Models
 
     public class BroadcastsResponse
     {
-        public int BroadcastId { get; set; }
+        public string BroadcastId { get; set; }
     }
 }

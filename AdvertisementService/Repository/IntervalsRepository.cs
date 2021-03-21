@@ -6,7 +6,7 @@ using AdvertisementService.Models.ResponseModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Obfuscation;
+using RoutesSecurity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +28,7 @@ namespace AdvertisementService.Repository
         {
             try
             {
-                int intervalIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(id), _appSettings.PrimeInverse);
+                int intervalIdDecrypted = Obfuscation.Decode(id);
                 var intervals = _context.Intervals.Include(x => x.AdvertisementsIntervals).Where(x => x.IntervalId == intervalIdDecrypted).FirstOrDefault();
                 if (intervals == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
@@ -51,15 +51,14 @@ namespace AdvertisementService.Repository
             int totalCount = 0;
             try
             {
-                int intervalIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(intervalId), _appSettings.PrimeInverse);
                 IntervalsGetResponse response = new IntervalsGetResponse();
                 List<IntervalsModel> intervalsModelList = new List<IntervalsModel>();
-                if (intervalIdDecrypted == 0)
+                if (string.IsNullOrEmpty(intervalId))
                 {
                     intervalsModelList = (from interval in _context.Intervals
                                              select new IntervalsModel()
                                              {
-                                                 IntervalId = ObfuscationClass.EncodeId(interval.IntervalId, _appSettings.Prime).ToString(),
+                                                 IntervalId = Obfuscation.Encode(interval.IntervalId),
                                                  Title = interval.Title
                                              }).AsEnumerable().OrderBy(a => a.IntervalId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
@@ -67,11 +66,12 @@ namespace AdvertisementService.Repository
                 }
                 else
                 {
+                    int intervalIdDecrypted = Obfuscation.Decode(intervalId);
                     intervalsModelList = (from interval in _context.Intervals
                                              where interval.IntervalId == intervalIdDecrypted
                                           select new IntervalsModel()
                                              {
-                                              IntervalId = ObfuscationClass.EncodeId(interval.IntervalId, _appSettings.Prime).ToString(),
+                                              IntervalId = Obfuscation.Encode(interval.IntervalId),
                                               Title = interval.Title
                                              }).AsEnumerable().OrderBy(a => a.IntervalId).Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
                     totalCount = _context.Intervals.Where(x => x.IntervalId == intervalIdDecrypted).ToList().Count();
@@ -119,7 +119,7 @@ namespace AdvertisementService.Repository
         {
             try
             {
-                int intervalIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(model.IntervalId), _appSettings.PrimeInverse);
+                int intervalIdDecrypted = Obfuscation.Decode(model.IntervalId);
                 var intervalData = _context.Intervals.Where(x => x.IntervalId == intervalIdDecrypted).FirstOrDefault();
                 if (intervalData == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.IntervalNotFound, StatusCodes.Status404NotFound);
