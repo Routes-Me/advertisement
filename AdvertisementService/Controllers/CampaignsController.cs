@@ -8,7 +8,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Obfuscation;
+using RoutesSecurity;
 
 namespace AdvertisementService.Controllers
 {
@@ -87,7 +87,7 @@ namespace AdvertisementService.Controllers
             }
             BroadcastsResponse broadcastsResponse = new BroadcastsResponse
             {
-                BroadcastId =ObfuscationClass.EncodeId(broadcast.BroadcastId, _appSettings.Prime)
+                BroadcastId =Obfuscation.Encode(broadcast.BroadcastId)
             };
             return StatusCode(StatusCodes.Status201Created, broadcastsResponse);
         }

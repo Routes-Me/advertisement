@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
-using Obfuscation;
+using RoutesSecurity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +34,7 @@ namespace AdvertisementService.Repository
         {
             try
             {
-                int campaignIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(id), _appSettings.PrimeInverse);
+                int campaignIdDecrypted = Obfuscation.Decode(id);
                 var campaigns = _context.Campaigns.Include(x => x.Broadcasts).Where(x => x.CampaignId == campaignIdDecrypted).FirstOrDefault();
                 if (campaigns == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.CampaignNotFound, StatusCodes.Status404NotFound);
@@ -59,17 +59,16 @@ namespace AdvertisementService.Repository
             try
             {
                 List<string> campainIds = new List<string>();
-                int campaignIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(campaignId), _appSettings.PrimeInverse);
-                int advertisementsIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(advertisementsId), _appSettings.PrimeInverse);
                 List<AdvertisementsGetModel> advertisementsModelList = new List<AdvertisementsGetModel>();
-                if (campaignIdDecrypted == 0)
+                if (string.IsNullOrEmpty(campaignId))
                     return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
 
+                int campaignIdDecrypted = Obfuscation.Decode(campaignId);
                 var campaignCount = _context.Campaigns.Where(x => x.CampaignId == campaignIdDecrypted).ToList().Count();
                 if (campaignCount == 0)
                     return ReturnResponse.ErrorResponse(CommonMessage.CampaignNotFound, StatusCodes.Status404NotFound);
 
-                if (advertisementsIdDecrypted == 0)
+                if (string.IsNullOrEmpty(advertisementsId))
                 {
                     var advertisements = _context.Advertisements.Include(x => x.Broadcasts).ToList();
                     var BroadcastsData = _context.AdvertisementsIntervals.ToList();
@@ -96,6 +95,7 @@ namespace AdvertisementService.Repository
                 }
                 else
                 {
+                    int advertisementsIdDecrypted = Obfuscation.Decode(advertisementsId);
                     var advertisements = _context.Advertisements.Include(x => x.Broadcasts).Where(x => x.AdvertisementId == advertisementsIdDecrypted).ToList();
                     var BroadcastsData = _context.AdvertisementsIntervals.Where(x => x.AdvertisementId == advertisementsIdDecrypted).ToList();
                     var campaignAdvertisement = _context.Broadcasts.Where(x => x.CampaignId == campaignIdDecrypted).ToList();
@@ -125,8 +125,8 @@ namespace AdvertisementService.Repository
                 {
                     foreach (var item in advertisementsModelList)
                     {
-                        int adsId = ObfuscationClass.DecodeId(Convert.ToInt32(item.AdvertisementId), _appSettings.PrimeInverse);
-                        int campId = ObfuscationClass.DecodeId(Convert.ToInt32(item.CampaignId.FirstOrDefault()), _appSettings.PrimeInverse);
+                        int adsId = Obfuscation.Decode(item.AdvertisementId);
+                        int campId = Obfuscation.Decode(item.CampaignId.FirstOrDefault());
                         item.Sort = _context.Broadcasts.Where(x => x.AdvertisementId == adsId && x.CampaignId == campId).Select(x => x.Sort).FirstOrDefault();
                     }
                 }
@@ -238,15 +238,14 @@ namespace AdvertisementService.Repository
             int totalCount = 0;
             try
             {
-                int campaignIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(campaignId), _appSettings.PrimeInverse);
                 CampaignsGetResponse response = new CampaignsGetResponse();
                 List<CampaignsModel> campaignsModelList = new List<CampaignsModel>();
-                if (campaignIdDecrypted == 0)
+                if (string.IsNullOrEmpty(campaignId))
                 {
                     campaignsModelList = (from campaign in _context.Campaigns
                                           select new CampaignsModel()
                                           {
-                                              CampaignId = ObfuscationClass.EncodeId(campaign.CampaignId, _appSettings.Prime).ToString(),
+                                              CampaignId = Obfuscation.Encode(campaign.CampaignId),
                                               Title = campaign.Title,
                                               StartAt = campaign.StartAt,
                                               EndAt = campaign.EndAt,
@@ -259,11 +258,12 @@ namespace AdvertisementService.Repository
                 }
                 else
                 {
+                    int campaignIdDecrypted = Obfuscation.Decode(campaignId);
                     campaignsModelList = (from campaign in _context.Campaigns
                                           where campaign.CampaignId == campaignIdDecrypted
                                           select new CampaignsModel()
                                           {
-                                              CampaignId = ObfuscationClass.EncodeId(campaign.CampaignId, _appSettings.Prime).ToString(),
+                                              CampaignId = Obfuscation.Encode(campaign.CampaignId),
                                               Title = campaign.Title,
                                               StartAt = campaign.StartAt,
                                               EndAt = campaign.EndAt,
@@ -320,7 +320,7 @@ namespace AdvertisementService.Repository
         {
             try
             {
-                int campaignIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(model.CampaignId), _appSettings.PrimeInverse);
+                int campaignIdDecrypted = Obfuscation.Decode(model.CampaignId);
                 var campaignData = _context.Campaigns.Where(x => x.CampaignId == campaignIdDecrypted).FirstOrDefault();
                 if (campaignData == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.CampaignNotFound, StatusCodes.Status404NotFound);
@@ -345,8 +345,8 @@ namespace AdvertisementService.Repository
             if (string.IsNullOrEmpty(campaignId) || string.IsNullOrEmpty(broadcastsDto.AdvertisementId))
                 throw new ArgumentNullException(CommonMessage.InvalidData);
 
-            int campaignIdDecoded = ObfuscationClass.DecodeId(Convert.ToInt32(campaignId), _appSettings.PrimeInverse);
-            int advertisementIdDecoded = ObfuscationClass.DecodeId(Convert.ToInt32(broadcastsDto.AdvertisementId), _appSettings.PrimeInverse);
+            int campaignIdDecoded = Obfuscation.Decode(campaignId);
+            int advertisementIdDecoded = Obfuscation.Decode(broadcastsDto.AdvertisementId);
 
             return new Broadcasts
             {
@@ -362,8 +362,8 @@ namespace AdvertisementService.Repository
             if (string.IsNullOrEmpty(campaignId) || string.IsNullOrEmpty(broadcastId))
                 throw new ArgumentNullException(CommonMessage.InvalidData);
 
-            int campaignIdDecoded = ObfuscationClass.DecodeId(Convert.ToInt32(campaignId), _appSettings.PrimeInverse);
-            int broadcastIdDecoded = ObfuscationClass.DecodeId(Convert.ToInt32(broadcastId), _appSettings.PrimeInverse);
+            int campaignIdDecoded = Obfuscation.Decode(campaignId);
+            int broadcastIdDecoded = Obfuscation.Decode(broadcastId);
 
             Broadcasts broadcast = _context.Broadcasts.Where(b => b.CampaignId == campaignIdDecoded && b.BroadcastId ==broadcastIdDecoded).FirstOrDefault();
             if (broadcast == null)

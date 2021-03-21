@@ -23,7 +23,7 @@ namespace AdvertisementService.Controllers
         [Route("advertisements/{advertisementsId?}")]
         public IActionResult GetAsync(string advertisementsId, string include, string embed, string sort_by, [FromQuery] Pagination pageInfo)
         {
-            string institutionId = "0";
+            string institutionId = null;
             dynamic response = _advertisementsRepository.GetAdvertisements(institutionId, advertisementsId, include, embed, sort_by, pageInfo);
             return StatusCode(response.statusCode, response);
         }

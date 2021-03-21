@@ -17,11 +17,11 @@ namespace AdvertisementService.Controllers
         }
 
         [HttpGet]
-        [Route("medias/{id=0}")]
+        [Route("medias/{id?}")]
         public IActionResult Get(string id, string include, [FromQuery] Pagination pageInfo)
         {
             dynamic response = _mediasRepository.GetMedias(id, include, pageInfo);
-            return StatusCode((int)response.statusCode, response);
+            return StatusCode(response.statusCode, response);
         }
         
         [HttpPost]

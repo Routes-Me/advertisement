@@ -6,7 +6,7 @@ using AdvertisementService.Models.ResponseModel;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using AdvertisementService.Models.Common;
-using Obfuscation;
+using RoutesSecurity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +42,7 @@ namespace AdvertisementService.Helper.Repository
                 List<string> lstItems = new List<string>();
                 foreach (var innerItem in item.Campaigns)
                 {
-                    lstItems.Add(ObfuscationClass.EncodeId(Convert.ToInt32(innerItem.CampaignId), _appSettings.Prime).ToString());
+                    lstItems.Add(Obfuscation.Encode(innerItem.CampaignId));
                 }
                 advertisements.CampaignId = lstItems;
                 advertisements.IntervalId = item.IntervalId;
@@ -63,12 +63,12 @@ namespace AdvertisementService.Helper.Repository
                     from m in Details.DefaultIfEmpty()
                     select new AdvertisementsGetModelWithCampaign()
                     {
-                        AdvertisementId = ObfuscationClass.EncodeId(advertisement.AdvertisementId, _appSettings.Prime).ToString(),
+                        AdvertisementId = Obfuscation.Encode(advertisement.AdvertisementId),
                         CreatedAt = advertisement.CreatedAt,
-                        InstitutionId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.InstitutionId), _appSettings.Prime).ToString(),
-                        MediaId = ObfuscationClass.EncodeId(Convert.ToInt32(advertisement.MediaId), _appSettings.Prime).ToString(),
+                        InstitutionId = Obfuscation.Encode(Convert.ToInt32(advertisement.InstitutionId)),
+                        MediaId = Obfuscation.Encode(Convert.ToInt32(advertisement.MediaId)),
                         ResourceName = advertisement.ResourceName,
-                        IntervalId = m == null ? null : ObfuscationClass.EncodeId(Convert.ToInt32(m.IntervalId), _appSettings.Prime).ToString(),
+                        IntervalId = m == null ? null : Obfuscation.Encode(m.IntervalId),
                         Campaigns = advertisement.Broadcasts.ToList(),
                         TintColor = advertisement.TintColor,
                         InvertedTintColor = advertisement.InvertedTintColor

@@ -7,7 +7,7 @@ using AdvertisementService.Models.ResponseModel;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Obfuscation;
+using RoutesSecurity;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -33,14 +33,14 @@ namespace AdvertisementService.Helper.Repository
             List<CampaignsModel> campaigns = new List<CampaignsModel>();
             foreach (var item in advertisementsModel)
             {
-                var advertisementIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(item.AdvertisementId), _appSettings.PrimeInverse);
+                var advertisementIdDecrypted = Obfuscation.Decode(item.AdvertisementId);
                 var campaignsDetails = (from campaign in _context.Campaigns
                                         join campadvt in _context.Broadcasts on campaign.CampaignId equals campadvt.CampaignId
                                         join advt in _context.Advertisements on campadvt.AdvertisementId equals advt.AdvertisementId
                                         where advt.AdvertisementId == advertisementIdDecrypted
                                         select new CampaignsModel()
                                         {
-                                            CampaignId = ObfuscationClass.EncodeId(campaign.CampaignId, _appSettings.Prime).ToString(),
+                                            CampaignId = Obfuscation.Encode(campaign.CampaignId),
                                             StartAt = campaign.StartAt,
                                             EndAt = campaign.EndAt,
                                             Status = campaign.Status,
@@ -80,14 +80,14 @@ namespace AdvertisementService.Helper.Repository
             List<IntervalsModel> intervals = new List<IntervalsModel>();
             foreach (var item in advertisementsModel)
             {
-                var advertisementIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(item.AdvertisementId), _appSettings.PrimeInverse);
+                var advertisementIdDecrypted = Obfuscation.Decode(item.AdvertisementId);
                 var intervalsDetails = (from interval in _context.Intervals
                                         join advtInterval in _context.AdvertisementsIntervals on interval.IntervalId equals advtInterval.IntervalId
                                         join advt in _context.Advertisements on advtInterval.AdvertisementId equals advt.AdvertisementId
                                         where advt.AdvertisementId == advertisementIdDecrypted
                                         select new IntervalsModel()
                                         {
-                                            IntervalId = ObfuscationClass.EncodeId(interval.IntervalId, _appSettings.Prime).ToString(),
+                                            IntervalId = Obfuscation.Encode(interval.IntervalId),
                                             Title = interval.Title
                                         }).ToList().FirstOrDefault();
                 if (intervalsDetails != null)
@@ -103,13 +103,13 @@ namespace AdvertisementService.Helper.Repository
             List<GetMediasModel> medias = new List<GetMediasModel>();
             foreach (var item in advertisementsModel)
             {
-                var mediaIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(item.MediaId), _appSettings.PrimeInverse);
+                var mediaIdDecrypted = Obfuscation.Decode(item.MediaId);
                 var mediasDetails = (from media in _context.Medias
                                      join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
                                      where media.MediaId == mediaIdDecrypted
                                      select new GetMediasModel()
                                      {
-                                         MediaId = ObfuscationClass.EncodeId(media.MediaId, _appSettings.Prime).ToString(),
+                                         MediaId = Obfuscation.Encode(media.MediaId),
                                          CreatedAt = media.CreatedAt,
                                          Url = media.Url,
                                          MediaType = media.MediaType,

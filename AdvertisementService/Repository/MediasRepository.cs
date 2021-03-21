@@ -10,7 +10,7 @@ using Microsoft.Azure.Storage.Blob;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Obfuscation;
+using RoutesSecurity;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,7 +38,7 @@ namespace AdvertisementService.Repository
         {
             try
             {
-                int mediaIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(id), _appSettings.PrimeInverse);
+                int mediaIdDecrypted = Obfuscation.Decode(id);
                 var medias = _context.Medias.Include(x => x.Advertisements).Include(x => x.MediaMetadata).Where(x => x.MediaId == mediaIdDecrypted).FirstOrDefault();
                 if (medias == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
@@ -77,15 +77,14 @@ namespace AdvertisementService.Repository
             int totalCount = 0;
             try
             {
-                int mediaIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(mediaId), _appSettings.PrimeInverse);
                 List<GetMediasModel> mediasModelList = new List<GetMediasModel>();
-                if (mediaIdDecrypted == 0)
+                if (string.IsNullOrEmpty(mediaId))
                 {
                     mediasModelList = (from media in _context.Medias
                                        join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
                                        select new GetMediasModel()
                                        {
-                                           MediaId = ObfuscationClass.EncodeId(media.MediaId, _appSettings.Prime).ToString(),
+                                           MediaId = Obfuscation.Encode(media.MediaId),
                                            CreatedAt = media.CreatedAt,
                                            Url = media.Url,
                                            MediaType = media.MediaType,
@@ -99,12 +98,13 @@ namespace AdvertisementService.Repository
                 }
                 else
                 {
+                    int mediaIdDecrypted = Obfuscation.Decode(mediaId);
                     mediasModelList = (from media in _context.Medias
                                        join metadata in _context.MediaMetadata on media.MediaMetadataId equals metadata.MediaMetadataId
                                        where media.MediaId == mediaIdDecrypted
                                        select new GetMediasModel()
                                        {
-                                           MediaId = ObfuscationClass.EncodeId(media.MediaId, _appSettings.Prime).ToString(),
+                                           MediaId = Obfuscation.Encode(media.MediaId),
                                            CreatedAt = media.CreatedAt,
                                            Url = media.Url,
                                            MediaType = media.MediaType,
@@ -195,7 +195,7 @@ namespace AdvertisementService.Repository
                 response.status = true;
                 response.statusCode = StatusCodes.Status201Created;
                 response.message = CommonMessage.MediaInsert;
-                response.mediaId = ObfuscationClass.EncodeId(media.MediaId, _appSettings.Prime).ToString();
+                response.mediaId = Obfuscation.Encode(media.MediaId);
                 response.url = media.Url;
                 return response;
             }
@@ -210,7 +210,7 @@ namespace AdvertisementService.Repository
             string blobUrl = string.Empty, mediaReferenceName = string.Empty;
             try
             {
-                int intervalIdDecrypted = ObfuscationClass.DecodeId(Convert.ToInt32(model.MediaId), _appSettings.PrimeInverse);
+                int intervalIdDecrypted = Obfuscation.Decode(model.MediaId);
                 var mediaData = _context.Medias.Include(x => x.MediaMetadata).Where(x => x.MediaId == intervalIdDecrypted).FirstOrDefault();
                 if (mediaData == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.MediaNotFound, StatusCodes.Status404NotFound);
