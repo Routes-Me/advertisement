@@ -9,8 +9,9 @@ using System.Threading.Tasks;
 
 namespace AdvertisementService.Controllers
 {
-    [Route("api")]
     [ApiController]
+    [ApiVersion( "1.0" )]
+    [Route("v{version:apiVersion}/")]
     public class AdvertisementsController : ControllerBase
     {
         private readonly IAdvertisementsRepository _advertisementsRepository;
@@ -66,7 +67,7 @@ namespace AdvertisementService.Controllers
         }
 
         [HttpGet]
-        [Route("contents/{id=0}")]
+        [Route("contents/{id?}")]
         public IActionResult GetAdvertisementsByPromotions(string id, [FromQuery] Pagination pageInfo)
         {
             dynamic response = _advertisementsRepository.GetContents(id, pageInfo);

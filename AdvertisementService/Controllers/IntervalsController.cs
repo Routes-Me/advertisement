@@ -5,8 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AdvertisementService.Controllers
 {
-    [Route("api")]
     [ApiController]
+    [ApiVersion( "1.0" )]
+    [Route("v{version:apiVersion}/")]
     public class IntervalsController : ControllerBase
     {
         private readonly IIntervalsRepository _intervalsRepository;
