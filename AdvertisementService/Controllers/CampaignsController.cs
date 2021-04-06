@@ -12,8 +12,9 @@ using RoutesSecurity;
 
 namespace AdvertisementService.Controllers
 {
-    [Route("api")]
     [ApiController]
+    [ApiVersion( "1.0" )]
+    [Route("v{version:apiVersion}/")]
     public class CampaignsController : ControllerBase
     {
         private readonly ICampaignsRepository _campaignsRepository;

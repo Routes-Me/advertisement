@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AdvertisementService.Controllers
 {
-    [Route("api")]
     [ApiController]
+    [ApiVersion( "1.0" )]
+    [Route("v{version:apiVersion}/")]
     public class MediasController : ControllerBase
     {
         private readonly IMediasRepository _mediasRepository;
