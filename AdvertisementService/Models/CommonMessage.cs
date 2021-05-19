@@ -38,6 +38,7 @@
         public static string AdvertisementRequired = "Advertisement id required.";
         public static string SortUpdate = "Sort index updated successfully.";
         public static string InvalidData = "Pass valid data.";
+        public static string ConnectionFailure = "Request cannot be executed: unable to establish connection with the targeted machine.";
 
     }
 }

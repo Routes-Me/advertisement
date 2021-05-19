@@ -527,7 +527,7 @@ namespace AdvertisementService.Repository
                     CreatedAt = DateTime.UtcNow,
                     InstitutionId = Obfuscation.Decode(model.InstitutionId),
                     MediaId = mediaId,
-                    ResourceName = model.ResourceName,
+                    ResourceName = JsonConvert.DeserializeObject<ResourceNamesResponse>(GetAPI(_dependencies.IdentifiersUrl, "key=advertisements").Content).resourceName.ToString(),
                     TintColor = model.TintColor,
                     InvertedTintColor = model.InvertedTintColor
                 };
@@ -813,6 +813,32 @@ namespace AdvertisementService.Repository
             {
                 return ReturnResponse.ExceptionResponse(ex);
             }
+        }
+
+        private dynamic GetAPI(string url, string query = "")
+        {
+            UriBuilder uriBuilder = new UriBuilder(_appSettings.Host + url);
+            uriBuilder = AppendQueryToUrl(uriBuilder, query);
+            var client = new RestClient(uriBuilder.Uri);
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = client.Execute(request);
+
+            if (response.StatusCode == 0)
+                throw new HttpListenerException(400, CommonMessage.ConnectionFailure);
+
+            if (!response.IsSuccessful)
+                throw new HttpListenerException((int)response.StatusCode, response.Content);
+
+            return response;
+        }
+
+        private UriBuilder AppendQueryToUrl(UriBuilder baseUri, string queryToAppend)
+        {
+            if (baseUri.Query != null && baseUri.Query.Length > 1)
+                baseUri.Query = baseUri.Query.Substring(1) + "&" + queryToAppend;
+            else
+                baseUri.Query = queryToAppend;
+            return baseUri;
         }
 
         private void DeletePromotions(string promotionId)

@@ -152,4 +152,9 @@ namespace AdvertisementService.Models
     {
         public string BroadcastId { get; set; }
     }
+
+    public class ResourceNamesResponse
+    {
+        public string resourceName { get; set; }
+    }
 }

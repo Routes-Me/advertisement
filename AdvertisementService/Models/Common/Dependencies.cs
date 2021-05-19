@@ -7,6 +7,7 @@ namespace AdvertisementService.Models.Common
 {
     public class Dependencies
     {
+        public string IdentifiersUrl { get; set; }
         public string InstitutionUrl { get; set; }
         public string CouponsUrl { get; set; }
         public string PromotionsUrl { get; set; }
