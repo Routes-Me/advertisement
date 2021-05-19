@@ -17,7 +17,8 @@ namespace AdvertisementService.Models.ResponseModel
     public class AdvertisementsGetModel
     {
         public string AdvertisementId { get; set; }
-        public string ResourceName { get; set; }
+        public string ResourceNumber { get; set; }
+        public string Name { get; set; }
         public string InstitutionId { get; set; }
         public DateTime? CreatedAt { get; set; }
         public string MediaId { get; set; }
@@ -41,6 +42,8 @@ namespace AdvertisementService.Models.ResponseModel
         public string Type { get; set; }
         public string Url { get; set; }
         public int? Sort { get; set; }
+        public string ResourceNumber { get; set; }
+        public string Name { get; set; }
         public int? TintColor { get; set; }
         public int? InvertedTintColor { get; set; }
     }
@@ -48,7 +51,8 @@ namespace AdvertisementService.Models.ResponseModel
     public class PostAdvertisementsModel
     {
         public string AdvertisementId { get; set; }
-        public string ResourceName { get; set; }
+        public string ResourceNumber { get; set; }
+        public string Name { get; set; }
         public string InstitutionId { get; set; }
         public string IntervalId { get; set; }
         public List<string> CampaignId { get; set; }
@@ -69,6 +73,8 @@ namespace AdvertisementService.Models.ResponseModel
         public string ContentId { get; set; }
         public string Type { get; set; }
         public string Url { get; set; }
+        public string ResourceNumber { get; set; }
+        public string Name { get; set; }
         public int? TintColor { get; set; }
         public int? InvertedTintColor { get; set; }
         public PromotionsModelForContent promotion { get; set; }
@@ -94,7 +100,8 @@ namespace AdvertisementService.Models.ResponseModel
     public class AdvertisementsGetModelWithCampaign
     {
         public string AdvertisementId { get; set; }
-        public string ResourceName { get; set; }
+        public string ResourceNumber { get; set; }
+        public string Name { get; set; }
         public string InstitutionId { get; set; }
         public DateTime? CreatedAt { get; set; }
         public string MediaId { get; set; }

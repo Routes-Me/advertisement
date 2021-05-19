@@ -38,7 +38,8 @@ namespace AdvertisementService.Helper.Repository
                 advertisements.CreatedAt = item.CreatedAt;
                 advertisements.InstitutionId = item.InstitutionId;
                 advertisements.MediaId = item.MediaId;
-                advertisements.ResourceName = item.ResourceName;
+                advertisements.ResourceNumber = item.ResourceNumber;
+                advertisements.Name = item.Name;
                 List<string> lstItems = new List<string>();
                 foreach (var innerItem in item.Campaigns)
                 {
@@ -67,7 +68,8 @@ namespace AdvertisementService.Helper.Repository
                         CreatedAt = advertisement.CreatedAt,
                         InstitutionId = Obfuscation.Encode(Convert.ToInt32(advertisement.InstitutionId)),
                         MediaId = Obfuscation.Encode(Convert.ToInt32(advertisement.MediaId)),
-                        ResourceName = advertisement.ResourceName,
+                        ResourceNumber = advertisement.ResourceNumber,
+                        Name = advertisement.Name,
                         IntervalId = m == null ? null : Obfuscation.Encode(m.IntervalId),
                         Campaigns = advertisement.Broadcasts.ToList(),
                         TintColor = advertisement.TintColor,
