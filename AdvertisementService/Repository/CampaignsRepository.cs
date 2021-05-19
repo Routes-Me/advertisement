@@ -80,7 +80,8 @@ namespace AdvertisementService.Repository
                                               {
                                                   AdvertisementId = advertisement.AdvertisementId,
                                                   InstitutionId = advertisement.InstitutionId,
-                                                  ResourceName = advertisement.ResourceName,
+                                                  ResourceNumber = advertisement.ResourceNumber,
+                                                  Name = advertisement.Name,
                                                   CreatedAt = advertisement.CreatedAt,
                                                   MediaId = advertisement.MediaId,
                                                   Media = advertisement.Media,
@@ -106,7 +107,8 @@ namespace AdvertisementService.Repository
                                               {
                                                   AdvertisementId = advertisement.AdvertisementId,
                                                   InstitutionId = advertisement.InstitutionId,
-                                                  ResourceName = advertisement.ResourceName,
+                                                  ResourceNumber = advertisement.ResourceNumber,
+                                                  Name = advertisement.Name,
                                                   CreatedAt = advertisement.CreatedAt,
                                                   MediaId = advertisement.MediaId,
                                                   Media = advertisement.Media,
@@ -141,7 +143,7 @@ namespace AdvertisementService.Repository
                             if (sortItem.FirstOrDefault().ToLower() == "advertisement" || sortItem.FirstOrDefault().ToLower() == "advertisements")
                                 advertisementsModelList = advertisementsModelList.OrderBy(x => x.AdvertisementId).ToList();
                             else if (sortItem.FirstOrDefault().ToLower() == "resourcename " || sortItem.FirstOrDefault().ToLower() == "resourcename")
-                                advertisementsModelList = advertisementsModelList.OrderBy(x => x.ResourceName).ToList();
+                                advertisementsModelList = advertisementsModelList.OrderBy(x => x.ResourceNumber).ToList();
                             else if (sortItem.FirstOrDefault().ToLower() == "institution" || sortItem.FirstOrDefault().ToLower() == "institutions")
                                 advertisementsModelList = advertisementsModelList.OrderBy(x => x.InstitutionId).ToList();
                             else if (sortItem.FirstOrDefault().ToLower() == "media" || sortItem.FirstOrDefault().ToLower() == "medias")
@@ -160,7 +162,7 @@ namespace AdvertisementService.Repository
                             if (sortItem.FirstOrDefault().ToLower() == "advertisement" || sortItem.FirstOrDefault().ToLower() == "advertisements")
                                 advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.AdvertisementId).ToList();
                             else if (sortItem.FirstOrDefault().ToLower() == "resourcename " || sortItem.FirstOrDefault().ToLower() == "resourcename")
-                                advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.ResourceName).ToList();
+                                advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.ResourceNumber).ToList();
                             else if (sortItem.FirstOrDefault().ToLower() == "institution" || sortItem.FirstOrDefault().ToLower() == "institutions")
                                 advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.InstitutionId).ToList();
                             else if (sortItem.FirstOrDefault().ToLower() == "media" || sortItem.FirstOrDefault().ToLower() == "medias")

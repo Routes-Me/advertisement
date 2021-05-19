@@ -197,7 +197,7 @@ namespace AdvertisementService.Repository
                             if (sortItem.FirstOrDefault().ToLower() == "advertisement" || sortItem.FirstOrDefault().ToLower() == "advertisements")
                                 advertisementsModelList = advertisementsModelList.OrderBy(x => x.AdvertisementId).ToList();
                             else if (sortItem.FirstOrDefault().ToLower() == "resourcename " || sortItem.FirstOrDefault().ToLower() == "resourcename")
-                                advertisementsModelList = advertisementsModelList.OrderBy(x => x.ResourceName).ToList();
+                                advertisementsModelList = advertisementsModelList.OrderBy(x => x.ResourceNumber).ToList();
                             else if (sortItem.FirstOrDefault().ToLower() == "institution" || sortItem.FirstOrDefault().ToLower() == "institutions")
                                 advertisementsModelList = advertisementsModelList.OrderBy(x => x.InstitutionId).ToList();
                             else if (sortItem.FirstOrDefault().ToLower() == "media" || sortItem.FirstOrDefault().ToLower() == "medias")
@@ -216,7 +216,7 @@ namespace AdvertisementService.Repository
                             if (sortItem.FirstOrDefault().ToLower() == "advertisement" || sortItem.FirstOrDefault().ToLower() == "advertisements")
                                 advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.AdvertisementId).ToList();
                             else if (sortItem.FirstOrDefault().ToLower() == "resourcename " || sortItem.FirstOrDefault().ToLower() == "resourcename")
-                                advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.ResourceName).ToList();
+                                advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.ResourceNumber).ToList();
                             else if (sortItem.FirstOrDefault().ToLower() == "institution" || sortItem.FirstOrDefault().ToLower() == "institutions")
                                 advertisementsModelList = advertisementsModelList.OrderByDescending(x => x.InstitutionId).ToList();
                             else if (sortItem.FirstOrDefault().ToLower() == "media" || sortItem.FirstOrDefault().ToLower() == "medias")
@@ -312,6 +312,8 @@ namespace AdvertisementService.Repository
                                              Type = media.MediaType,
                                              Url = media.Url,
                                              Sort = advtcamp.Sort,
+                                             ResourceNumber = advertisement.ResourceNumber,
+                                             Name = advertisement.Name,
                                              TintColor = advertisement.TintColor,
                                              InvertedTintColor = advertisement.InvertedTintColor
                                          }).AsEnumerable().OrderBy(a => a.Sort)
@@ -341,6 +343,8 @@ namespace AdvertisementService.Repository
                                              Type = media.MediaType,
                                              Url = media.Url,
                                              Sort = advtcamp.Sort,
+                                             ResourceNumber = advertisement.ResourceNumber,
+                                             Name = advertisement.Name,
                                              TintColor = advertisement.TintColor,
                                              InvertedTintColor = advertisement.InvertedTintColor
                                          }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).OrderBy(a => a.Sort)
@@ -364,6 +368,8 @@ namespace AdvertisementService.Repository
                         ContentId = content.ContentId,
                         Type = content.Type,
                         Url = content.Url,
+                        Name = content.Name,
+                        ResourceNumber = content.ResourceNumber,
                         TintColor = content.TintColor,
                         InvertedTintColor = content.InvertedTintColor
                     };
@@ -527,7 +533,8 @@ namespace AdvertisementService.Repository
                     CreatedAt = DateTime.UtcNow,
                     InstitutionId = Obfuscation.Decode(model.InstitutionId),
                     MediaId = mediaId,
-                    ResourceName = model.ResourceName,
+                    ResourceNumber = JsonConvert.DeserializeObject<ResourceNamesResponse>(GetAPI(_dependencies.IdentifiersUrl, "key=advertisements").Content).resourceName.ToString(),
+                    Name = model.Name,
                     TintColor = model.TintColor,
                     InvertedTintColor = model.InvertedTintColor
                 };
@@ -723,7 +730,8 @@ namespace AdvertisementService.Repository
                     advertisements.MediaId = mediaData.MediaId;
                 else
                     advertisements.MediaId = null;
-                advertisements.ResourceName = model.ResourceName;
+                advertisements.ResourceNumber = model.ResourceNumber;
+                advertisements.Name = model.Name;
                 advertisements.TintColor = model.TintColor;
                 advertisements.InvertedTintColor = model.InvertedTintColor;
                 _context.Advertisements.Update(advertisements);
@@ -813,6 +821,32 @@ namespace AdvertisementService.Repository
             {
                 return ReturnResponse.ExceptionResponse(ex);
             }
+        }
+
+        private dynamic GetAPI(string url, string query = "")
+        {
+            UriBuilder uriBuilder = new UriBuilder(_appSettings.Host + url);
+            uriBuilder = AppendQueryToUrl(uriBuilder, query);
+            var client = new RestClient(uriBuilder.Uri);
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = client.Execute(request);
+
+            if (response.StatusCode == 0)
+                throw new HttpListenerException(400, CommonMessage.ConnectionFailure);
+
+            if (!response.IsSuccessful)
+                throw new HttpListenerException((int)response.StatusCode, response.Content);
+
+            return response;
+        }
+
+        private UriBuilder AppendQueryToUrl(UriBuilder baseUri, string queryToAppend)
+        {
+            if (baseUri.Query != null && baseUri.Query.Length > 1)
+                baseUri.Query = baseUri.Query.Substring(1) + "&" + queryToAppend;
+            else
+                baseUri.Query = queryToAppend;
+            return baseUri;
         }
 
         private void DeletePromotions(string promotionId)

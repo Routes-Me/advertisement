@@ -13,7 +13,8 @@ namespace AdvertisementService.Models.DBModels
 
         public int AdvertisementId { get; set; }
         public int? InstitutionId { get; set; }
-        public string ResourceName { get; set; }
+        public string ResourceNumber { get; set; }
+        public string Name { get; set; }
         public DateTime? CreatedAt { get; set; }
         public int? MediaId { get; set; }
         public int? TintColor { get; set; }

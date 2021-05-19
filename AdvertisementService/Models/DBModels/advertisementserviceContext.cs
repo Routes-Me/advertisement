@@ -47,9 +47,15 @@ namespace AdvertisementService.Models.DBModels
 
                 entity.Property(e => e.MediaId).HasColumnName("media_id");
 
-                entity.Property(e => e.ResourceName)
-                    .HasColumnName("resource_name")
-                    .HasColumnType("varchar(25)")
+                entity.Property(e => e.ResourceNumber)
+                    .HasColumnName("resource_number")
+                    .HasColumnType("varchar(21)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.Property(e => e.Name)
+                    .HasColumnName("name")
+                    .HasColumnType("varchar(50)")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
 
