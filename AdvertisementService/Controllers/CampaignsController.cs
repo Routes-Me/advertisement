@@ -28,19 +28,19 @@ namespace AdvertisementService.Controllers
         }
 
         [HttpGet]
-        [Route("campaigns/{id=0}")]
+        [Route("campaigns/{id?}")]
         public IActionResult GetCampaigns(string id, string include, [FromQuery] Pagination pageInfo)
         {
             dynamic response = _campaignsRepository.GetCampaigns(id, include, pageInfo);
-            return StatusCode((int)response.statusCode, response);
+            return StatusCode(response.statusCode, response);
         }
 
         [HttpGet]
-        [Route("campaigns/{id=0}/advertisements/{advertisementsId=0}")]
+        [Route("campaigns/{id}/advertisements/{advertisementsId?}")]
         public IActionResult GetAdvertisementsByIdAsync(string id, string advertisementsId, string include, string embed,string sort_by, [FromQuery] Pagination pageInfo)
         {
             dynamic response = _campaignsRepository.GetAdvertisementsAsync(id, advertisementsId, include, embed, sort_by, pageInfo);
-            return StatusCode((int)response.statusCode, response);
+            return StatusCode(response.statusCode, response);
         }
 
         [HttpPost]
@@ -48,7 +48,7 @@ namespace AdvertisementService.Controllers
         public IActionResult Post(CampaignsModel model)
         {
             dynamic response = _campaignsRepository.InsertCampaigns(model);
-            return StatusCode((int)response.statusCode, response);
+            return StatusCode(response.statusCode, response);
         }
 
         [HttpPut]
@@ -56,7 +56,7 @@ namespace AdvertisementService.Controllers
         public IActionResult Put(CampaignsModel model)
         {
             dynamic response = _campaignsRepository.UpdateCampaigns(model);
-            return StatusCode((int)response.statusCode, response);
+            return StatusCode(response.statusCode, response);
         }
 
         [HttpDelete]
@@ -64,7 +64,7 @@ namespace AdvertisementService.Controllers
         public IActionResult Delete(string id)
         {
             dynamic response = _campaignsRepository.DeleteCampaigns(id);
-            return StatusCode((int)response.statusCode, response);
+            return StatusCode(response.statusCode, response);
         }
 
         [HttpPost]
