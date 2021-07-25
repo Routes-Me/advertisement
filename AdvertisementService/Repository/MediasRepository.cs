@@ -21,12 +21,12 @@ namespace AdvertisementService.Repository
 {
     public class MediasRepository : IMediasRepository
     {
-        private readonly advertisementserviceContext _context;
+        private readonly AdvertisementContext _context;
         private readonly AzureStorageBlobConfig _config;
         private readonly IVideoConversionRepository _videoConversionRepository;
         private readonly AppSettings _appSettings;
 
-        public MediasRepository(IOptions<AppSettings> appSettings, IOptions<AzureStorageBlobConfig> config, advertisementserviceContext context, IVideoConversionRepository videoConversionRepository)
+        public MediasRepository(IOptions<AppSettings> appSettings, IOptions<AzureStorageBlobConfig> config, AdvertisementContext context, IVideoConversionRepository videoConversionRepository)
         {
             _appSettings = appSettings.Value;
             _config = config.Value;

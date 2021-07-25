@@ -29,7 +29,7 @@ namespace AdvertisementService.Repository
 {
     public class AdvertisementsRepository : IAdvertisementsRepository
     {
-        private readonly advertisementserviceContext _context;
+        private readonly AdvertisementContext _context;
         private readonly IIncludeAdvertisementsRepository _includeAdvertisements;
         private readonly AppSettings _appSettings;
         private IWebHostEnvironment _hostingEnv;
@@ -38,7 +38,7 @@ namespace AdvertisementService.Repository
         private readonly Dependencies _dependencies;
         private readonly IVideoConversionRepository _videoConversionRepository;
         private readonly ILogger<AdvertisementsRepository> _logger;
-        public AdvertisementsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements, IWebHostEnvironment hostingEnv, ICommonFunctions commonFunctions, IOptions<AzureStorageBlobConfig> config, IOptions<Dependencies> dependencies, IVideoConversionRepository videoConversionRepository, ILogger<AdvertisementsRepository> logger)
+        public AdvertisementsRepository(IOptions<AppSettings> appSettings, AdvertisementContext context, IIncludeAdvertisementsRepository includeAdvertisements, IWebHostEnvironment hostingEnv, ICommonFunctions commonFunctions, IOptions<AzureStorageBlobConfig> config, IOptions<Dependencies> dependencies, IVideoConversionRepository videoConversionRepository, ILogger<AdvertisementsRepository> logger)
         {
             _appSettings = appSettings.Value;
             _context = context;
@@ -581,7 +581,7 @@ namespace AdvertisementService.Repository
             try
             {
                 string mediaReferenceName = string.Empty, ext = string.Empty;
-                int? mediaId = null, MediaMetadataId = null;
+                int? MediaMetadataId = null;
                 var advertisements = _context.Advertisements.Include(x => x.AdvertisementsIntervals).Include(x => x.Broadcasts).Where(x => x.AdvertisementId == Obfuscation.Decode(model.AdvertisementId)).FirstOrDefault();
                 if (advertisements == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);

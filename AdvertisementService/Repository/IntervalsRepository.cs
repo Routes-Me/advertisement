@@ -15,10 +15,10 @@ namespace AdvertisementService.Repository
 {
     public class IntervalsRepository : IIntervalsRepository
     {
-        private readonly advertisementserviceContext _context;
+        private readonly AdvertisementContext _context;
         private readonly AppSettings _appSettings;
 
-        public IntervalsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context)
+        public IntervalsRepository(IOptions<AppSettings> appSettings, AdvertisementContext context)
         {
             _appSettings = appSettings.Value;
             _context = context;

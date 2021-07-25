@@ -1,4 +1,5 @@
 ﻿using AdvertisementService.Models.ResponseModel;
+using AdvertisementService.Internal.Dto;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -46,6 +47,11 @@ namespace AdvertisementService.Models
         }
     }
 
+    public class ErrorMessage
+    {
+        public string Error { get; set; }
+    }
+
     #region Campaigns Response
     public class CampaignsGetResponse : Response
     {
@@ -75,6 +81,12 @@ namespace AdvertisementService.Models
     {
         public string AdvertisementId { get; set; }
     }
+
+    public class AdvertisementsGetReportDto
+    {
+        public List<AdvertisementReportDto> Data { get; set; }
+    }
+
     #endregion
 
     #region Medias Response

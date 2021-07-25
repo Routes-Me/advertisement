@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace AdvertisementService.Models.DBModels
 {
-    public partial class advertisementserviceContext : DbContext
+    public partial class AdvertisementContext : DbContext
     {
-        public advertisementserviceContext()
+        public AdvertisementContext()
         {
         }
 
-        public advertisementserviceContext(DbContextOptions<advertisementserviceContext> options)
+        public AdvertisementContext(DbContextOptions<AdvertisementContext> options)
             : base(options)
         {
         }

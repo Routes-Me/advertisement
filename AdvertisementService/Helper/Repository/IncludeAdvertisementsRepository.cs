@@ -19,9 +19,9 @@ namespace AdvertisementService.Helper.Repository
     public class IncludeAdvertisementsRepository : IIncludeAdvertisementsRepository
     {
         private readonly AppSettings _appSettings;
-        private readonly advertisementserviceContext _context;
+        private readonly AdvertisementContext _context;
         private readonly Dependencies _dependencies;
-        public IncludeAdvertisementsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context, IOptions<Dependencies> dependencies)
+        public IncludeAdvertisementsRepository(IOptions<AppSettings> appSettings, AdvertisementContext context, IOptions<Dependencies> dependencies)
         {
             _appSettings = appSettings.Value;
             _context = context;
