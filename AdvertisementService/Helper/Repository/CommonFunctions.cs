@@ -16,11 +16,11 @@ namespace AdvertisementService.Helper.Repository
 {
     public class CommonFunctions : ICommonFunctions
     {
-        private readonly advertisementserviceContext _context;
+        private readonly AdvertisementContext _context;
         private readonly IIncludeAdvertisementsRepository _includeAdvertisements;
         private readonly AdvertisementService.Models.Common.AppSettings _appSettings;
 
-        public CommonFunctions(IOptions<AdvertisementService.Models.Common.AppSettings> appSettings, advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements)
+        public CommonFunctions(IOptions<AdvertisementService.Models.Common.AppSettings> appSettings, AdvertisementContext context, IIncludeAdvertisementsRepository includeAdvertisements)
         {
             _appSettings = appSettings.Value;
             _context = context;

@@ -18,9 +18,9 @@ namespace AdvertisementService.Controllers
     public class CampaignsController : ControllerBase
     {
         private readonly ICampaignsRepository _campaignsRepository;
-        private readonly advertisementserviceContext _context;
+        private readonly AdvertisementContext _context;
         private readonly AppSettings _appSettings;
-        public CampaignsController(ICampaignsRepository campaignsRepository, advertisementserviceContext context, IOptions<AppSettings> appSettings)
+        public CampaignsController(ICampaignsRepository campaignsRepository, AdvertisementContext context, IOptions<AppSettings> appSettings)
         {
             _campaignsRepository = campaignsRepository;
             _context = context;

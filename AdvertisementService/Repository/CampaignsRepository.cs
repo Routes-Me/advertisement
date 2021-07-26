@@ -18,11 +18,11 @@ namespace AdvertisementService.Repository
 {
     public class CampaignsRepository : ICampaignsRepository
     {
-        private readonly advertisementserviceContext _context;
+        private readonly AdvertisementContext _context;
         private readonly IIncludeAdvertisementsRepository _includeAdvertisements;
         private readonly AppSettings _appSettings;
         private ICommonFunctions _commonFunctions;
-        public CampaignsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements, ICommonFunctions commonFunctions)
+        public CampaignsRepository(IOptions<AppSettings> appSettings, AdvertisementContext context, IIncludeAdvertisementsRepository includeAdvertisements, ICommonFunctions commonFunctions)
         {
             _appSettings = appSettings.Value;
             _context = context;
