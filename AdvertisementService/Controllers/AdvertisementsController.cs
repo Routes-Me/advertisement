@@ -71,7 +71,7 @@ namespace AdvertisementService.Controllers
         public IActionResult GetAdvertisementsByPromotions(string id, [FromQuery] Pagination pageInfo)
         {
             dynamic response = _advertisementsRepository.GetContents(id, pageInfo);
-            return StatusCode((int)response.statusCode, response);
+            return Ok(response);
         }
 
         [HttpPatch]
