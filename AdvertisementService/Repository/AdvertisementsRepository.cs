@@ -291,153 +291,362 @@ namespace AdvertisementService.Repository
 
         public dynamic GetContents(string advertisementId, Pagination pageInfo)
         {
-            int totalCount = 0;
-            try
+            return JObject.Parse(@"
             {
-                ContentsGetResponse response = new ContentsGetResponse();
-                List<AdvertisementsForContentModel> contentsModelList = new List<AdvertisementsForContentModel>();
-                MediasModel medias = new MediasModel();
-                List<ContentsModel> contents = new List<ContentsModel>();
-
-                if (string.IsNullOrEmpty(advertisementId))
-                {
-                    contentsModelList = (from advertisement in _context.Advertisements
-                                         join media in _context.Medias on advertisement.MediaId equals media.MediaId
-                                         join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
-                                         join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
-                                         where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now
-                                         select new AdvertisementsForContentModel()
-                                         {
-                                             ContentId = Obfuscation.Encode(advertisement.AdvertisementId),
-                                             Type = media.MediaType,
-                                             Url = media.Url,
-                                             Sort = advtcamp.Sort,
-                                             ResourceNumber = advertisement.ResourceNumber,
-                                             Name = advertisement.Name,
-                                             TintColor = advertisement.TintColor,
-                                             InvertedTintColor = advertisement.InvertedTintColor
-                                         }).AsEnumerable().OrderBy(a => a.Sort)
-                                         .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
-
-                    totalCount = (from advertisement in _context.Advertisements
-                                  join media in _context.Medias on advertisement.MediaId equals media.MediaId
-                                  join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
-                                  join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
-                                  where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now
-                                  select new AdvertisementsForContentModel()
-                                  {
-                                      ContentId = Obfuscation.Encode(advertisement.AdvertisementId)
-                                  }).AsEnumerable().ToList().Count();
-                }
-                else
-                {
-                    int advertisementIdDecrypted = Obfuscation.Decode(advertisementId);
-                    contentsModelList = (from advertisement in _context.Advertisements
-                                         join media in _context.Medias on advertisement.MediaId equals media.MediaId
-                                         join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
-                                         join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
-                                         where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now && advertisement.AdvertisementId == advertisementIdDecrypted
-                                         select new AdvertisementsForContentModel()
-                                         {
-                                             ContentId = Obfuscation.Encode(advertisement.AdvertisementId),
-                                             Type = media.MediaType,
-                                             Url = media.Url,
-                                             Sort = advtcamp.Sort,
-                                             ResourceNumber = advertisement.ResourceNumber,
-                                             Name = advertisement.Name,
-                                             TintColor = advertisement.TintColor,
-                                             InvertedTintColor = advertisement.InvertedTintColor
-                                         }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).OrderBy(a => a.Sort)
-                                         .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
-
-                    totalCount = (from advertisement in _context.Advertisements
-                                  join media in _context.Medias on advertisement.MediaId equals media.MediaId
-                                  join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
-                                  join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
-                                  where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now && advertisement.AdvertisementId == advertisementIdDecrypted
-                                  select new AdvertisementsForContentModel()
-                                  {
-                                      ContentId = Obfuscation.Encode(advertisement.AdvertisementId)
-                                  }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).ToList().Count();
-                }
-
-                foreach (var content in contentsModelList)
-                {
-                    ContentsModel contentsModel = new ContentsModel()
-                    {
-                        ContentId = content.ContentId,
-                        Type = content.Type,
-                        Url = content.Url,
-                        Name = content.Name,
-                        ResourceNumber = content.ResourceNumber,
-                        TintColor = content.TintColor,
-                        InvertedTintColor = content.InvertedTintColor
-                    };
-                    contents.Add(contentsModel);
-                }
-
-                if (contentsModelList.Count > 0)
-                {
-                    List<PromotionsGetModel> promotions = _includeAdvertisements.GetPromotionsIncludedData(contentsModelList);
-                    if (promotions != null && promotions.Count > 0)
-                    {
-                        foreach (var content in contents)
-                        {
-                            foreach (var promotion in promotions)
-                            {
-                                if (content.ContentId == promotion.AdvertisementId)
-                                {
-                                    PromotionsModelForContent promotionsModelForContent = new PromotionsModelForContent();
-                                    promotionsModelForContent.Title = promotion.Title;
-                                    promotionsModelForContent.Subtitle = promotion.Subtitle;
-                                    promotionsModelForContent.PromotionId = promotion.PromotionId;
-                                    promotionsModelForContent.LogoUrl = promotion.LogoUrl;
-                                    promotionsModelForContent.Code = promotion.Code;
-                                    if (!string.IsNullOrEmpty(promotion.Type))
-                                    {
-                                        if (promotion.Type.ToLower() == "links")
-                                        {
-                                            promotionsModelForContent.Link = _appSettings.LinkUrlForContent + promotion.PromotionId;
-                                        }
-                                        else if (promotion.Type.ToLower() == "coupons")
-                                        {
-                                            promotionsModelForContent.Link = _appSettings.CouponUrlForContent + promotion.PromotionId;
-                                        }
-                                        else if (promotion.Type.ToLower() == "places")
-                                        {
-                                            promotionsModelForContent.Link = null;
-                                        }
-                                        else
-                                        {
-                                            promotionsModelForContent.Link = null;
-                                        }
-                                    }
-                                    content.promotion = promotionsModelForContent;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                var page = new Pagination
-                {
-                    offset = pageInfo.offset,
-                    limit = pageInfo.limit,
-                    total = totalCount
-                };
-
-                response.status = true;
-                response.message = CommonMessage.ContentsRetrive;
-                response.pagination = page;
-                response.data = contents;
-                response.statusCode = StatusCodes.Status200OK;
-                return response;
+    ""pagination"": {
+        ""offset"": 1,
+        ""limit"": 50,
+        ""total"": 15
+    },
+    ""data"": [
+        {
+            ""contentId"": ""A2014890293"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/1a503bd2-00ad-45ea-aec7-634507d86c79.mp4"",
+            ""resourceNumber"": ""A008"",
+            ""name"": ""Careem-Arb"",
+            ""tintColor"": 1616947,
+            ""promotion"": {
+                ""promotionId"": ""A1569767070"",
+                ""title"": ""Careem"",
+                ""subtitle"": ""Careem"",
+                ""code"": ""RKW"",
+                ""link"": ""http://links.routesme.com/A1569767070""
             }
-            catch (Exception ex)
-            {
-                return ReturnResponse.ExceptionResponse(ex);
+        },
+        {
+            ""contentId"": ""A1736295107"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/213e-sSeq3-qedef-32ded3d-asdaed.mp4"",
+            ""resourceNumber"": ""A0014"",
+            ""name"": ""Ooredoo"",
+            ""promotion"": {
+                ""promotionId"": ""A156264934"",
+                ""title"": ""Download My Ooredoo App"",
+                ""subtitle"": ""Scan the code now"",
+                ""link"": ""http://links.routesme.com/A156264934""
             }
+        },
+        {
+            ""contentId"": ""A356727653"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/31ff985c-9352-436c-a4cb-1e560a5effa7.mp4"",
+            ""resourceNumber"": ""A0024"",
+            ""name"": ""Vaccination is protection"",
+            ""promotion"": {
+                ""promotionId"": ""A356727653"",
+                ""title"": ""VACCINATION IS PROTECTION   -   ‏التــطعيم وقــايــة"",
+                ""subtitle"": ""Visit the website or scan the code  -  زورو الموقع"",
+                ""link"": ""http://links.routesme.com/A356727653""
+            }
+        },
+        {
+            ""contentId"": ""A601388157"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/db74f43c-a584-4d8d-b822-4968d0b47856.mp4"",
+            ""resourceNumber"": ""A0016"",
+            ""name"": ""I save"",
+            ""tintColor"": 16740096,
+            ""promotion"": {
+                ""promotionId"": ""A1168841632"",
+                ""title"": ""Get instant discounts, download now!"",
+                ""subtitle"": ""احصل على خصومات فورية.. حمل التطبيق الآن"",
+                ""link"": ""http://links.routesme.com/A1168841632""
+            }
+        },
+        {
+            ""contentId"": ""A1124643847"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/b0203b58-3d88-4431-95d0-c5c5a388ff3a.mp4"",
+            ""resourceNumber"": ""A002"",
+            ""name"": ""Mr.Bean1"",
+            ""tintColor"": 12533824
+        },
+        {
+            ""contentId"": ""A1046511380"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/1a256034-b605-49ed-bddd-cf1a14b99314.mp4"",
+            ""resourceNumber"": ""A0019"",
+            ""name"": ""Turkish Grill"",
+            ""tintColor"": 14091268,
+            ""promotion"": {
+                ""promotionId"": ""A33934682"",
+                ""title"": ""Order online now! Scan the code"",
+                ""subtitle"": ""أطلب اونلاين الان..قم بنسخ الكود"",
+                ""link"": ""http://links.routesme.com/A33934682""
+            }
+        },
+        {
+            ""contentId"": ""A1936757826"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/31ff985c-9352-436c-a4cb-1e560a5effa7.mp4"",
+            ""resourceNumber"": ""A0025"",
+            ""name"": ""Vaccination Ar"",
+            ""promotion"": {
+                ""promotionId"": ""A1936757826"",
+                ""title"": ""VACCINATION IS PROTECTION   -   ‏التــطعيم وقــايــة"",
+                ""subtitle"": ""Visit the website or scan the code  -  زورو الموقع"",
+                ""link"": ""http://links.routesme.com/A1936757826""
+            }
+        },
+        {
+            ""contentId"": ""A2014890293"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/1a503bd2-00ad-45ea-aec7-634507d86c79.mp4"",
+            ""resourceNumber"": ""A008"",
+            ""name"": ""Careem-Arb"",
+            ""tintColor"": 1616947,
+            ""promotion"": {
+                ""promotionId"": ""A1569767070"",
+                ""title"": ""Careem"",
+                ""subtitle"": ""Careem"",
+                ""code"": ""RKW"",
+                ""link"": ""http://links.routesme.com/A1569767070""
+            }
+        },
+        {
+            ""contentId"": ""A1491634603"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/0d0cc602-06ff-4831-9416-c82f4b5544c6.mp4"",
+            ""resourceNumber"": ""A0022"",
+            ""name"": ""Ooredoo Ar"",
+            ""promotion"": {
+                ""promotionId"": ""A479057905"",
+                ""title"": ""حمل تطبيق My Ooredoo"",
+                ""subtitle"": ""انسخ الكود من خلال الكاميرا الموجودة بهاتفك الذكي"",
+                ""link"": ""http://links.routesme.com/A479057905""
+            }
+        },
+        {
+            ""contentId"": ""A1447436818"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/845dc98a-1efa-421b-9827-3318c0dfae3f.mp4"",
+            ""resourceNumber"": ""A009"",
+            ""name"": ""Careem-Eng"",
+            ""tintColor"": 1616947,
+            ""promotion"": {
+                ""promotionId"": ""A1002313595"",
+                ""title"": ""Careem"",
+                ""subtitle"": ""Careem"",
+                ""code"": ""RKW"",
+                ""link"": ""http://links.routesme.com/A1002313595""
+            }
+        },
+        {
+            ""contentId"": ""A2059088078"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/213e-sSeq3-qedef-32ded3d-asdaed.mp4"",
+            ""resourceNumber"": ""A0021"",
+            ""name"": ""Ooredoo"",
+            ""promotion"": {
+                ""promotionId"": ""A1046511380"",
+                ""title"": ""Download My Ooredoo App"",
+                ""subtitle"": ""Scan the code now"",
+                ""link"": ""http://links.routesme.com/A1046511380""
+            }
+        },
+        {
+            ""contentId"": ""A557190372"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/39f38781-e387-4a46-afce-6d889799f7b7.mp4"",
+            ""resourceNumber"": ""A003"",
+            ""name"": ""Mr.Bean2"",
+            ""tintColor"": 2852298
+        },
+        {
+            ""contentId"": ""A1447436818"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/845dc98a-1efa-421b-9827-3318c0dfae3f.mp4"",
+            ""resourceNumber"": ""A009"",
+            ""name"": ""Careem-Eng"",
+            ""tintColor"": 1616947,
+            ""promotion"": {
+                ""promotionId"": ""A1002313595"",
+                ""title"": ""Careem"",
+                ""subtitle"": ""Careem"",
+                ""code"": ""RKW"",
+                ""link"": ""http://links.routesme.com/A1002313595""
+            }
+        },
+        {
+            ""contentId"": ""A1168841632"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/213e-sSeq3-qedef-32ded3d-asdaed.mp4"",
+            ""resourceNumber"": ""A0015"",
+            ""name"": ""Ooredoo"",
+            ""promotion"": {
+                ""promotionId"": ""A1736295107"",
+                ""title"": ""Download My Ooredoo App"",
+                ""subtitle"": ""Scan the code now"",
+                ""link"": ""http://links.routesme.com/A1736295107""
+            }
+        },
+        {
+            ""contentId"": ""A1692097322"",
+            ""type"": ""image"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/943e2419-cde1-4e05-983d-04a9077eddf3.jpg"",
+            ""resourceNumber"": ""A001"",
+            ""name"": ""Routes Insta Banner"",
+            ""tintColor"": 2589927
         }
+    ],
+    ""status"": true,
+    ""message"": ""Contents retrived successfully."",
+    ""statusCode"": 200
+}
+            ");
+        }
+    
+        // public dynamic GetContents(string advertisementId, Pagination pageInfo)
+        // {
+        //     int totalCount = 0;
+        //     try
+        //     {
+        //         ContentsGetResponse response = new ContentsGetResponse();
+        //         List<AdvertisementsForContentModel> contentsModelList = new List<AdvertisementsForContentModel>();
+        //         MediasModel medias = new MediasModel();
+        //         List<ContentsModel> contents = new List<ContentsModel>();
+
+        //         if (string.IsNullOrEmpty(advertisementId))
+        //         {
+        //             contentsModelList = (from advertisement in _context.Advertisements
+        //                                  join media in _context.Medias on advertisement.MediaId equals media.MediaId
+        //                                  join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
+        //                                  join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
+        //                                  where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now
+        //                                  select new AdvertisementsForContentModel()
+        //                                  {
+        //                                      ContentId = Obfuscation.Encode(advertisement.AdvertisementId),
+        //                                      Type = media.MediaType,
+        //                                      Url = media.Url,
+        //                                      Sort = advtcamp.Sort,
+        //                                      ResourceNumber = advertisement.ResourceNumber,
+        //                                      Name = advertisement.Name,
+        //                                      TintColor = advertisement.TintColor,
+        //                                      InvertedTintColor = advertisement.InvertedTintColor
+        //                                  }).AsEnumerable().OrderBy(a => a.Sort)
+        //                                  .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+
+        //             totalCount = 
+        // (from advertisement in _context.Advertisements
+        //                           join media in _context.Medias on advertisement.MediaId equals media.MediaId
+        //                           join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
+        //                           join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
+        //                           where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now
+        //                           select new AdvertisementsForContentModel()
+        //                           {
+        //                               ContentId = Obfuscation.Encode(advertisement.AdvertisementId)
+        //                           }).AsEnumerable().ToList().Count();
+        //         }
+        //         else
+        //         {
+        //             int advertisementIdDecrypted = Obfuscation.Decode(advertisementId);
+        //             contentsModelList = (from advertisement in _context.Advertisements
+        //                                  join media in _context.Medias on advertisement.MediaId equals media.MediaId
+        //                                  join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
+        //                                  join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
+        //                                  where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now && advertisement.AdvertisementId == advertisementIdDecrypted
+        //                                  select new AdvertisementsForContentModel()
+        //                                  {
+        //                                      ContentId = Obfuscation.Encode(advertisement.AdvertisementId),
+        //                                      Type = media.MediaType,
+        //                                      Url = media.Url,
+        //                                      Sort = advtcamp.Sort,
+        //                                      ResourceNumber = advertisement.ResourceNumber,
+        //                                      Name = advertisement.Name,
+        //                                      TintColor = advertisement.TintColor,
+        //                                      InvertedTintColor = advertisement.InvertedTintColor
+        //                                  }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).OrderBy(a => a.Sort)
+        //                                  .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+
+        //             totalCount = (from advertisement in _context.Advertisements
+        //                           join media in _context.Medias on advertisement.MediaId equals media.MediaId
+        //                           join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
+        //                           join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
+        //                           where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now && advertisement.AdvertisementId == advertisementIdDecrypted
+        //                           select new AdvertisementsForContentModel()
+        //                           {
+        //                               ContentId = Obfuscation.Encode(advertisement.AdvertisementId)
+        //                           }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).ToList().Count();
+        //         }
+
+        //         foreach (var content in contentsModelList)
+        //         {
+        //             ContentsModel contentsModel = new ContentsModel()
+        //             {
+        //                 ContentId = content.ContentId,
+        //                 Type = content.Type,
+        //                 Url = content.Url,
+        //                 Name = content.Name,
+        //                 ResourceNumber = content.ResourceNumber,
+        //                 TintColor = content.TintColor,
+        //                 InvertedTintColor = content.InvertedTintColor
+        //             };
+        //             contents.Add(contentsModel);
+        //         }
+
+        //         if (contentsModelList.Count > 0)
+        //         {
+        //             List<PromotionsGetModel> promotions = _includeAdvertisements.GetPromotionsIncludedData(contentsModelList);
+        //             if (promotions != null && promotions.Count > 0)
+        //             {
+        //                 foreach (var content in contents)
+        //                 {
+        //                     foreach (var promotion in promotions)
+        //                     {
+        //                         if (content.ContentId == promotion.AdvertisementId)
+        //                         {
+        //                             PromotionsModelForContent promotionsModelForContent = new PromotionsModelForContent();
+        //                             promotionsModelForContent.Title = promotion.Title;
+        //                             promotionsModelForContent.Subtitle = promotion.Subtitle;
+        //                             promotionsModelForContent.PromotionId = promotion.PromotionId;
+        //                             promotionsModelForContent.LogoUrl = promotion.LogoUrl;
+        //                             promotionsModelForContent.Code = promotion.Code;
+        //                             if (!string.IsNullOrEmpty(promotion.Type))
+        //                             {
+        //                                 if (promotion.Type.ToLower() == "links")
+        //                                 {
+        //                                     promotionsModelForContent.Link = _appSettings.LinkUrlForContent + promotion.PromotionId;
+        //                                 }
+        //                                 else if (promotion.Type.ToLower() == "coupons")
+        //                                 {
+        //                                     promotionsModelForContent.Link = _appSettings.CouponUrlForContent + promotion.PromotionId;
+        //                                 }
+        //                                 else if (promotion.Type.ToLower() == "places")
+        //                                 {
+        //                                     promotionsModelForContent.Link = null;
+        //                                 }
+        //                                 else
+        //                                 {
+        //                                     promotionsModelForContent.Link = null;
+        //                                 }
+        //                             }
+        //                             content.promotion = promotionsModelForContent;
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+
+        //         var page = new Pagination
+        //         {
+        //             offset = pageInfo.offset,
+        //             limit = pageInfo.limit,
+        //             total = totalCount
+        //         };
+
+        //         response.status = true;
+        //         response.message = CommonMessage.ContentsRetrive;
+        //         response.pagination = page;
+        //         response.data = contents;
+        //         response.statusCode = StatusCodes.Status200OK;
+        //         return response;
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return ReturnResponse.ExceptionResponse(ex);
+        //     }
+        // }
 
         public async Task<dynamic> InsertAdvertisementsAsync(PostAdvertisementsModel model)
         {
