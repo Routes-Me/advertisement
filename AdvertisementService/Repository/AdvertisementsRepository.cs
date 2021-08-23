@@ -309,8 +309,8 @@ namespace AdvertisementService.Repository
             ""promotion"": {
                 ""promotionId"": ""A1569767070"",
                 ""title"": ""Careem"",
-                ""subtitle"": ""Careem"",
-                ""code"": ""RKW"",
+                ""subtitle"": ""إستخدم الكود RKW وادفع ١ د.ك على ٥ مشاوير "",
+                ""code"": ""null"",
                 ""link"": ""http://links.routesme.com/A1569767070""
             }
         },
@@ -399,8 +399,8 @@ namespace AdvertisementService.Repository
             ""promotion"": {
                 ""promotionId"": ""A1569767070"",
                 ""title"": ""Careem"",
-                ""subtitle"": ""Careem"",
-                ""code"": ""RKW"",
+                ""subtitle"": ""إستخدم الكود RKW وادفع ١ د.ك على ٥ مشاوير "",
+                ""code"": ""null"",
                 ""link"": ""http://links.routesme.com/A1569767070""
             }
         },
@@ -427,8 +427,8 @@ namespace AdvertisementService.Repository
             ""promotion"": {
                 ""promotionId"": ""A1002313595"",
                 ""title"": ""Careem"",
-                ""subtitle"": ""Careem"",
-                ""code"": ""RKW"",
+                ""subtitle"": ""Use promo code: RKW\nGet 1KD rides for your next 5 "",
+                ""code"": ""null"",
                 ""link"": ""http://links.routesme.com/A1002313595""
             }
         },
@@ -463,8 +463,8 @@ namespace AdvertisementService.Repository
             ""promotion"": {
                 ""promotionId"": ""A1002313595"",
                 ""title"": ""Careem"",
-                ""subtitle"": ""Careem"",
-                ""code"": ""RKW"",
+                ""subtitle"": ""Use promo code: RKW\nGet 1KD rides for your next 5 "",
+                ""code"": ""null"",
                 ""link"": ""http://links.routesme.com/A1002313595""
             }
         },
@@ -497,156 +497,156 @@ namespace AdvertisementService.Repository
             ");
         }
     
-        // public dynamic GetContents(string advertisementId, Pagination pageInfo)
-        // {
-        //     int totalCount = 0;
-        //     try
-        //     {
-        //         ContentsGetResponse response = new ContentsGetResponse();
-        //         List<AdvertisementsForContentModel> contentsModelList = new List<AdvertisementsForContentModel>();
-        //         MediasModel medias = new MediasModel();
-        //         List<ContentsModel> contents = new List<ContentsModel>();
+        public dynamic GetContentsV1(string advertisementId, Pagination pageInfo)
+        {
+            int totalCount = 0;
+            try
+            {
+                ContentsGetResponse response = new ContentsGetResponse();
+                List<AdvertisementsForContentModel> contentsModelList = new List<AdvertisementsForContentModel>();
+                MediasModel medias = new MediasModel();
+                List<ContentsModel> contents = new List<ContentsModel>();
 
-        //         if (string.IsNullOrEmpty(advertisementId))
-        //         {
-        //             contentsModelList = (from advertisement in _context.Advertisements
-        //                                  join media in _context.Medias on advertisement.MediaId equals media.MediaId
-        //                                  join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
-        //                                  join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
-        //                                  where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now
-        //                                  select new AdvertisementsForContentModel()
-        //                                  {
-        //                                      ContentId = Obfuscation.Encode(advertisement.AdvertisementId),
-        //                                      Type = media.MediaType,
-        //                                      Url = media.Url,
-        //                                      Sort = advtcamp.Sort,
-        //                                      ResourceNumber = advertisement.ResourceNumber,
-        //                                      Name = advertisement.Name,
-        //                                      TintColor = advertisement.TintColor,
-        //                                      InvertedTintColor = advertisement.InvertedTintColor
-        //                                  }).AsEnumerable().OrderBy(a => a.Sort)
-        //                                  .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                if (string.IsNullOrEmpty(advertisementId))
+                {
+                    contentsModelList = (from advertisement in _context.Advertisements
+                                         join media in _context.Medias on advertisement.MediaId equals media.MediaId
+                                         join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
+                                         join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
+                                         where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now
+                                         select new AdvertisementsForContentModel()
+                                         {
+                                             ContentId = Obfuscation.Encode(advertisement.AdvertisementId),
+                                             Type = media.MediaType,
+                                             Url = media.Url,
+                                             Sort = advtcamp.Sort,
+                                             ResourceNumber = advertisement.ResourceNumber,
+                                             Name = advertisement.Name,
+                                             TintColor = advertisement.TintColor,
+                                             InvertedTintColor = advertisement.InvertedTintColor
+                                         }).AsEnumerable().OrderBy(a => a.Sort)
+                                         .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
-        //             totalCount = 
-        // (from advertisement in _context.Advertisements
-        //                           join media in _context.Medias on advertisement.MediaId equals media.MediaId
-        //                           join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
-        //                           join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
-        //                           where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now
-        //                           select new AdvertisementsForContentModel()
-        //                           {
-        //                               ContentId = Obfuscation.Encode(advertisement.AdvertisementId)
-        //                           }).AsEnumerable().ToList().Count();
-        //         }
-        //         else
-        //         {
-        //             int advertisementIdDecrypted = Obfuscation.Decode(advertisementId);
-        //             contentsModelList = (from advertisement in _context.Advertisements
-        //                                  join media in _context.Medias on advertisement.MediaId equals media.MediaId
-        //                                  join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
-        //                                  join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
-        //                                  where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now && advertisement.AdvertisementId == advertisementIdDecrypted
-        //                                  select new AdvertisementsForContentModel()
-        //                                  {
-        //                                      ContentId = Obfuscation.Encode(advertisement.AdvertisementId),
-        //                                      Type = media.MediaType,
-        //                                      Url = media.Url,
-        //                                      Sort = advtcamp.Sort,
-        //                                      ResourceNumber = advertisement.ResourceNumber,
-        //                                      Name = advertisement.Name,
-        //                                      TintColor = advertisement.TintColor,
-        //                                      InvertedTintColor = advertisement.InvertedTintColor
-        //                                  }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).OrderBy(a => a.Sort)
-        //                                  .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                    totalCount = 
+        (from advertisement in _context.Advertisements
+                                  join media in _context.Medias on advertisement.MediaId equals media.MediaId
+                                  join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
+                                  join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
+                                  where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now
+                                  select new AdvertisementsForContentModel()
+                                  {
+                                      ContentId = Obfuscation.Encode(advertisement.AdvertisementId)
+                                  }).AsEnumerable().ToList().Count();
+                }
+                else
+                {
+                    int advertisementIdDecrypted = Obfuscation.Decode(advertisementId);
+                    contentsModelList = (from advertisement in _context.Advertisements
+                                         join media in _context.Medias on advertisement.MediaId equals media.MediaId
+                                         join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
+                                         join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
+                                         where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now && advertisement.AdvertisementId == advertisementIdDecrypted
+                                         select new AdvertisementsForContentModel()
+                                         {
+                                             ContentId = Obfuscation.Encode(advertisement.AdvertisementId),
+                                             Type = media.MediaType,
+                                             Url = media.Url,
+                                             Sort = advtcamp.Sort,
+                                             ResourceNumber = advertisement.ResourceNumber,
+                                             Name = advertisement.Name,
+                                             TintColor = advertisement.TintColor,
+                                             InvertedTintColor = advertisement.InvertedTintColor
+                                         }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).OrderBy(a => a.Sort)
+                                         .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
-        //             totalCount = (from advertisement in _context.Advertisements
-        //                           join media in _context.Medias on advertisement.MediaId equals media.MediaId
-        //                           join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
-        //                           join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
-        //                           where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now && advertisement.AdvertisementId == advertisementIdDecrypted
-        //                           select new AdvertisementsForContentModel()
-        //                           {
-        //                               ContentId = Obfuscation.Encode(advertisement.AdvertisementId)
-        //                           }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).ToList().Count();
-        //         }
+                    totalCount = (from advertisement in _context.Advertisements
+                                  join media in _context.Medias on advertisement.MediaId equals media.MediaId
+                                  join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
+                                  join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
+                                  where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now && advertisement.AdvertisementId == advertisementIdDecrypted
+                                  select new AdvertisementsForContentModel()
+                                  {
+                                      ContentId = Obfuscation.Encode(advertisement.AdvertisementId)
+                                  }).AsEnumerable().GroupBy(x => x.ContentId).Select(a => a.First()).ToList().Count();
+                }
 
-        //         foreach (var content in contentsModelList)
-        //         {
-        //             ContentsModel contentsModel = new ContentsModel()
-        //             {
-        //                 ContentId = content.ContentId,
-        //                 Type = content.Type,
-        //                 Url = content.Url,
-        //                 Name = content.Name,
-        //                 ResourceNumber = content.ResourceNumber,
-        //                 TintColor = content.TintColor,
-        //                 InvertedTintColor = content.InvertedTintColor
-        //             };
-        //             contents.Add(contentsModel);
-        //         }
+                foreach (var content in contentsModelList)
+                {
+                    ContentsModel contentsModel = new ContentsModel()
+                    {
+                        ContentId = content.ContentId,
+                        Type = content.Type,
+                        Url = content.Url,
+                        Name = content.Name,
+                        ResourceNumber = content.ResourceNumber,
+                        TintColor = content.TintColor,
+                        InvertedTintColor = content.InvertedTintColor
+                    };
+                    contents.Add(contentsModel);
+                }
 
-        //         if (contentsModelList.Count > 0)
-        //         {
-        //             List<PromotionsGetModel> promotions = _includeAdvertisements.GetPromotionsIncludedData(contentsModelList);
-        //             if (promotions != null && promotions.Count > 0)
-        //             {
-        //                 foreach (var content in contents)
-        //                 {
-        //                     foreach (var promotion in promotions)
-        //                     {
-        //                         if (content.ContentId == promotion.AdvertisementId)
-        //                         {
-        //                             PromotionsModelForContent promotionsModelForContent = new PromotionsModelForContent();
-        //                             promotionsModelForContent.Title = promotion.Title;
-        //                             promotionsModelForContent.Subtitle = promotion.Subtitle;
-        //                             promotionsModelForContent.PromotionId = promotion.PromotionId;
-        //                             promotionsModelForContent.LogoUrl = promotion.LogoUrl;
-        //                             promotionsModelForContent.Code = promotion.Code;
-        //                             if (!string.IsNullOrEmpty(promotion.Type))
-        //                             {
-        //                                 if (promotion.Type.ToLower() == "links")
-        //                                 {
-        //                                     promotionsModelForContent.Link = _appSettings.LinkUrlForContent + promotion.PromotionId;
-        //                                 }
-        //                                 else if (promotion.Type.ToLower() == "coupons")
-        //                                 {
-        //                                     promotionsModelForContent.Link = _appSettings.CouponUrlForContent + promotion.PromotionId;
-        //                                 }
-        //                                 else if (promotion.Type.ToLower() == "places")
-        //                                 {
-        //                                     promotionsModelForContent.Link = null;
-        //                                 }
-        //                                 else
-        //                                 {
-        //                                     promotionsModelForContent.Link = null;
-        //                                 }
-        //                             }
-        //                             content.promotion = promotionsModelForContent;
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
+                if (contentsModelList.Count > 0)
+                {
+                    List<PromotionsGetModel> promotions = _includeAdvertisements.GetPromotionsIncludedData(contentsModelList);
+                    if (promotions != null && promotions.Count > 0)
+                    {
+                        foreach (var content in contents)
+                        {
+                            foreach (var promotion in promotions)
+                            {
+                                if (content.ContentId == promotion.AdvertisementId)
+                                {
+                                    PromotionsModelForContent promotionsModelForContent = new PromotionsModelForContent();
+                                    promotionsModelForContent.Title = promotion.Title;
+                                    promotionsModelForContent.Subtitle = promotion.Subtitle;
+                                    promotionsModelForContent.PromotionId = promotion.PromotionId;
+                                    promotionsModelForContent.LogoUrl = promotion.LogoUrl;
+                                    promotionsModelForContent.Code = promotion.Code;
+                                    if (!string.IsNullOrEmpty(promotion.Type))
+                                    {
+                                        if (promotion.Type.ToLower() == "links")
+                                        {
+                                            promotionsModelForContent.Link = _appSettings.LinkUrlForContent + promotion.PromotionId;
+                                        }
+                                        else if (promotion.Type.ToLower() == "coupons")
+                                        {
+                                            promotionsModelForContent.Link = _appSettings.CouponUrlForContent + promotion.PromotionId;
+                                        }
+                                        else if (promotion.Type.ToLower() == "places")
+                                        {
+                                            promotionsModelForContent.Link = null;
+                                        }
+                                        else
+                                        {
+                                            promotionsModelForContent.Link = null;
+                                        }
+                                    }
+                                    content.promotion = promotionsModelForContent;
+                                }
+                            }
+                        }
+                    }
+                }
 
-        //         var page = new Pagination
-        //         {
-        //             offset = pageInfo.offset,
-        //             limit = pageInfo.limit,
-        //             total = totalCount
-        //         };
+                var page = new Pagination
+                {
+                    offset = pageInfo.offset,
+                    limit = pageInfo.limit,
+                    total = totalCount
+                };
 
-        //         response.status = true;
-        //         response.message = CommonMessage.ContentsRetrive;
-        //         response.pagination = page;
-        //         response.data = contents;
-        //         response.statusCode = StatusCodes.Status200OK;
-        //         return response;
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return ReturnResponse.ExceptionResponse(ex);
-        //     }
-        // }
+                response.status = true;
+                response.message = CommonMessage.ContentsRetrive;
+                response.pagination = page;
+                response.data = contents;
+                response.statusCode = StatusCodes.Status200OK;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ReturnResponse.ExceptionResponse(ex);
+            }
+        }
 
         public async Task<dynamic> InsertAdvertisementsAsync(PostAdvertisementsModel model)
         {
