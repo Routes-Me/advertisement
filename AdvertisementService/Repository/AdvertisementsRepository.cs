@@ -310,7 +310,6 @@ namespace AdvertisementService.Repository
                 ""promotionId"": ""A1569767070"",
                 ""title"": ""Careem"",
                 ""subtitle"": ""إستخدم الكود RKW وادفع ١ د.ك على ٥ مشاوير "",
-                ""code"": ""null"",
                 ""link"": ""http://links.routesme.com/A1569767070""
             }
         },
@@ -400,7 +399,6 @@ namespace AdvertisementService.Repository
                 ""promotionId"": ""A1569767070"",
                 ""title"": ""Careem"",
                 ""subtitle"": ""إستخدم الكود RKW وادفع ١ د.ك على ٥ مشاوير "",
-                ""code"": ""null"",
                 ""link"": ""http://links.routesme.com/A1569767070""
             }
         },
@@ -427,8 +425,7 @@ namespace AdvertisementService.Repository
             ""promotion"": {
                 ""promotionId"": ""A1002313595"",
                 ""title"": ""Careem"",
-                ""subtitle"": ""Use promo code: RKW\nGet 1KD rides for your next 5 "",
-                ""code"": ""null"",
+                ""subtitle"": ""Use promo code: RKW Get 1KD rides for your next 5 "",
                 ""link"": ""http://links.routesme.com/A1002313595""
             }
         },
@@ -463,8 +460,7 @@ namespace AdvertisementService.Repository
             ""promotion"": {
                 ""promotionId"": ""A1002313595"",
                 ""title"": ""Careem"",
-                ""subtitle"": ""Use promo code: RKW\nGet 1KD rides for your next 5 "",
-                ""code"": ""null"",
+                ""subtitle"": ""Use promo code: RKW Get 1KD rides for your next 5 "",
                 ""link"": ""http://links.routesme.com/A1002313595""
             }
         },
