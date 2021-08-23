@@ -310,7 +310,6 @@ namespace AdvertisementService.Repository
                 ""promotionId"": ""A1569767070"",
                 ""title"": ""Careem"",
                 ""subtitle"": ""إستخدم الكود RKW وادفع ١ د.ك على ٥ مشاوير "",
-                ""code"": ""null"",
                 ""link"": ""http://links.routesme.com/A1569767070""
             }
         },
@@ -400,7 +399,6 @@ namespace AdvertisementService.Repository
                 ""promotionId"": ""A1569767070"",
                 ""title"": ""Careem"",
                 ""subtitle"": ""إستخدم الكود RKW وادفع ١ د.ك على ٥ مشاوير "",
-                ""code"": ""null"",
                 ""link"": ""http://links.routesme.com/A1569767070""
             }
         },
