@@ -3,6 +3,8 @@ using AdvertisementService.Helper.Abstraction;
 using AdvertisementService.Helper.Repository;
 using AdvertisementService.Models.Common;
 using AdvertisementService.Models.DBModels;
+using AdvertisementService.Internal.Repository;
+using AdvertisementService.Internal.Abstraction;
 using AdvertisementService.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -39,9 +41,10 @@ namespace AdvertisementService
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             });
 
-            services.AddDbContext<advertisementserviceContext>(options =>
+            services.AddDbContext<AdvertisementContext>(options =>
             {
                 options.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
             });
@@ -54,6 +57,7 @@ namespace AdvertisementService
             }));
 
             services.AddScoped<IAdvertisementsRepository, AdvertisementsRepository>();
+            services.AddScoped<IAdvertisementsReportRepository, AdvertisementsReportRepository>();
             services.AddScoped<ICampaignsRepository, CampaignsRepository>();
             services.AddScoped<IMediasRepository, MediasRepository>();
             services.AddScoped<IIntervalsRepository, IntervalsRepository>();

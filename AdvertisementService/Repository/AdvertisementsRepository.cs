@@ -29,7 +29,7 @@ namespace AdvertisementService.Repository
 {
     public class AdvertisementsRepository : IAdvertisementsRepository
     {
-        private readonly advertisementserviceContext _context;
+        private readonly AdvertisementContext _context;
         private readonly IIncludeAdvertisementsRepository _includeAdvertisements;
         private readonly AppSettings _appSettings;
         private IWebHostEnvironment _hostingEnv;
@@ -38,7 +38,7 @@ namespace AdvertisementService.Repository
         private readonly Dependencies _dependencies;
         private readonly IVideoConversionRepository _videoConversionRepository;
         private readonly ILogger<AdvertisementsRepository> _logger;
-        public AdvertisementsRepository(IOptions<AppSettings> appSettings, advertisementserviceContext context, IIncludeAdvertisementsRepository includeAdvertisements, IWebHostEnvironment hostingEnv, ICommonFunctions commonFunctions, IOptions<AzureStorageBlobConfig> config, IOptions<Dependencies> dependencies, IVideoConversionRepository videoConversionRepository, ILogger<AdvertisementsRepository> logger)
+        public AdvertisementsRepository(IOptions<AppSettings> appSettings, AdvertisementContext context, IIncludeAdvertisementsRepository includeAdvertisements, IWebHostEnvironment hostingEnv, ICommonFunctions commonFunctions, IOptions<AzureStorageBlobConfig> config, IOptions<Dependencies> dependencies, IVideoConversionRepository videoConversionRepository, ILogger<AdvertisementsRepository> logger)
         {
             _appSettings = appSettings.Value;
             _context = context;
@@ -289,16 +289,31 @@ namespace AdvertisementService.Repository
             }
         }
 
-           public dynamic GetContents(string advertisementId, Pagination pageInfo)
+        public dynamic GetContents(string advertisementId, Pagination pageInfo)
         {
             return JObject.Parse(@"
             {
     ""pagination"": {
         ""offset"": 1,
-        ""limit"": 38,
-        ""total"": 11
+        ""limit"": 50,
+        ""total"": 15
     },
     ""data"": [
+        {
+            ""contentId"": ""A2014890293"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/1a503bd2-00ad-45ea-aec7-634507d86c79.mp4"",
+            ""resourceNumber"": ""A008"",
+            ""name"": ""Careem-Arb"",
+            ""tintColor"": 1616947,
+            ""promotion"": {
+                ""promotionId"": ""A1569767070"",
+                ""title"": ""Careem"",
+                ""subtitle"": ""Careem"",
+                ""code"": ""RKW"",
+                ""link"": ""http://links.routesme.com/A1569767070""
+            }
+        },
         {
             ""contentId"": ""A1736295107"",
             ""type"": ""video"",
@@ -375,6 +390,21 @@ namespace AdvertisementService.Repository
             }
         },
         {
+            ""contentId"": ""A2014890293"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/1a503bd2-00ad-45ea-aec7-634507d86c79.mp4"",
+            ""resourceNumber"": ""A008"",
+            ""name"": ""Careem-Arb"",
+            ""tintColor"": 1616947,
+            ""promotion"": {
+                ""promotionId"": ""A1569767070"",
+                ""title"": ""Careem"",
+                ""subtitle"": ""Careem"",
+                ""code"": ""RKW"",
+                ""link"": ""http://links.routesme.com/A1569767070""
+            }
+        },
+        {
             ""contentId"": ""A1491634603"",
             ""type"": ""video"",
             ""url"": ""https://routesme.blob.core.windows.net/advertisements/0d0cc602-06ff-4831-9416-c82f4b5544c6.mp4"",
@@ -385,6 +415,21 @@ namespace AdvertisementService.Repository
                 ""title"": ""حمل تطبيق My Ooredoo"",
                 ""subtitle"": ""انسخ الكود من خلال الكاميرا الموجودة بهاتفك الذكي"",
                 ""link"": ""http://links.routesme.com/A479057905""
+            }
+        },
+        {
+            ""contentId"": ""A1447436818"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/845dc98a-1efa-421b-9827-3318c0dfae3f.mp4"",
+            ""resourceNumber"": ""A009"",
+            ""name"": ""Careem-Eng"",
+            ""tintColor"": 1616947,
+            ""promotion"": {
+                ""promotionId"": ""A1002313595"",
+                ""title"": ""Careem"",
+                ""subtitle"": ""Careem"",
+                ""code"": ""RKW"",
+                ""link"": ""http://links.routesme.com/A1002313595""
             }
         },
         {
@@ -407,6 +452,21 @@ namespace AdvertisementService.Repository
             ""resourceNumber"": ""A003"",
             ""name"": ""Mr.Bean2"",
             ""tintColor"": 2852298
+        },
+        {
+            ""contentId"": ""A1447436818"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/845dc98a-1efa-421b-9827-3318c0dfae3f.mp4"",
+            ""resourceNumber"": ""A009"",
+            ""name"": ""Careem-Eng"",
+            ""tintColor"": 1616947,
+            ""promotion"": {
+                ""promotionId"": ""A1002313595"",
+                ""title"": ""Careem"",
+                ""subtitle"": ""Careem"",
+                ""code"": ""RKW"",
+                ""link"": ""http://links.routesme.com/A1002313595""
+            }
         },
         {
             ""contentId"": ""A1168841632"",
@@ -436,7 +496,7 @@ namespace AdvertisementService.Repository
 }
             ");
         }
-        
+    
         // public dynamic GetContents(string advertisementId, Pagination pageInfo)
         // {
         //     int totalCount = 0;
@@ -467,7 +527,8 @@ namespace AdvertisementService.Repository
         //                                  }).AsEnumerable().OrderBy(a => a.Sort)
         //                                  .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
-        //             totalCount = (from advertisement in _context.Advertisements
+        //             totalCount = 
+        // (from advertisement in _context.Advertisements
         //                           join media in _context.Medias on advertisement.MediaId equals media.MediaId
         //                           join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
         //                           join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
@@ -729,7 +790,7 @@ namespace AdvertisementService.Repository
             try
             {
                 string mediaReferenceName = string.Empty, ext = string.Empty;
-                int? mediaId = null, MediaMetadataId = null;
+                int? MediaMetadataId = null;
                 var advertisements = _context.Advertisements.Include(x => x.AdvertisementsIntervals).Include(x => x.Broadcasts).Where(x => x.AdvertisementId == Obfuscation.Decode(model.AdvertisementId)).FirstOrDefault();
                 if (advertisements == null)
                     return ReturnResponse.ErrorResponse(CommonMessage.AdvertisementNotFound, StatusCodes.Status404NotFound);
