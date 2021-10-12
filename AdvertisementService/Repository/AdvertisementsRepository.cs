@@ -294,123 +294,177 @@ namespace AdvertisementService.Repository
         {
             return JObject.Parse(@"
                             {
-                    ""pagination"": {
-                            ""offset"": 1,
-                            ""limit"": 15,
-                            ""total"": 14
-                        },
-                    ""data"": [
-                        {
-                            ""contentId"": ""A879983343"",
-                            ""type"": ""image"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/bdafcbcf-3c01-4867-9b30-162988881683.png"",
-                            ""resourceNumber"": ""A0010"",
-                            ""name"": ""Routes Insta Banner"",
-                            ""tintColor"": 2839179
-                        },
-                        {
-                            ""contentId"": ""A312529868"",
-                            ""type"": ""image"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/43fe0241-0292-4aa4-b2fc-0646e02b6ea9.png"",
-                            ""resourceNumber"": ""A0011"",
-                            ""name"": ""Routes FB Banner"",
-                            ""tintColor"": 2839179
-                        },
-                        {
-                            ""contentId"": ""A1736295107"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/213e-sSeq3-qedef-32ded3d-asdaed.mp4"",
-                            ""resourceNumber"": ""A0014"",
-                            ""name"": ""Ooredoo""
-                        },
-                        {
-                            ""contentId"": ""A356727653"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/31ff985c-9352-436c-a4cb-1e560a5effa7.mp4"",
-                            ""resourceNumber"": ""A0024"",
-                            ""name"": ""Vaccination is protection""
-                        },
-                        {
-                            ""contentId"": ""A601388157"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/db74f43c-a584-4d8d-b822-4968d0b47856.mp4"",
-                            ""resourceNumber"": ""A0016"",
-                            ""name"": ""I save"",
-                            ""tintColor"": 16740096
-                        },
-                        {
-                            ""contentId"": ""A1124643847"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/b0203b58-3d88-4431-95d0-c5c5a388ff3a.mp4"",
-                            ""resourceNumber"": ""A002"",
-                            ""name"": ""Mr.Bean1"",
-                            ""tintColor"": 12533824
-                        },
-                        {
-                            ""contentId"": ""A1046511380"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/1a256034-b605-49ed-bddd-cf1a14b99314.mp4"",
-                            ""resourceNumber"": ""A0019"",
-                            ""name"": ""Turkish Grill"",
-                            ""tintColor"": 14091268
-                        },
-                        {
-                            ""contentId"": ""A1936757826"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/31ff985c-9352-436c-a4cb-1e560a5effa7.mp4"",
-                            ""resourceNumber"": ""A0025"",
-                            ""name"": ""Vaccination Ar""
-                        },
-                        {
-                            ""contentId"": ""A1491634603"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/0d0cc602-06ff-4831-9416-c82f4b5544c6.mp4"",
-                            ""resourceNumber"": ""A0022"",
-                            ""name"": ""Ooredoo Ar""
-                        },
-                        {
-                            ""contentId"": ""A2059088078"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/213e-sSeq3-qedef-32ded3d-asdaed.mp4"",
-                            ""resourceNumber"": ""A0021"",
-                            ""name"": ""Ooredoo""
-                        },
-                        {
-                            ""contentId"": ""A557190372"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/39f38781-e387-4a46-afce-6d889799f7b7.mp4"",
-                            ""resourceNumber"": ""A003"",
-                            ""name"": ""Mr.Bean2"",
-                            ""tintColor"": 2852298
-                        },
-                        {
-                            ""contentId"": ""A1168841632"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/213e-sSeq3-qedef-32ded3d-asdaed.mp4"",
-                            ""resourceNumber"": ""A0015"",
-                            ""name"": ""Ooredoo""
-                        },
-                        {
-                            ""contentId"": ""A2137220545"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/740de07d-5073-4966-bf43-7f026e8d59c9.mp4"",
-                            ""resourceNumber"": ""A004"",
-                            ""name"": ""I Save 2"",
-                            ""tintColor"": 16743168
-                        },
-                        {
-                            ""contentId"": ""A1692097322"",
-                            ""type"": ""image"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/943e2419-cde1-4e05-983d-04a9077eddf3.jpg"",
-                            ""resourceNumber"": ""A001"",
-                            ""name"": ""Routes Insta Banner"",
-                            ""tintColor"": 2589927
-                        }
-                    ],
-                    ""status"": true,
-                    ""message"": ""Contents retrived successfully."",
-                    ""statusCode"": 200
-                }");
+    ""pagination"": {
+        ""offset"": 1,
+        ""limit"": 15,
+        ""total"": 14
+    },
+    ""data"": [
+        {
+            ""contentId"": ""A879983343"",
+            ""type"": ""image"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/bdafcbcf-3c01-4867-9b30-162988881683.png"",
+            ""resourceNumber"": ""A0010"",
+            ""name"": ""Routes Insta Banner"",
+            ""tintColor"": 2839179
+        },
+        {
+            ""contentId"": ""A312529868"",
+            ""type"": ""image"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/43fe0241-0292-4aa4-b2fc-0646e02b6ea9.png"",
+            ""resourceNumber"": ""A0011"",
+            ""name"": ""Routes FB Banner"",
+            ""tintColor"": 2839179
+        },
+        {
+            ""contentId"": ""A1736295107"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/213e-sSeq3-qedef-32ded3d-asdaed.mp4"",
+            ""resourceNumber"": ""A0014"",
+            ""name"": ""Ooredoo"",
+            ""promotion"": {
+                ""promotionId"": ""A156264934"",
+                ""title"": ""Download My Ooredoo App"",
+                ""subtitle"": ""Scan the code now"",
+                ""link"": ""http://stage.links.routesme.com/A156264934""
+            }
+        },
+        {
+            ""contentId"": ""A356727653"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/31ff985c-9352-436c-a4cb-1e560a5effa7.mp4"",
+            ""resourceNumber"": ""A0024"",
+            ""name"": ""Vaccination is protection"",
+            ""promotion"": {
+                ""promotionId"": ""A356727653"",
+                ""title"": ""VACCINATION IS PROTECTION   -   ‏التــطعيم وقــايــة"",
+                ""subtitle"": ""Visit the website or scan the code  -  زورو الموقع"",
+                ""link"": ""http://stage.links.routesme.com/A356727653""
+            }
+        },
+        {
+            ""contentId"": ""A601388157"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/db74f43c-a584-4d8d-b822-4968d0b47856.mp4"",
+            ""resourceNumber"": ""A0016"",
+            ""name"": ""I save"",
+            ""tintColor"": 16740096,
+            ""promotion"": {
+                ""promotionId"": ""A1168841632"",
+                ""title"": ""Get instant discounts, download now!"",
+                ""subtitle"": ""احصل على خصومات فورية.. حمل التطبيق الآن"",
+                ""link"": ""http://stage.links.routesme.com/A1168841632""
+            }
+        },
+        {
+            ""contentId"": ""A1124643847"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/b0203b58-3d88-4431-95d0-c5c5a388ff3a.mp4"",
+            ""resourceNumber"": ""A002"",
+            ""name"": ""Mr.Bean1"",
+            ""tintColor"": 12533824
+        },
+        {
+            ""contentId"": ""A1046511380"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/1a256034-b605-49ed-bddd-cf1a14b99314.mp4"",
+            ""resourceNumber"": ""A0019"",
+            ""name"": ""Turkish Grill"",
+            ""tintColor"": 14091268,
+            ""promotion"": {
+                ""promotionId"": ""A33934682"",
+                ""title"": ""Order online now! Scan the code"",
+                ""subtitle"": ""أطلب اونلاين الان..قم بنسخ الكود"",
+                ""link"": ""http://stage.links.routesme.com/A33934682""
+            }
+        },
+        {
+            ""contentId"": ""A1936757826"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/31ff985c-9352-436c-a4cb-1e560a5effa7.mp4"",
+            ""resourceNumber"": ""A0025"",
+            ""name"": ""Vaccination Ar"",
+            ""promotion"": {
+                ""promotionId"": ""A1936757826"",
+                ""title"": ""VACCINATION IS PROTECTION   -   ‏التــطعيم وقــايــة"",
+                ""subtitle"": ""Visit the website or scan the code  -  زورو الموقع"",
+                ""link"": ""http://stage.links.routesme.com/A1936757826""
+            }
+        },
+        {
+            ""contentId"": ""A1491634603"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/0d0cc602-06ff-4831-9416-c82f4b5544c6.mp4"",
+            ""resourceNumber"": ""A0022"",
+            ""name"": ""Ooredoo Ar"",
+            ""promotion"": {
+                ""promotionId"": ""A479057905"",
+                ""title"": ""حمل تطبيق My Ooredoo"",
+                ""subtitle"": ""انسخ الكود من خلال الكاميرا الموجودة بهاتفك الذكي"",
+                ""link"": ""http://stage.links.routesme.com/A479057905""
+            }
+        },
+        {
+            ""contentId"": ""A2059088078"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/213e-sSeq3-qedef-32ded3d-asdaed.mp4"",
+            ""resourceNumber"": ""A0021"",
+            ""name"": ""Ooredoo"",
+            ""promotion"": {
+                ""promotionId"": ""A1046511380"",
+                ""title"": ""Download My Ooredoo App"",
+                ""subtitle"": ""Scan the code now"",
+                ""link"": ""http://stage.links.routesme.com/A1046511380""
+            }
+        },
+        {
+            ""contentId"": ""A557190372"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/39f38781-e387-4a46-afce-6d889799f7b7.mp4"",
+            ""resourceNumber"": ""A003"",
+            ""name"": ""Mr.Bean2"",
+            ""tintColor"": 2852298
+        },
+        {
+            ""contentId"": ""A1168841632"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/213e-sSeq3-qedef-32ded3d-asdaed.mp4"",
+            ""resourceNumber"": ""A0015"",
+            ""name"": ""Ooredoo"",
+            ""promotion"": {
+                ""promotionId"": ""A1736295107"",
+                ""title"": ""Download My Ooredoo App"",
+                ""subtitle"": ""Scan the code now"",
+                ""link"": ""http://stage.links.routesme.com/A1736295107""
+            }
+        },
+        {
+            ""contentId"": ""A2137220545"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/740de07d-5073-4966-bf43-7f026e8d59c9.mp4"",
+            ""resourceNumber"": ""A004"",
+            ""name"": ""I Save 2"",
+            ""tintColor"": 16743168,
+            ""promotion"": {
+                ""promotionId"": ""A1692097322"",
+                ""title"": ""Get instant discounts, download now!"",
+                ""subtitle"": ""احصل على خصومات فورية.. حمل التطبيق الآن"",
+                ""link"": ""http://stage.links.routesme.com/A1692097322""
+            }
+        },
+        {
+            ""contentId"": ""A1692097322"",
+            ""type"": ""image"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/943e2419-cde1-4e05-983d-04a9077eddf3.jpg"",
+            ""resourceNumber"": ""A001"",
+            ""name"": ""Routes Insta Banner"",
+            ""tintColor"": 2589927
+        }
+    ],
+    ""status"": true,
+    ""message"": ""Contents retrived successfully."",
+    ""statusCode"": 200
+}");
         }
 
         // public dynamic GetContents(string advertisementId, Pagination pageInfo)
@@ -444,15 +498,15 @@ namespace AdvertisementService.Repository
         //                                  .Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
 
         //             totalCount =
-        // (from advertisement in _context.Advertisements
-        //  join media in _context.Medias on advertisement.MediaId equals media.MediaId
-        //  join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
-        //  join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
-        //  where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now
-        //  select new AdvertisementsForContentModel()
-        //  {
-        //      ContentId = Obfuscation.Encode(advertisement.AdvertisementId)
-        //  }).AsEnumerable().ToList().Count();
+        //             (from advertisement in _context.Advertisements
+        //              join media in _context.Medias on advertisement.MediaId equals media.MediaId
+        //              join advtcamp in _context.Broadcasts on advertisement.AdvertisementId equals advtcamp.AdvertisementId
+        //              join camp in _context.Campaigns on advtcamp.CampaignId equals camp.CampaignId
+        //              where camp.Status.ToLower() == "active" && camp.StartAt <= DateTime.Now && camp.EndAt >= DateTime.Now
+        //              select new AdvertisementsForContentModel()
+        //              {
+        //                  ContentId = Obfuscation.Encode(advertisement.AdvertisementId)
+        //              }).AsEnumerable().ToList().Count();
         //         }
         //         else
         //         {
