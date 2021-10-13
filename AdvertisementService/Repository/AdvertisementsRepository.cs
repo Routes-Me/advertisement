@@ -293,11 +293,11 @@ namespace AdvertisementService.Repository
         public dynamic GetContents(string advertisementId, Pagination pageInfo)
         {
             return JObject.Parse(@"
-                            {
+                                    {
     ""pagination"": {
         ""offset"": 1,
         ""limit"": 15,
-        ""total"": 14
+        ""total"": 15
     },
     ""data"": [
         {
@@ -315,6 +315,19 @@ namespace AdvertisementService.Repository
             ""resourceNumber"": ""A0011"",
             ""name"": ""Routes FB Banner"",
             ""tintColor"": 2839179
+        },
+        {
+            ""contentId"": ""A1892560041"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/71597500-9524-44bb-ba44-3f6ec364b9af.mp4"",
+            ""resourceNumber"": ""A0012"",
+            ""name"": ""McWrap"",
+            ""tintColor"": 16497182,
+            ""promotion"": {
+                ""promotionId"": ""A434860120"",
+                ""title"": ""Dowload McDonald’s app today"",
+                ""link"": ""http://stage.links.routesme.com/A434860120""
+            }
         },
         {
             ""contentId"": ""A1736295107"",
@@ -363,6 +376,19 @@ namespace AdvertisementService.Repository
             ""resourceNumber"": ""A002"",
             ""name"": ""Mr.Bean1"",
             ""tintColor"": 12533824
+        },
+        {
+            ""contentId"": ""A1892560041"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/71597500-9524-44bb-ba44-3f6ec364b9af.mp4"",
+            ""resourceNumber"": ""A0012"",
+            ""name"": ""McWrap"",
+            ""tintColor"": 16497182,
+            ""promotion"": {
+                ""promotionId"": ""A434860120"",
+                ""title"": ""Dowload McDonald’s app today"",
+                ""link"": ""http://stage.links.routesme.com/A434860120""
+            }
         },
         {
             ""contentId"": ""A1046511380"",
