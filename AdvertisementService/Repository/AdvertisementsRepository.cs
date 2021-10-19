@@ -322,12 +322,7 @@ namespace AdvertisementService.Repository
             ""url"": ""https://routesme.blob.core.windows.net/advertisements/d86827c1-645a-4f4f-a8e4-3de536b8006a.mp4"",
             ""resourceNumber"": ""A0013"",
             ""name"": ""Routes Quiz 1"",
-            ""tintColor"": 1918103,
-            ""promotion"": {
-                ""promotionId"": ""A2014890293"",
-                ""title"": ""Routes Quiz !!!"",
-                ""link"": ""http://stage.links.routesme.com/A2014890293""
-            }
+            ""tintColor"": 1918103
         },
         {
             ""contentId"": ""A1892560041"",
@@ -436,12 +431,7 @@ namespace AdvertisementService.Repository
             ""url"": ""https://routesme.blob.core.windows.net/advertisements/e08c3bd2-337a-4c6c-955a-78d4e6c40bbf.mp4"",
             ""resourceNumber"": ""A0014"",
             ""name"": ""Routes Quiz 2"",
-            ""tintColor"": 2114189,
-            ""promotion"": {
-                ""promotionId"": ""A1447436818"",
-                ""title"": ""Routes Quiz !!!"",
-                ""link"": ""http://stage.links.routesme.com/A1447436818""
-            }
+            ""tintColor"": 2114189
         },
         {
             ""contentId"": ""A2059088078"",
