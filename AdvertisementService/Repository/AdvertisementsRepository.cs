@@ -334,7 +334,7 @@ namespace AdvertisementService.Repository
             ""promotion"": {
                 ""promotionId"": ""A434860120"",
                 ""title"": ""Dowload McDonald’s app today"",
-                ""link"": ""http://stage.links.routesme.com/A434860120""
+                ""link"": ""http://links.routesme.com/A434860120""
             }
         },
         {
@@ -347,7 +347,7 @@ namespace AdvertisementService.Repository
                 ""promotionId"": ""A156264934"",
                 ""title"": ""Download My Ooredoo App"",
                 ""subtitle"": ""Scan the code now"",
-                ""link"": ""http://stage.links.routesme.com/A156264934""
+                ""link"": ""http://links.routesme.com/A156264934""
             }
         },
         {
@@ -360,7 +360,7 @@ namespace AdvertisementService.Repository
                 ""promotionId"": ""A356727653"",
                 ""title"": ""VACCINATION IS PROTECTION   -   ‏التــطعيم وقــايــة"",
                 ""subtitle"": ""Visit the website or scan the code  -  زورو الموقع"",
-                ""link"": ""http://stage.links.routesme.com/A356727653""
+                ""link"": ""http://links.routesme.com/A356727653""
             }
         },
         {
@@ -374,7 +374,7 @@ namespace AdvertisementService.Repository
                 ""promotionId"": ""A1168841632"",
                 ""title"": ""Get instant discounts, download now!"",
                 ""subtitle"": ""احصل على خصومات فورية.. حمل التطبيق الآن"",
-                ""link"": ""http://stage.links.routesme.com/A1168841632""
+                ""link"": ""http://links.routesme.com/A1168841632""
             }
         },
         {
@@ -396,7 +396,7 @@ namespace AdvertisementService.Repository
                 ""promotionId"": ""A33934682"",
                 ""title"": ""Order online now! Scan the code"",
                 ""subtitle"": ""أطلب اونلاين الان..قم بنسخ الكود"",
-                ""link"": ""http://stage.links.routesme.com/A33934682""
+                ""link"": ""http://links.routesme.com/A33934682""
             }
         },
         {
@@ -409,7 +409,7 @@ namespace AdvertisementService.Repository
                 ""promotionId"": ""A1936757826"",
                 ""title"": ""VACCINATION IS PROTECTION   -   ‏التــطعيم وقــايــة"",
                 ""subtitle"": ""Visit the website or scan the code  -  زورو الموقع"",
-                ""link"": ""http://stage.links.routesme.com/A1936757826""
+                ""link"": ""http://links.routesme.com/A1936757826""
             }
         },
         {
@@ -422,7 +422,7 @@ namespace AdvertisementService.Repository
                 ""promotionId"": ""A479057905"",
                 ""title"": ""حمل تطبيق My Ooredoo"",
                 ""subtitle"": ""انسخ الكود من خلال الكاميرا الموجودة بهاتفك الذكي"",
-                ""link"": ""http://stage.links.routesme.com/A479057905""
+                ""link"": ""http://links.routesme.com/A479057905""
             }
         },
         {
@@ -443,7 +443,7 @@ namespace AdvertisementService.Repository
                 ""promotionId"": ""A1046511380"",
                 ""title"": ""Download My Ooredoo App"",
                 ""subtitle"": ""Scan the code now"",
-                ""link"": ""http://stage.links.routesme.com/A1046511380""
+                ""link"": ""http://links.routesme.com/A1046511380""
             }
         },
         {
@@ -464,7 +464,7 @@ namespace AdvertisementService.Repository
                 ""promotionId"": ""A1736295107"",
                 ""title"": ""Download My Ooredoo App"",
                 ""subtitle"": ""Scan the code now"",
-                ""link"": ""http://stage.links.routesme.com/A1736295107""
+                ""link"": ""http://links.routesme.com/A1736295107""
             }
         }
     ],
