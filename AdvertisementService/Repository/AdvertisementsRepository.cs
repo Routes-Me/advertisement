@@ -359,6 +359,19 @@ namespace AdvertisementService.Repository
             ""tintColor"": 1587848
         },
         {
+            ""contentId"": ""A1892560041"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/71597500-9524-44bb-ba44-3f6ec364b9af.mp4"",
+            ""resourceNumber"": ""A0012"",
+            ""name"": ""McWrap"",
+            ""tintColor"": 16497182,
+            ""promotion"": {
+                ""promotionId"": ""A434860120"",
+                ""title"": ""Dowload McDonald’s app today"",
+                ""link"": ""http://links.routesme.com/A434860120""
+            }
+        },
+        {
             ""contentId"": ""A356727653"",
             ""type"": ""video"",
             ""url"": ""https://routesme.blob.core.windows.net/advertisements/31ff985c-9352-436c-a4cb-1e560a5effa7.mp4"",
@@ -383,6 +396,19 @@ namespace AdvertisementService.Repository
                 ""title"": ""Get instant discounts, download now!"",
                 ""subtitle"": ""احصل على خصومات فورية.. حمل التطبيق الآن"",
                 ""link"": ""http://links.routesme.com/A1168841632""
+            }
+        },
+        {
+            ""contentId"": ""A1892560041"",
+            ""type"": ""video"",
+            ""url"": ""https://routesme.blob.core.windows.net/advertisements/71597500-9524-44bb-ba44-3f6ec364b9af.mp4"",
+            ""resourceNumber"": ""A0012"",
+            ""name"": ""McWrap"",
+            ""tintColor"": 16497182,
+            ""promotion"": {
+                ""promotionId"": ""A434860120"",
+                ""title"": ""Dowload McDonald’s app today"",
+                ""link"": ""http://links.routesme.com/A434860120""
             }
         },
         {
