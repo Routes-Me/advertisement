@@ -297,7 +297,7 @@ namespace AdvertisementService.Repository
     ""pagination"": {
         ""offset"": 1,
         ""limit"": 20,
-        ""total"": 19
+        ""total"": 12
     },
     ""data"": [
         {
