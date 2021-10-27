@@ -297,7 +297,7 @@ namespace AdvertisementService.Repository
     ""pagination"": {
         ""offset"": 1,
         ""limit"": 20,
-        ""total"": 19
+        ""total"": 12
     },
     ""data"": [
         {
@@ -335,19 +335,6 @@ namespace AdvertisementService.Repository
                 ""promotionId"": ""A434860120"",
                 ""title"": ""Dowload McDonald’s app today"",
                 ""link"": ""http://links.routesme.com/A434860120""
-            }
-        },
-        {
-            ""contentId"": ""A1736295107"",
-            ""type"": ""video"",
-            ""url"": ""https://routesme.blob.core.windows.net/advertisements/213e-sSeq3-qedef-32ded3d-asdaed.mp4"",
-            ""resourceNumber"": ""A0014"",
-            ""name"": ""Ooredoo"",
-            ""promotion"": {
-                ""promotionId"": ""A156264934"",
-                ""title"": ""Download My Ooredoo App"",
-                ""subtitle"": ""Scan the code now"",
-                ""link"": ""http://links.routesme.com/A156264934""
             }
         },
         {
@@ -446,32 +433,6 @@ namespace AdvertisementService.Repository
                 ""link"": ""http://links.routesme.com/A1936757826""
             }
         },
-        {
-            ""contentId"": ""A1491634603"",
-            ""type"": ""video"",
-            ""url"": ""https://routesme.blob.core.windows.net/advertisements/0d0cc602-06ff-4831-9416-c82f4b5544c6.mp4"",
-            ""resourceNumber"": ""A0022"",
-            ""name"": ""Ooredoo Ar"",
-            ""promotion"": {
-                ""promotionId"": ""A479057905"",
-                ""title"": ""حمل تطبيق My Ooredoo"",
-                ""subtitle"": ""انسخ الكود من خلال الكاميرا الموجودة بهاتفك الذكي"",
-                ""link"": ""http://links.routesme.com/A479057905""
-            }
-        },
-        {
-            ""contentId"": ""A2059088078"",
-            ""type"": ""video"",
-            ""url"": ""https://routesme.blob.core.windows.net/advertisements/213e-sSeq3-qedef-32ded3d-asdaed.mp4"",
-            ""resourceNumber"": ""A0021"",
-            ""name"": ""Ooredoo"",
-            ""promotion"": {
-                ""promotionId"": ""A1046511380"",
-                ""title"": ""Download My Ooredoo App"",
-                ""subtitle"": ""Scan the code now"",
-                ""link"": ""http://links.routesme.com/A1046511380""
-            }
-        }
     ],
     ""status"": true,
     ""message"": ""Contents retrived successfully."",
