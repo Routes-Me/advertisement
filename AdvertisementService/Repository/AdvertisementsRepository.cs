@@ -296,7 +296,7 @@ namespace AdvertisementService.Repository
                 ""pagination"": {
                     ""offset"": 1,
                     ""limit"": 10,
-                    ""total"": 8
+                    ""total"": 9
                 },
                 ""data"": [
                     {
@@ -351,6 +351,14 @@ namespace AdvertisementService.Repository
                         }
                     },
                     {
+                        ""contentId"": ""A512992587"",
+                        ""type"": ""video"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/250f3c53-6e1e-4eb1-aecf-d10b1039659b.mp4"",
+                        ""resourceNumber"": ""A0022"",
+                        ""name"": ""Mc Crispy Chicken"",
+                        ""tintColor"": 16774922
+                    },
+                    {
                         ""contentId"": ""A1124643847"",
                         ""type"": ""video"",
                         ""url"": ""https://routesme.blob.core.windows.net/advertisements/b0203b58-3d88-4431-95d0-c5c5a388ff3a.mp4"",
@@ -389,8 +397,7 @@ namespace AdvertisementService.Repository
                 ""status"": true,
                 ""message"": ""Contents retrived successfully."",
                 ""statusCode"": 200
-            }
-        ");
+            }");
         }
 
         // public dynamic GetContentsv1(string advertisementId, Pagination pageInfo)
