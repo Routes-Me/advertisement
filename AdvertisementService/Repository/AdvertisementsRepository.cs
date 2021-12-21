@@ -419,19 +419,6 @@ namespace AdvertisementService.Repository
                             ""subtitle"": ""أطلب اونلاين الان..قم بنسخ الكود"",
                             ""link"": ""http://links.routesme.com/A33934682""
                         }
-                    },
-                    {
-                        ""contentId"": ""A1936757826"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/31ff985c-9352-436c-a4cb-1e560a5effa7.mp4"",
-                        ""resourceNumber"": ""A0025"",
-                        ""name"": ""Vaccination Ar"",
-                        ""promotion"": {
-                            ""promotionId"": ""A1936757826"",
-                            ""title"": ""VACCINATION IS PROTECTION   -   ‏التــطعيم وقــايــة"",
-                            ""subtitle"": ""Visit the website or scan the code  -  زورو الموقع"",
-                            ""link"": ""http://links.routesme.com/A1936757826""
-                        }
                     }
                 ],
                 ""status"": true,
