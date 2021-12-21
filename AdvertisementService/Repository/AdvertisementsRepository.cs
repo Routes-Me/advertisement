@@ -289,6 +289,7 @@ namespace AdvertisementService.Repository
             }
         }
 
+
         public dynamic GetContents(string advertisementId, Pagination pageInfo)
         {
             return JObject.Parse(@"
@@ -427,7 +428,7 @@ namespace AdvertisementService.Repository
             }");
         }
 
-        // public dynamic GetContentsv1(string advertisementId, Pagination pageInfo)
+        // public dynamic GetContents(string advertisementId, Pagination pageInfo)
         // {
         //     int totalCount = 0;
         //     try
