@@ -405,7 +405,13 @@ namespace AdvertisementService.Repository
                         ""url"": ""https://routesme.blob.core.windows.net/advertisements/740de07d-5073-4966-bf43-7f026e8d59c9.mp4"",
                         ""resourceNumber"": ""A004"",
                         ""name"": ""I Save 2"",
-                        ""tintColor"": 16743168
+                        ""tintColor"": 16743168,
+                        ""promotion"": {
+                            ""promotionId"": ""A1168841632"",
+                            ""title"": ""Get instant discounts, download now!"",
+                            ""subtitle"": ""احصل على خصومات فورية.. حمل التطبيق الآن"",
+                            ""link"": ""http://links.routesme.com/A1168841632""
+                        }
                     },
                     {
                         ""contentId"": ""A1046511380"",
