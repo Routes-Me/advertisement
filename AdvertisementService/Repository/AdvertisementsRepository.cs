@@ -297,7 +297,7 @@ namespace AdvertisementService.Repository
                 ""pagination"": {
                     ""offset"": 1,
                     ""limit"": 15,
-                    ""total"": 13
+                    ""total"": 14
                 },
                 ""data"": [
                     {
@@ -336,6 +336,14 @@ namespace AdvertisementService.Repository
                         ""resourceNumber"": ""A0021"",
                         ""name"": ""Shrimpy"",
                         ""tintColor"": 15230255
+                    },
+                    {
+                        ""contentId"": ""A390662335"",
+                        ""type"": ""video"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/860f0d6d-2cfc-48e0-9c76-bfe3975436ae.mp4"",
+                        ""resourceNumber"": ""A0026"",
+                        ""name"": ""Routes_Covid"",
+                        ""tintColor"": 41974
                     },
                     {
                         ""contentId"": ""A2093022760"",
