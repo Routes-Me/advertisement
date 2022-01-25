@@ -330,14 +330,6 @@ namespace AdvertisementService.Repository
                         }
                     },
                     {
-                        ""contentId"": ""A1080446062"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/aa358871-7a3a-4db6-893b-d970f4ead581.mp4"",
-                        ""resourceNumber"": ""A0021"",
-                        ""name"": ""Shrimpy"",
-                        ""tintColor"": 15230255
-                    },
-                    {
                         ""contentId"": ""A390662335"",
                         ""type"": ""video"",
                         ""url"": ""https://routesme.blob.core.windows.net/advertisements/860f0d6d-2cfc-48e0-9c76-bfe3975436ae.mp4"",
@@ -368,14 +360,6 @@ namespace AdvertisementService.Repository
                         }
                     },
                     {
-                        ""contentId"": ""A512992587"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/250f3c53-6e1e-4eb1-aecf-d10b1039659b.mp4"",
-                        ""resourceNumber"": ""A0022"",
-                        ""name"": ""Mc Crispy Chicken"",
-                        ""tintColor"": 16774922
-                    },
-                    {
                         ""contentId"": ""A2093022760"",
                         ""type"": ""video"",
                         ""url"": ""https://routesme.blob.core.windows.net/advertisements/a0d673aa-3d8b-48ac-afb8-4b0876d97d77.mp4"",
@@ -384,28 +368,12 @@ namespace AdvertisementService.Repository
                         ""tintColor"": 1655439
                     },
                     {
-                        ""contentId"": ""A1080446062"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/aa358871-7a3a-4db6-893b-d970f4ead581.mp4"",
-                        ""resourceNumber"": ""A0021"",
-                        ""name"": ""Shrimpy"",
-                        ""tintColor"": 15230255
-                    },
-                    {
                         ""contentId"": ""A1525569285"",
                         ""type"": ""video"",
                         ""url"": ""https://routesme.blob.core.windows.net/advertisements/3c1354f6-dd3a-4080-90c0-84819c33c1a5.mp4"",
                         ""resourceNumber"": ""A0024"",
                         ""name"": ""Routes Quiz 7"",
                         ""tintColor"": 1524367
-                    },
-                    {
-                        ""contentId"": ""A512992587"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/250f3c53-6e1e-4eb1-aecf-d10b1039659b.mp4"",
-                        ""resourceNumber"": ""A0022"",
-                        ""name"": ""Mc Crispy Chicken"",
-                        ""tintColor"": 16774922
                     },
                     {
                         ""contentId"": ""A2137220545"",
