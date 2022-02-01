@@ -347,7 +347,7 @@ namespace AdvertisementService.Repository
                         ""promotion"": {
                             ""promotionId"": ""A879983343"",
                             ""title"": ""Use code: RKW"",
-                            ""link"": ""http://stage.links.routesme.com/A879983343""
+                            ""link"": ""http://links.routesme.com/A879983343""
                         }
                     },
                     {
