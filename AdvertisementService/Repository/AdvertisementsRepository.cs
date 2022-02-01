@@ -297,7 +297,7 @@ namespace AdvertisementService.Repository
                 ""pagination"": {
                     ""offset"": 1,
                     ""limit"": 15,
-                    ""total"": 14
+                    ""total"": 11
                 },
                 ""data"": [
                     {
@@ -336,6 +336,19 @@ namespace AdvertisementService.Repository
                         ""resourceNumber"": ""A0026"",
                         ""name"": ""Routes_Covid"",
                         ""tintColor"": 41974
+                    },
+                    {
+                        ""contentId"": ""A1970692508"",
+                        ""type"": ""video"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/826dd6ec-d8a7-4530-afa9-c80b98965e05.mp4"",
+                        ""resourceNumber"": ""A0027"",
+                        ""name"": ""Careem ad"",
+                        ""tintColor"": 5221192,
+                        ""promotion"": {
+                            ""promotionId"": ""A879983343"",
+                            ""title"": ""Use code: RKW"",
+                            ""link"": ""http://stage.links.routesme.com/A879983343""
+                        }
                     },
                     {
                         ""contentId"": ""A2093022760"",
