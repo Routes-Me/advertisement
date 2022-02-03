@@ -347,6 +347,7 @@ namespace AdvertisementService.Repository
                         ""promotion"": {
                             ""promotionId"": ""A879983343"",
                             ""title"": ""Use code: RKW"",
+                            ""subtitle"": ""إستخدم كود RKW""
                             ""link"": ""http://links.routesme.com/A879983343""
                         }
                     },
@@ -382,6 +383,7 @@ namespace AdvertisementService.Repository
                         ""promotion"": {
                             ""promotionId"": ""A879983343"",
                             ""title"": ""Use code: RKW"",
+                            ""subtitle"": ""إستخدم كود RKW""
                             ""link"": ""http://links.routesme.com/A879983343""
                         }
                     },
@@ -425,6 +427,7 @@ namespace AdvertisementService.Repository
                         ""promotion"": {
                             ""promotionId"": ""A879983343"",
                             ""title"": ""Use code: RKW"",
+                            ""subtitle"": ""إستخدم كود RKW""
                             ""link"": ""http://links.routesme.com/A879983343""
                         }
                     },
