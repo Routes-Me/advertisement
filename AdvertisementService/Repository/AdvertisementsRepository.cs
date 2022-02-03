@@ -373,6 +373,19 @@ namespace AdvertisementService.Repository
                         }
                     },
                     {
+                        ""contentId"": ""A1970692508"",
+                        ""type"": ""video"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/826dd6ec-d8a7-4530-afa9-c80b98965e05.mp4"",
+                        ""resourceNumber"": ""A0027"",
+                        ""name"": ""Careem ad"",
+                        ""tintColor"": 5221192,
+                        ""promotion"": {
+                            ""promotionId"": ""A879983343"",
+                            ""title"": ""Use code: RKW"",
+                            ""link"": ""http://links.routesme.com/A879983343""
+                        }
+                    },
+                    {
                         ""contentId"": ""A2093022760"",
                         ""type"": ""video"",
                         ""url"": ""https://routesme.blob.core.windows.net/advertisements/a0d673aa-3d8b-48ac-afb8-4b0876d97d77.mp4"",
@@ -400,6 +413,19 @@ namespace AdvertisementService.Repository
                             ""title"": ""Get instant discounts, download now!"",
                             ""subtitle"": ""احصل على خصومات فورية.. حمل التطبيق الآن"",
                             ""link"": ""http://links.routesme.com/A1168841632""
+                        }
+                    },
+                    {
+                        ""contentId"": ""A1970692508"",
+                        ""type"": ""video"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/826dd6ec-d8a7-4530-afa9-c80b98965e05.mp4"",
+                        ""resourceNumber"": ""A0027"",
+                        ""name"": ""Careem ad"",
+                        ""tintColor"": 5221192,
+                        ""promotion"": {
+                            ""promotionId"": ""A879983343"",
+                            ""title"": ""Use code: RKW"",
+                            ""link"": ""http://links.routesme.com/A879983343""
                         }
                     },
                     {
