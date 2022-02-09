@@ -346,6 +346,20 @@ namespace AdvertisementService.Repository
                         ""tintColor"": 5221192
                     },
                     {
+                        ""contentId"": ""A903654922"",
+                        ""type"": ""video"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/a12e3534-ac87-4d05-b301-686d878c484a.mp4"",
+                        ""resourceNumber"": ""A0012"",
+                        ""name"": ""CityCenter"",
+                        ""tintColor"": 248529,
+                        ""promotion"": {
+                            ""promotionId"": ""A1814427574"",
+                            ""title"": ""Download City Centre App today!"",
+                            ""subtitle"":""حمل تطبيق ستي سنتر الآن"",
+                            ""link"": ""http://stage.links.routesme.com/A1814427574""
+                        }
+                    },
+                    {
                         ""contentId"": ""A2093022760"",
                         ""type"": ""video"",
                         ""url"": ""https://routesme.blob.core.windows.net/advertisements/a0d673aa-3d8b-48ac-afb8-4b0876d97d77.mp4"",
@@ -367,20 +381,6 @@ namespace AdvertisementService.Repository
                         }
                     },
                     {
-                        ""contentId"": ""A2137220545"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/ff144cf3-3fb2-48b7-9d03-42e481934ec1.mp4"",
-                        ""resourceNumber"": ""A004"",
-                        ""name"": ""Dominos"",
-                        ""tintColor"": 2385407,
-                        ""promotion"": {
-                            ""promotionId"": ""A1090709165"",
-                            ""title"": ""Call now and get the latest offers"",
-                            ""subtitle"": ""اتصل الان واحصل على اخر العروض 1800800 "",
-                            ""link"": ""http://links.routesme.com/A1090709165""
-                        }
-                    },
-                    {
                         ""contentId"": ""A1046511380"",
                         ""type"": ""video"",
                         ""url"": ""https://routesme.blob.core.windows.net/advertisements/bea7a5bd-b70c-453e-8e22-1487aca833ba.mp4"",
@@ -390,7 +390,7 @@ namespace AdvertisementService.Repository
                         ""promotion"": {
                             ""promotionId"": ""A1369304351"",
                             ""title"": ""Economy Class experience like never before"",
-                            ""subtitle"":""Book your journey now""
+                            ""subtitle"":""Book your journey now"",
                             ""link"": ""http://stage.links.routesme.com/A1369304351""
                         }
                     }
