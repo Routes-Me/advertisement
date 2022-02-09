@@ -383,14 +383,15 @@ namespace AdvertisementService.Repository
                     {
                         ""contentId"": ""A1046511380"",
                         ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/ff144cf3-3fb2-48b7-9d03-42e481934ec1.mp4"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/bea7a5bd-b70c-453e-8e22-1487aca833ba.mp4"",
                         ""resourceNumber"": ""A0018"",
                         ""name"": ""QatarAirways"",
                         ""tintColor"": 14091268,
                         ""promotion"": {
                             ""promotionId"": ""A1369304351"",
                             ""title"": ""Economy Class experience like never before"",
-                            ""link"": ""http://links.routesme.com/A1369304351""
+                            ""subtitle"":""Book your journey now""
+                            ""link"": ""http://stage.links.routesme.com/A1369304351""
                         }
                     }
                 ],
