@@ -9,7 +9,7 @@ namespace AdvertisementService.Helper.Abstraction
         dynamic GetMediasIncludedData(List<AdvertisementsGetModel> advertisementsModelList);
         dynamic GetCampaignIncludedData(List<AdvertisementsGetModel> advertisementsModelList);
         dynamic GetIntervalIncludedData(List<AdvertisementsGetModel> advertisementsModelList);
-        dynamic GetPromotionsIncludedData(List<AdvertisementsForContentModel> advertisementsModelList);
+        dynamic GetPromotionsIncludedData(List<ContentsModel> contentsModels);
         List<PromotionsGetModel> GetPromotionsData();
         dynamic GetPromotionsForAdvertisementIncludedData(List<AdvertisementsGetModel> advertisementsModelList);
     }

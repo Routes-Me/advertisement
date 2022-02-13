@@ -123,10 +123,10 @@ namespace AdvertisementService.Helper.Repository
             return Common.SerializeJsonForIncludedRepo(mediaList.Cast<dynamic>().ToList());
         }
 
-        public dynamic GetPromotionsIncludedData(List<AdvertisementsForContentModel> advertisementsModelList)
+        public dynamic GetPromotionsIncludedData(List<ContentsModel> contentsModels)
         {
             List<PromotionsGetModel> promotions = new List<PromotionsGetModel>();
-            foreach (var item in advertisementsModelList)
+            foreach (var item in contentsModels)
             {
                 var client = new RestClient(_appSettings.Host + _dependencies.CouponsUrl + item.ContentId);
                 var request = new RestRequest(Method.GET);

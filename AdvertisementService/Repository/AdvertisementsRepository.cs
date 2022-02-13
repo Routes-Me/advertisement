@@ -289,165 +289,281 @@ namespace AdvertisementService.Repository
             }
         }
 
-
-        public dynamic GetContents(string advertisementId, Pagination pageInfo)
+        public ContentsGetResponse GetContents(string advertisementId, Pagination pageInfo)
         {
-            return JObject.Parse(@"
+            int totalCount = 0;
+            ContentsGetResponse response = new ContentsGetResponse();
+            List<ContentsModel> contents = new List<ContentsModel>();
+            try
             {
-                ""pagination"": {
-                    ""offset"": 1,
-                    ""limit"": 15,
-                    ""total"": 11
-                },
-                ""data"": [
+                List<Broadcasts> _listBroadcast = new List<Broadcasts>();
+                if (string.IsNullOrEmpty(advertisementId))
+                {
+                    _listBroadcast = _context.Broadcasts
+                        .Include(x => x.Campaign)
+                        .Include(x => x.Advertisement)
+                        .ThenInclude(x => x.Media)
+                        .Where(x => x.Campaign.Status == "active"
+                            && x.Campaign.StartAt <= DateTime.Now
+                            && x.Campaign.EndAt >= DateTime.Now).OrderBy(a => a.Sort).ToList();
+                    foreach (var broadcast in _listBroadcast)
                     {
-                        ""contentId"": ""A879983343"",
-                        ""type"": ""image"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/bdafcbcf-3c01-4867-9b30-162988881683.png"",
-                        ""resourceNumber"": ""A0010"",
-                        ""name"": ""Routes Insta Banner"",
-                        ""tintColor"": 2839179
-                    },
+                        ContentsModel content = new ContentsModel();
+                        content.ContentId = Obfuscation.Encode(broadcast.AdvertisementId);
+                        content.Type = broadcast.Advertisement.Media.MediaType;
+                        content.Url = broadcast.Advertisement.Media.Url;
+                        content.ResourceNumber = broadcast.Advertisement.ResourceNumber;
+                        content.Name = broadcast.Advertisement.Name;
+                        content.TintColor = broadcast.Advertisement.TintColor;
+                        contents.Add(content);
+                    }
+                    totalCount = contents.Count;
+                    contents = contents.Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                }
+                else
+                {
+                    _listBroadcast = _context.Broadcasts
+                        .Include(x => x.Campaign)
+                        .Include(x => x.Advertisement)
+                        .ThenInclude(x => x.Media)
+                        .Where(x => x.Campaign.Status == "active"
+                            && x.AdvertisementId == Obfuscation.Decode(advertisementId)
+                            && x.Campaign.StartAt <= DateTime.Now
+                            && x.Campaign.EndAt >= DateTime.Now)
+                        .OrderBy(a => a.Sort).ToList();
+                    foreach (var broadcast in _listBroadcast)
                     {
-                        ""contentId"": ""A312529868"",
-                        ""type"": ""image"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/43fe0241-0292-4aa4-b2fc-0646e02b6ea9.png"",
-                        ""resourceNumber"": ""A0011"",
-                        ""name"": ""Routes FB Banner"",
-                        ""tintColor"": 2839179
-                    },
+                        ContentsModel content = new ContentsModel();
+                        content.ContentId = Obfuscation.Encode(broadcast.AdvertisementId);
+                        content.Type = broadcast.Advertisement.Media.MediaType;
+                        content.Url = broadcast.Advertisement.Media.Url;
+                        content.ResourceNumber = broadcast.Advertisement.ResourceNumber;
+                        content.Name = broadcast.Advertisement.Name;
+                        content.TintColor = broadcast.Advertisement.TintColor;
+                        contents.Add(content);
+                    }
+                    totalCount = contents.Count;
+                    contents = contents.Skip((pageInfo.offset - 1) * pageInfo.limit).Take(pageInfo.limit).ToList();
+                }
+                if (contents.Count > 0)
+                {
+                    List<PromotionsGetModel> promotions = _includeAdvertisements.GetPromotionsIncludedData(contents);
+                    if (promotions != null && promotions.Count > 0)
                     {
-                        ""contentId"": ""A356727653"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/31ff985c-9352-436c-a4cb-1e560a5effa7.mp4"",
-                        ""resourceNumber"": ""A0024"",
-                        ""name"": ""Vaccination is protection"",
-                        ""promotion"": {
-                            ""promotionId"": ""A356727653"",
-                            ""title"": ""VACCINATION IS PROTECTION   -   ‏التــطعيم وقــايــة"",
-                            ""subtitle"": ""Visit the website or scan the code  -  زورو الموقع"",
-                            ""link"": ""http://links.routesme.com/A356727653""
-                        }
-                    },
-                    {
-                        ""contentId"": ""A390662335"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/860f0d6d-2cfc-48e0-9c76-bfe3975436ae.mp4"",
-                        ""resourceNumber"": ""A0026"",
-                        ""name"": ""Routes_Covid"",
-                        ""tintColor"": 41974
-                    },
-                    {
-                        ""contentId"": ""A1970692508"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/826dd6ec-d8a7-4530-afa9-c80b98965e05.mp4"",
-                        ""resourceNumber"": ""A0027"",
-                        ""name"": ""Careem ad"",
-                        ""tintColor"": 5221192,
-                        ""promotion"": {
-                            ""promotionId"": ""A879983343"",
-                            ""title"": ""Use code: RKW"",
-                            ""link"": ""http://links.routesme.com/A879983343""
-                        }
-                    },
-                    {
-                        ""contentId"": ""A2093022760"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/a0d673aa-3d8b-48ac-afb8-4b0876d97d77.mp4"",
-                        ""resourceNumber"": ""A0023"",
-                        ""name"": ""New Year 2022"",
-                        ""tintColor"": 1655439
-                    },
-                    {
-                        ""contentId"": ""A601388157"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/db74f43c-a584-4d8d-b822-4968d0b47856.mp4"",
-                        ""resourceNumber"": ""A0016"",
-                        ""name"": ""I save"",
-                        ""tintColor"": 16740096,
-                        ""promotion"": {
-                            ""promotionId"": ""A1168841632"",
-                            ""title"": ""Get instant discounts, download now!"",
-                            ""subtitle"": ""احصل على خصومات فورية.. حمل التطبيق الآن"",
-                            ""link"": ""http://links.routesme.com/A1168841632""
-                        }
-                    },
-                    {
-                        ""contentId"": ""A1970692508"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/826dd6ec-d8a7-4530-afa9-c80b98965e05.mp4"",
-                        ""resourceNumber"": ""A0027"",
-                        ""name"": ""Careem ad"",
-                        ""tintColor"": 5221192,
-                        ""promotion"": {
-                            ""promotionId"": ""A879983343"",
-                            ""title"": ""Use code: RKW"",
-                            ""link"": ""http://links.routesme.com/A879983343""
-                        }
-                    },
-                    {
-                        ""contentId"": ""A2093022760"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/a0d673aa-3d8b-48ac-afb8-4b0876d97d77.mp4"",
-                        ""resourceNumber"": ""A0023"",
-                        ""name"": ""New Year 2022"",
-                        ""tintColor"": 1655439
-                    },
-                    {
-                        ""contentId"": ""A1525569285"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/3c1354f6-dd3a-4080-90c0-84819c33c1a5.mp4"",
-                        ""resourceNumber"": ""A0024"",
-                        ""name"": ""Routes Quiz 7"",
-                        ""tintColor"": 1524367
-                    },
-                    {
-                        ""contentId"": ""A2137220545"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/740de07d-5073-4966-bf43-7f026e8d59c9.mp4"",
-                        ""resourceNumber"": ""A004"",
-                        ""name"": ""I Save 2"",
-                        ""tintColor"": 16743168,
-                        ""promotion"": {
-                            ""promotionId"": ""A1168841632"",
-                            ""title"": ""Get instant discounts, download now!"",
-                            ""subtitle"": ""احصل على خصومات فورية.. حمل التطبيق الآن"",
-                            ""link"": ""http://links.routesme.com/A1168841632""
-                        }
-                    },
-                    {
-                        ""contentId"": ""A1970692508"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/826dd6ec-d8a7-4530-afa9-c80b98965e05.mp4"",
-                        ""resourceNumber"": ""A0027"",
-                        ""name"": ""Careem ad"",
-                        ""tintColor"": 5221192,
-                        ""promotion"": {
-                            ""promotionId"": ""A879983343"",
-                            ""title"": ""Use code: RKW"",
-                            ""link"": ""http://links.routesme.com/A879983343""
-                        }
-                    },
-                    {
-                        ""contentId"": ""A1046511380"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/1a256034-b605-49ed-bddd-cf1a14b99314.mp4"",
-                        ""resourceNumber"": ""A0019"",
-                        ""name"": ""Turkish Grill"",
-                        ""tintColor"": 14091268,
-                        ""promotion"": {
-                            ""promotionId"": ""A33934682"",
-                            ""title"": ""Order online now! Scan the code"",
-                            ""subtitle"": ""أطلب اونلاين الان..قم بنسخ الكود"",
-                            ""link"": ""http://links.routesme.com/A33934682""
+                        for (int i = 0; i < contents.Count; i++)
+                        {
+                            for (int j = 0; j < promotions.Count; j++)
+                            {
+                                if (contents[i].ContentId == promotions[j].AdvertisementId)
+                                {
+                                    PromotionsModelForContent promotionsModelForContent = new PromotionsModelForContent();
+                                    promotionsModelForContent.Title = promotions[j].Title;
+                                    promotionsModelForContent.Subtitle = promotions[j].Subtitle;
+                                    promotionsModelForContent.PromotionId = promotions[j].PromotionId;
+                                    promotionsModelForContent.LogoUrl = promotions[j].LogoUrl;
+                                    promotionsModelForContent.Code = promotions[j].Code;
+                                    if (!string.IsNullOrEmpty(promotions[j].Type))
+                                    {
+                                        if (promotions[j].Type.ToLower() == "links")
+                                        {
+                                            promotionsModelForContent.Link = _appSettings.LinkUrlForContent + promotions[j].PromotionId;
+                                        }
+                                        else if (promotions[j].Type.ToLower() == "coupons")
+                                        {
+                                            promotionsModelForContent.Link = _appSettings.CouponUrlForContent + promotions[j].PromotionId;
+                                        }
+                                        else if (promotions[j].Type.ToLower() == "places")
+                                        {
+                                            promotionsModelForContent.Link = null;
+                                        }
+                                        else
+                                        {
+                                            promotionsModelForContent.Link = null;
+                                        }
+                                    }
+                                    contents[i].promotion = promotionsModelForContent;
+                                }
+                            }
                         }
                     }
-                ],
-                ""status"": true,
-                ""message"": ""Contents retrived successfully."",
-                ""statusCode"": 200
-            }");
+                }
+                var page = new Pagination
+                {
+                    offset = pageInfo.offset,
+                    limit = pageInfo.limit,
+                    total = totalCount
+                };
+                response.status = true;
+                response.message = CommonMessage.ContentsRetrive;
+                response.pagination = page;
+                response.data = contents;
+                response.statusCode = StatusCodes.Status200OK;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ReturnResponse.ExceptionResponse(ex);
+            }
         }
+
+        //public dynamic GetContents(string advertisementId, Pagination pageInfo)
+        //{
+        //    return JObject.Parse(@"
+        //    {
+        //        ""pagination"": {
+        //            ""offset"": 1,
+        //            ""limit"": 15,
+        //            ""total"": 11
+        //        },
+        //        ""data"": [
+        //            {
+        //                ""contentId"": ""A879983343"",
+        //                ""type"": ""image"",
+        //                ""url"": ""https://routesme.blob.core.windows.net/advertisements/bdafcbcf-3c01-4867-9b30-162988881683.png"",
+        //                ""resourceNumber"": ""A0010"",
+        //                ""name"": ""Routes Insta Banner"",
+        //                ""tintColor"": 2839179
+        //            },
+        //            {
+        //                ""contentId"": ""A312529868"",
+        //                ""type"": ""image"",
+        //                ""url"": ""https://routesme.blob.core.windows.net/advertisements/43fe0241-0292-4aa4-b2fc-0646e02b6ea9.png"",
+        //                ""resourceNumber"": ""A0011"",
+        //                ""name"": ""Routes FB Banner"",
+        //                ""tintColor"": 2839179
+        //            },
+        //            {
+        //                ""contentId"": ""A356727653"",
+        //                ""type"": ""video"",
+        //                ""url"": ""https://routesme.blob.core.windows.net/advertisements/31ff985c-9352-436c-a4cb-1e560a5effa7.mp4"",
+        //                ""resourceNumber"": ""A0024"",
+        //                ""name"": ""Vaccination is protection"",
+        //                ""promotion"": {
+        //                    ""promotionId"": ""A356727653"",
+        //                    ""title"": ""VACCINATION IS PROTECTION   -   ‏التــطعيم وقــايــة"",
+        //                    ""subtitle"": ""Visit the website or scan the code  -  زورو الموقع"",
+        //                    ""link"": ""http://links.routesme.com/A356727653""
+        //                }
+        //            },
+        //            {
+        //                ""contentId"": ""A390662335"",
+        //                ""type"": ""video"",
+        //                ""url"": ""https://routesme.blob.core.windows.net/advertisements/860f0d6d-2cfc-48e0-9c76-bfe3975436ae.mp4"",
+        //                ""resourceNumber"": ""A0026"",
+        //                ""name"": ""Routes_Covid"",
+        //                ""tintColor"": 41974
+        //            },
+        //            {
+        //                ""contentId"": ""A1970692508"",
+        //                ""type"": ""video"",
+        //                ""url"": ""https://routesme.blob.core.windows.net/advertisements/826dd6ec-d8a7-4530-afa9-c80b98965e05.mp4"",
+        //                ""resourceNumber"": ""A0027"",
+        //                ""name"": ""Careem ad"",
+        //                ""tintColor"": 5221192,
+        //                ""promotion"": {
+        //                    ""promotionId"": ""A879983343"",
+        //                    ""title"": ""Use code: RKW"",
+        //                    ""link"": ""http://links.routesme.com/A879983343""
+        //                }
+        //            },
+        //            {
+        //                ""contentId"": ""A2093022760"",
+        //                ""type"": ""video"",
+        //                ""url"": ""https://routesme.blob.core.windows.net/advertisements/a0d673aa-3d8b-48ac-afb8-4b0876d97d77.mp4"",
+        //                ""resourceNumber"": ""A0023"",
+        //                ""name"": ""New Year 2022"",
+        //                ""tintColor"": 1655439
+        //            },
+        //            {
+        //                ""contentId"": ""A601388157"",
+        //                ""type"": ""video"",
+        //                ""url"": ""https://routesme.blob.core.windows.net/advertisements/db74f43c-a584-4d8d-b822-4968d0b47856.mp4"",
+        //                ""resourceNumber"": ""A0016"",
+        //                ""name"": ""I save"",
+        //                ""tintColor"": 16740096,
+        //                ""promotion"": {
+        //                    ""promotionId"": ""A1168841632"",
+        //                    ""title"": ""Get instant discounts, download now!"",
+        //                    ""subtitle"": ""احصل على خصومات فورية.. حمل التطبيق الآن"",
+        //                    ""link"": ""http://links.routesme.com/A1168841632""
+        //                }
+        //            },
+        //            {
+        //                ""contentId"": ""A1970692508"",
+        //                ""type"": ""video"",
+        //                ""url"": ""https://routesme.blob.core.windows.net/advertisements/826dd6ec-d8a7-4530-afa9-c80b98965e05.mp4"",
+        //                ""resourceNumber"": ""A0027"",
+        //                ""name"": ""Careem ad"",
+        //                ""tintColor"": 5221192,
+        //                ""promotion"": {
+        //                    ""promotionId"": ""A879983343"",
+        //                    ""title"": ""Use code: RKW"",
+        //                    ""link"": ""http://links.routesme.com/A879983343""
+        //                }
+        //            },
+        //            {
+        //                ""contentId"": ""A2093022760"",
+        //                ""type"": ""video"",
+        //                ""url"": ""https://routesme.blob.core.windows.net/advertisements/a0d673aa-3d8b-48ac-afb8-4b0876d97d77.mp4"",
+        //                ""resourceNumber"": ""A0023"",
+        //                ""name"": ""New Year 2022"",
+        //                ""tintColor"": 1655439
+        //            },
+        //            {
+        //                ""contentId"": ""A1525569285"",
+        //                ""type"": ""video"",
+        //                ""url"": ""https://routesme.blob.core.windows.net/advertisements/3c1354f6-dd3a-4080-90c0-84819c33c1a5.mp4"",
+        //                ""resourceNumber"": ""A0024"",
+        //                ""name"": ""Routes Quiz 7"",
+        //                ""tintColor"": 1524367
+        //            },
+        //            {
+        //                ""contentId"": ""A2137220545"",
+        //                ""type"": ""video"",
+        //                ""url"": ""https://routesme.blob.core.windows.net/advertisements/740de07d-5073-4966-bf43-7f026e8d59c9.mp4"",
+        //                ""resourceNumber"": ""A004"",
+        //                ""name"": ""I Save 2"",
+        //                ""tintColor"": 16743168,
+        //                ""promotion"": {
+        //                    ""promotionId"": ""A1168841632"",
+        //                    ""title"": ""Get instant discounts, download now!"",
+        //                    ""subtitle"": ""احصل على خصومات فورية.. حمل التطبيق الآن"",
+        //                    ""link"": ""http://links.routesme.com/A1168841632""
+        //                }
+        //            },
+        //            {
+        //                ""contentId"": ""A1970692508"",
+        //                ""type"": ""video"",
+        //                ""url"": ""https://routesme.blob.core.windows.net/advertisements/826dd6ec-d8a7-4530-afa9-c80b98965e05.mp4"",
+        //                ""resourceNumber"": ""A0027"",
+        //                ""name"": ""Careem ad"",
+        //                ""tintColor"": 5221192,
+        //                ""promotion"": {
+        //                    ""promotionId"": ""A879983343"",
+        //                    ""title"": ""Use code: RKW"",
+        //                    ""link"": ""http://links.routesme.com/A879983343""
+        //                }
+        //            },
+        //            {
+        //                ""contentId"": ""A1046511380"",
+        //                ""type"": ""video"",
+        //                ""url"": ""https://routesme.blob.core.windows.net/advertisements/1a256034-b605-49ed-bddd-cf1a14b99314.mp4"",
+        //                ""resourceNumber"": ""A0019"",
+        //                ""name"": ""Turkish Grill"",
+        //                ""tintColor"": 14091268,
+        //                ""promotion"": {
+        //                    ""promotionId"": ""A33934682"",
+        //                    ""title"": ""Order online now! Scan the code"",
+        //                    ""subtitle"": ""أطلب اونلاين الان..قم بنسخ الكود"",
+        //                    ""link"": ""http://links.routesme.com/A33934682""
+        //                }
+        //            }
+        //        ],
+        //        ""status"": true,
+        //        ""message"": ""Contents retrived successfully."",
+        //        ""statusCode"": 200
+        //    }");
+        //}
 
         // public dynamic GetContents(string advertisementId, Pagination pageInfo)
         // {
