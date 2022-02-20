@@ -68,9 +68,9 @@ namespace AdvertisementService.Controllers
 
         [HttpGet]
         [Route("contents/{id?}")]
-        public IActionResult GetAdvertisementsByPromotions(string id, [FromQuery] Pagination pageInfo)
+        public IActionResult GetAdvertisementsByPromotions(string id, [FromQuery] Pagination pageInfo,[FromQuery] string institutionId)
         {
-            dynamic response = _advertisementsRepository.GetContents(id, pageInfo);
+            dynamic response = _advertisementsRepository.GetContents(id, pageInfo,institutionId);
             return Ok(response);
         }
 

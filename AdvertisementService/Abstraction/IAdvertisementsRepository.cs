@@ -10,7 +10,7 @@ namespace AdvertisementService.Abstraction
         Task<dynamic> UpdateAdvertisementsAsync(PostAdvertisementsModel model);
         Task<dynamic> DeleteAdvertisementsAsync(string id);
         Task<dynamic> InsertAdvertisementsAsync(PostAdvertisementsModel model);
-        dynamic GetContents(string advertisementsId, Pagination pageInfo);
+        dynamic GetContents(string advertisementsId, Pagination pageInfo,string institutionId);
         dynamic UpdateCampaignAdvertisement(string campaignsId, string advertisementsId, PatchSort model);
         dynamic UpdateCampaignAdvertisementList(string campaignsId, PatchSortList model);
     }

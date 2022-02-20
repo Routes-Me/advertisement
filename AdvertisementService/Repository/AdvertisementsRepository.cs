@@ -290,8 +290,38 @@ namespace AdvertisementService.Repository
         }
 
 
-        public dynamic GetContents(string advertisementId, Pagination pageInfo)
+        public dynamic GetContents(string advertisementId, Pagination pageInfo,string institutionId)
         {
+
+            if(!string.IsNullOrEmpty(institutionId))
+            {
+                int advertisementIdDecrypted = Obfuscation.Decode(institutionId);
+                if(institutionId.Equals("32"))
+                {
+                    return JObject.Parse(@"{
+                    ""pagination"": {
+                        ""offset"": 1,
+                        ""limit"": 10,
+                        ""total"": 9
+                    },
+                    ""data"": [
+                        {
+                            ""contentId"": ""A1403239033"",
+                            ""type"": ""video"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/13338f71-f17e-4aad-b18d-3d9cf931f3bf.mp4"",
+                            ""resourceNumber"": ""A0028"",
+                            ""name"": ""Routes-Amerni"",
+                            ""tintColor"": 1326727
+                        }
+                    ],
+                    ""status"": true,
+                    ""message"": ""Contents retrived successfully."",
+                    ""statusCode"": 200
+                    }");
+                }
+            }
+            
+            
             return JObject.Parse(@"
             {
                 ""pagination"": {
@@ -401,7 +431,7 @@ namespace AdvertisementService.Repository
             }");
         }
 
-        // public dynamic GetContents(string advertisementId, Pagination pageInfo)
+        // public dynamic GetContents(string advertisementId, Pagination pageInfo,string institutionId)
         // {
         //     int totalCount = 0;
         //     try
@@ -410,6 +440,8 @@ namespace AdvertisementService.Repository
         //         List<AdvertisementsForContentModel> contentsModelList = new List<AdvertisementsForContentModel>();
         //         MediasModel medias = new MediasModel();
         //         List<ContentsModel> contents = new List<ContentsModel>();
+
+        //         List<Advertisements> list = _context.Advertisements.ToList();
 
         //         if (string.IsNullOrEmpty(advertisementId))
         //         {
