@@ -296,7 +296,7 @@ namespace AdvertisementService.Repository
             if(!string.IsNullOrEmpty(institutionId))
             {
                 int advertisementIdDecrypted = Obfuscation.Decode(institutionId);
-                if(institutionId.Equals("32"))
+                if(advertisementIdDecrypted.Equals("32"))
                 {
                     return JObject.Parse(@"{
                     ""pagination"": {
