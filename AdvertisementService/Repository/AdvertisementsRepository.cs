@@ -296,7 +296,7 @@ namespace AdvertisementService.Repository
             if(!string.IsNullOrEmpty(institutionId))
             {
                 int advertisementIdDecrypted = Obfuscation.Decode(institutionId);
-                if(advertisementIdDecrypted.Equals("32"))
+                if(advertisementIdDecrypted==32)
                 {
                     return JObject.Parse(@"{
                     ""pagination"": {
@@ -387,27 +387,6 @@ namespace AdvertisementService.Repository
                             ""title"": ""Download City Centre App today!"",
                             ""subtitle"":""حمل تطبيق ستي سنتر الآن"",
                             ""link"": ""http://stage.links.routesme.com/A1814427574""
-                        }
-                    },
-                    {
-                        ""contentId"": ""A2093022760"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/a0d673aa-3d8b-48ac-afb8-4b0876d97d77.mp4"",
-                        ""resourceNumber"": ""A0023"",
-                        ""name"": ""New Year 2022"",
-                        ""tintColor"": 1655439
-                    },
-                    {
-                        ""contentId"": ""A1892560041"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/71597500-9524-44bb-ba44-3f6ec364b9af.mp4"",
-                        ""resourceNumber"": ""A0012"",
-                        ""name"": ""McWrap"",
-                        ""tintColor"": 16497182,
-                        ""promotion"": {
-                            ""promotionId"": ""A434860120"",
-                            ""title"": ""Dowload McDonald’s app today"",
-                            ""link"": ""http://links.routesme.com/A434860120""
                         }
                     },
                     {
