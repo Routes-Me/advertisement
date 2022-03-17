@@ -368,39 +368,31 @@ namespace AdvertisementService.Repository
                         ""tintColor"": 41974
                     },
                     {
-                        ""contentId"": ""A1970692508"",
+                        ""contentId"": ""A2137220545"",
                         ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/5072b331-8a30-462e-9db3-aef636273d42.mp4"",
-                        ""resourceNumber"": ""A0027"",
-                        ""name"": ""Nescafe LQ"",
-                        ""tintColor"": 5221192
-                    },
-                    {
-                        ""contentId"": ""A903654922"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/a12e3534-ac87-4d05-b301-686d878c484a.mp4"",
-                        ""resourceNumber"": ""A0012"",
-                        ""name"": ""CityCenter"",
-                        ""tintColor"": 248529,
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/740de07d-5073-4966-bf43-7f026e8d59c9.mp4"",
+                        ""resourceNumber"": ""A004"",
+                        ""name"": ""I Save 2"",
+                        ""tintColor"": 16743168,
                         ""promotion"": {
-                            ""promotionId"": ""A1814427574"",
-                            ""title"": ""Download City Centre App today!"",
-                            ""subtitle"":""حمل تطبيق ستي سنتر الآن"",
-                            ""link"": ""http://stage.links.routesme.com/A1814427574""
+                            ""promotionId"": ""A1168841632"",
+                            ""title"": ""Get instant discounts, download now!"",
+                            ""subtitle"": ""احصل على خصومات فورية.. حمل التطبيق الآن"",
+                            ""link"": ""http://links.routesme.com/A1168841632""
                         }
                     },
                     {
                         ""contentId"": ""A1046511380"",
                         ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/bea7a5bd-b70c-453e-8e22-1487aca833ba.mp4"",
-                        ""resourceNumber"": ""A0018"",
-                        ""name"": ""QatarAirways"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/1a256034-b605-49ed-bddd-cf1a14b99314.mp4"",
+                        ""resourceNumber"": ""A0019"",
+                        ""name"": ""Turkish Grill"",
                         ""tintColor"": 14091268,
                         ""promotion"": {
-                            ""promotionId"": ""A1369304351"",
-                            ""title"": ""Economy Class experience like never before"",
-                            ""subtitle"":""Book your journey now"",
-                            ""link"": ""http://stage.links.routesme.com/A1369304351""
+                            ""promotionId"": ""A33934682"",
+                            ""title"": ""Order online now! Scan the code"",
+                            ""subtitle"": ""أطلب اونلاين الان..قم بنسخ الكود"",
+                            ""link"": ""http://links.routesme.com/A33934682""
                         }
                     }
                 ],
