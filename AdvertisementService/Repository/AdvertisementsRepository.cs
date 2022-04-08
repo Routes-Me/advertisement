@@ -319,6 +319,73 @@ namespace AdvertisementService.Repository
                     ""statusCode"": 200
                     }");
                 }
+                if ((advertisementIdDecrypted==31)||(advertisementIdDecrypted==33))
+                {
+                    return JObject.Parse(@"
+                    {
+                        ""pagination"": {
+                            ""offset"": 1,
+                            ""limit"": 10,
+                            ""total"": 5
+                        },
+                        ""data"": [
+                            {
+                                ""contentId"": ""A879983343"",
+                                ""type"": ""image"",
+                                ""url"": ""https://routesme.blob.core.windows.net/advertisements/bdafcbcf-3c01-4867-9b30-162988881683.png"",
+                                ""resourceNumber"": ""A0010"",
+                                ""name"": ""Routes Insta Banner"",
+                                ""tintColor"": 2839179
+                            },
+                            {
+                                ""contentId"": ""A312529868"",
+                                ""type"": ""image"",
+                                ""url"": ""https://routesme.blob.core.windows.net/advertisements/43fe0241-0292-4aa4-b2fc-0646e02b6ea9.png"",
+                                ""resourceNumber"": ""A0011"",
+                                ""name"": ""Routes FB Banner"",
+                                ""tintColor"": 2839179
+                            },
+                            {
+                                ""contentId"": ""A356727653"",
+                                ""type"": ""video"",
+                                ""url"": ""https://routesme.blob.core.windows.net/advertisements/31ff985c-9352-436c-a4cb-1e560a5effa7.mp4"",
+                                ""resourceNumber"": ""A0024"",
+                                ""name"": ""Vaccination is protection"",
+                                ""promotion"": {
+                                    ""promotionId"": ""A356727653"",
+                                    ""title"": ""VACCINATION IS PROTECTION   -   ‏التــطعيم وقــايــة"",
+                                    ""subtitle"": ""Visit the website or scan the code  -  زورو الموقع"",
+                                    ""link"": ""http://links.routesme.com/A356727653""
+                                }
+                            },
+                            {
+                                ""contentId"": ""A390662335"",
+                                ""type"": ""video"",
+                                ""url"": ""https://routesme.blob.core.windows.net/advertisements/860f0d6d-2cfc-48e0-9c76-bfe3975436ae.mp4"",
+                                ""resourceNumber"": ""A0026"",
+                                ""name"": ""Routes_Covid"",
+                                ""tintColor"": 41974
+                            },
+                            {
+                                ""contentId"": ""A2137220545"",
+                                ""type"": ""video"",
+                                ""url"": ""https://routesme.blob.core.windows.net/advertisements/740de07d-5073-4966-bf43-7f026e8d59c9.mp4"",
+                                ""resourceNumber"": ""A004"",
+                                ""name"": ""I Save 2"",
+                                ""tintColor"": 16743168,
+                                ""promotion"": {
+                                    ""promotionId"": ""A1168841632"",
+                                    ""title"": ""Get instant discounts, download now!"",
+                                    ""subtitle"": ""احصل على خصومات فورية.. حمل التطبيق الآن"",
+                                    ""link"": ""http://links.routesme.com/A1168841632""
+                                }
+                            }
+                        ],
+                        ""status"": true,
+                        ""message"": ""Contents retrived successfully."",
+                        ""statusCode"": 200
+                    }");
+                }
             }
             
             
