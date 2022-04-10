@@ -302,7 +302,7 @@ namespace AdvertisementService.Repository
                     ""pagination"": {
                         ""offset"": 1,
                         ""limit"": 10,
-                        ""total"": 1
+                        ""total"": 2
                     },
                     ""data"": [
                         {
