@@ -306,6 +306,14 @@ namespace AdvertisementService.Repository
                     },
                     ""data"": [
                         {
+                            ""contentId"": ""A268332083"",
+                            ""type"": ""video"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/d4c24528-7e55-4fe6-9cc0-043007f1847e.mp4"",
+                            ""resourceNumber"": ""A0030"",
+                            ""name"": ""KuwaitDrone"",
+                            ""tintColor"": 1523593
+                        },
+                        {
                             ""contentId"": ""A1403239033"",
                             ""type"": ""video"",
                             ""url"": ""https://routesme.blob.core.windows.net/advertisements/13338f71-f17e-4aad-b18d-3d9cf931f3bf.mp4"",
