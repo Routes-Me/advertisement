@@ -402,7 +402,7 @@ namespace AdvertisementService.Repository
                 ""pagination"": {
                     ""offset"": 1,
                     ""limit"": 10,
-                    ""total"": 6
+                    ""total"": 7
                 },
                 ""data"": [
                     {
@@ -441,6 +441,20 @@ namespace AdvertisementService.Repository
                         ""resourceNumber"": ""A0026"",
                         ""name"": ""Routes_Covid"",
                         ""tintColor"": 41974
+                    },
+                    {
+                        ""contentId"": ""A1848362256"",
+                        ""type"": ""video"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/e235260f-a23b-4cca-90d2-1a73b43d0adf.mp4"",
+                        ""resourceNumber"": ""A0031"",
+                        ""name"": ""FlyBooking"",
+                        ""tintColor"": 15693114,
+                        ""promotion"": {
+                            ""promotionId"": ""A312529868"",
+                            ""title"": ""Download Flybooking and get the best rates for tickets and hotels."",
+                            ""subtitle"": ""حمل تطبيق فلاي بوكينغ واحصل على أفضل الأسعار لتذاك"",
+                            ""link"": ""http://stage.links.routesme.com/A312529868""
+                        }
                     },
                     {
                         ""contentId"": ""A2137220545"",
