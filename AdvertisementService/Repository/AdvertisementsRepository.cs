@@ -314,6 +314,50 @@ namespace AdvertisementService.Repository
                             ""tintColor"": 1523593
                         },
                         {
+                            ""contentId"": ""A1280908781"",
+                            ""type"": ""video"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/e4204320-ce54-4b49-9000-9a1de24fb0ab.mp4"",
+                            ""resourceNumber"": ""A0032"",
+                            ""name"": ""AirportVideoAmerni"",
+                            ""tintColor"": 1589903
+                        },
+                        {
+                            ""contentId"": ""A713455306"",
+                            ""type"": ""video"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/a5bd55bb-e368-4975-886c-f6313bd2d75a.mp4"",
+                            ""resourceNumber"": ""A0033"",
+                            ""name"": ""Eid"",
+                            ""tintColor"": 1589903
+                        },
+                        {
+                            ""contentId"": ""A1848362256"",
+                            ""type"": ""video"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/e235260f-a23b-4cca-90d2-1a73b43d0adf.mp4"",
+                            ""resourceNumber"": ""A0031"",
+                            ""name"": ""FlyBooking"",
+                            ""tintColor"": 15693114,
+                            ""promotion"": {
+                                ""promotionId"": ""A312529868"",
+                                ""title"": ""Download Flybooking and get the best rates for tickets and hotels."",
+                                ""subtitle"": ""حمل تطبيق فلاي بوكينغ واحصل على أفضل الأسعار لتذاك"",
+                                ""link"": ""http://stage.links.routesme.com/A312529868""
+                            }
+                        },
+                        {
+                            ""contentId"": ""A146001831"",
+                            ""type"": ""video"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/0b1511f0-d722-49ee-9011-b1550e72bbc4.mp4"",
+                            ""resourceNumber"": ""A0034"",
+                            ""name"": ""DarHamad"",
+                            ""tintColor"": 1248513,
+                            ""promotion"": {
+                                ""promotionId"": ""A1892560041"",
+                                ""title"": ""Scan the code and get the change to win Hair & Body spray from Dar Hamad"",
+                                ""subtitle"": ""امسح الكود وادخل السحب على عطر الشعر والجسم من دار"",
+                                ""link"": ""http://stage.links.routesme.com/A1892560041""
+                            }
+                        },
+                        {
                             ""contentId"": ""A1403239033"",
                             ""type"": ""video"",
                             ""url"": ""https://routesme.blob.core.windows.net/advertisements/13338f71-f17e-4aad-b18d-3d9cf931f3bf.mp4"",
@@ -354,6 +398,20 @@ namespace AdvertisementService.Repository
                                 ""tintColor"": 2839179
                             },
                             {
+                                ""contentId"": ""A1848362256"",
+                                ""type"": ""video"",
+                                ""url"": ""https://routesme.blob.core.windows.net/advertisements/e235260f-a23b-4cca-90d2-1a73b43d0adf.mp4"",
+                                ""resourceNumber"": ""A0031"",
+                                ""name"": ""FlyBooking"",
+                                ""tintColor"": 15693114,
+                                ""promotion"": {
+                                    ""promotionId"": ""A312529868"",
+                                    ""title"": ""Download Flybooking and get the best rates for tickets and hotels."",
+                                    ""subtitle"": ""حمل تطبيق فلاي بوكينغ واحصل على أفضل الأسعار لتذاك"",
+                                    ""link"": ""http://stage.links.routesme.com/A312529868""
+                                }
+                            },
+                            {
                                 ""contentId"": ""A356727653"",
                                 ""type"": ""video"",
                                 ""url"": ""https://routesme.blob.core.windows.net/advertisements/31ff985c-9352-436c-a4cb-1e560a5effa7.mp4"",
@@ -365,6 +423,14 @@ namespace AdvertisementService.Repository
                                     ""subtitle"": ""Visit the website or scan the code  -  زورو الموقع"",
                                     ""link"": ""http://links.routesme.com/A356727653""
                                 }
+                            },
+                            {
+                                ""contentId"": ""A713455306"",
+                                ""type"": ""video"",
+                                ""url"": ""https://routesme.blob.core.windows.net/advertisements/a5bd55bb-e368-4975-886c-f6313bd2d75a.mp4"",
+                                ""resourceNumber"": ""A0033"",
+                                ""name"": ""Eid"",
+                                ""tintColor"": 1589903
                             },
                             {
                                 ""contentId"": ""A390662335"",
@@ -455,6 +521,14 @@ namespace AdvertisementService.Repository
                             ""subtitle"": ""حمل تطبيق فلاي بوكينغ واحصل على أفضل الأسعار لتذاك"",
                             ""link"": ""http://stage.links.routesme.com/A312529868""
                         }
+                    },
+                    {
+                        ""contentId"": ""A713455306"",
+                        ""type"": ""video"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/a5bd55bb-e368-4975-886c-f6313bd2d75a.mp4"",
+                        ""resourceNumber"": ""A0033"",
+                        ""name"": ""Eid"",
+                        ""tintColor"": 1589903
                     },
                     {
                         ""contentId"": ""A2137220545"",
