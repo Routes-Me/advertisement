@@ -340,7 +340,7 @@ namespace AdvertisementService.Repository
                                 ""promotionId"": ""A312529868"",
                                 ""title"": ""Download Flybooking and get the best rates for tickets and hotels."",
                                 ""subtitle"": ""حمل تطبيق فلاي بوكينغ واحصل على أفضل الأسعار لتذاك"",
-                                ""link"": ""http://stage.links.routesme.com/A312529868""
+                                ""link"": ""http://links.routesme.com/A312529868""
                             }
                         },
                         {
@@ -354,7 +354,7 @@ namespace AdvertisementService.Repository
                                 ""promotionId"": ""A1892560041"",
                                 ""title"": ""Scan the code and get the change to win Hair & Body spray from Dar Hamad"",
                                 ""subtitle"": ""امسح الكود وادخل السحب على عطر الشعر والجسم من دار"",
-                                ""link"": ""http://stage.links.routesme.com/A1892560041""
+                                ""link"": ""http://links.routesme.com/A1892560041""
                             }
                         },
                         {
@@ -408,7 +408,7 @@ namespace AdvertisementService.Repository
                                     ""promotionId"": ""A312529868"",
                                     ""title"": ""Download Flybooking and get the best rates for tickets and hotels."",
                                     ""subtitle"": ""حمل تطبيق فلاي بوكينغ واحصل على أفضل الأسعار لتذاك"",
-                                    ""link"": ""http://stage.links.routesme.com/A312529868""
+                                    ""link"": ""http://links.routesme.com/A312529868""
                                 }
                             },
                             {
@@ -519,7 +519,7 @@ namespace AdvertisementService.Repository
                             ""promotionId"": ""A312529868"",
                             ""title"": ""Download Flybooking and get the best rates for tickets and hotels."",
                             ""subtitle"": ""حمل تطبيق فلاي بوكينغ واحصل على أفضل الأسعار لتذاك"",
-                            ""link"": ""http://stage.links.routesme.com/A312529868""
+                            ""link"": ""http://links.routesme.com/A312529868""
                         }
                     },
                     {
