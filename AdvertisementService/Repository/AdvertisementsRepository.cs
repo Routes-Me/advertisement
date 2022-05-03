@@ -488,7 +488,7 @@ namespace AdvertisementService.Repository
                             ""A1457699921""
                         ],
                         ""TintColor"": 16235040
-                    }
+                    },
                     {
                         ""contentId"": ""A312529868"",
                         ""type"": ""image"",
