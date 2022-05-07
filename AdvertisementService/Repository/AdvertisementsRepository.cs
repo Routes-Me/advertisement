@@ -378,7 +378,7 @@ namespace AdvertisementService.Repository
                         ""pagination"": {
                             ""offset"": 1,
                             ""limit"": 10,
-                            ""total"": 5
+                            ""total"": 8
                         },
                         ""data"": [
                             {
@@ -478,7 +478,7 @@ namespace AdvertisementService.Repository
                 ""pagination"": {
                     ""offset"": 1,
                     ""limit"": 10,
-                    ""total"": 7
+                    ""total"": 9
                 },
                 ""data"": [
                     {
