@@ -390,6 +390,16 @@ namespace AdvertisementService.Repository
                                 ""tintColor"": 2839179
                             },
                             {
+                                ""Name"": ""MC Mushroom Omelet Muffin"",
+                                ""InstitutionId"": ""A1335369669"",
+                                ""MediaUrl"": ""https://routesme.blob.core.windows.net/advertisements/70ccfade-a418-4dac-b76d-216cd1c8ba9d.mp4"",
+                                ""IntervalId"": ""A1580030173"",
+                                ""CampaignId"": [
+                                    ""A1457699921""
+                                ],
+                                ""TintColor"": 16235040
+                            },
+                            {
                                 ""contentId"": ""A312529868"",
                                 ""type"": ""image"",
                                 ""url"": ""https://routesme.blob.core.windows.net/advertisements/43fe0241-0292-4aa4-b2fc-0646e02b6ea9.png"",
