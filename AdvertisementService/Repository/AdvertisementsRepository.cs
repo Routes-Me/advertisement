@@ -390,14 +390,12 @@ namespace AdvertisementService.Repository
                                 ""tintColor"": 2839179
                             },
                             {
-                                ""Name"": ""MC Mushroom Omelet Muffin"",
-                                ""InstitutionId"": ""A1335369669"",
-                                ""MediaUrl"": ""https://routesme.blob.core.windows.net/advertisements/70ccfade-a418-4dac-b76d-216cd1c8ba9d.mp4"",
-                                ""IntervalId"": ""A1580030173"",
-                                ""CampaignId"": [
-                                    ""A1457699921""
-                                ],
-                                ""TintColor"": 16235040
+                                ""contentId"": ""A1726032004"",
+                                ""type"": ""video"",
+                                ""url"": ""https://routesme.blob.core.windows.net/advertisements/70ccfade-a418-4dac-b76d-216cd1c8ba9d.mp4"",
+                                ""resourceNumber"": ""A0035"",
+                                ""name"": ""MC Mushroom Omelet Muffin"",
+                                ""tintColor"": 16235040
                             },
                             {
                                 ""contentId"": ""A312529868"",
@@ -490,14 +488,12 @@ namespace AdvertisementService.Repository
                         ""tintColor"": 2839179
                     },
                     {
-                        ""Name"": ""MC Mushroom Omelet Muffin"",
-                        ""InstitutionId"": ""A1335369669"",
-                        ""MediaUrl"": ""https://routesme.blob.core.windows.net/advertisements/70ccfade-a418-4dac-b76d-216cd1c8ba9d.mp4"",
-                        ""IntervalId"": ""A1580030173"",
-                        ""CampaignId"": [
-                            ""A1457699921""
-                        ],
-                        ""TintColor"": 16235040
+                        ""contentId"": ""A1726032004"",
+                        ""type"": ""video"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/70ccfade-a418-4dac-b76d-216cd1c8ba9d.mp4"",
+                        ""resourceNumber"": ""A0035"",
+                        ""name"": ""MC Mushroom Omelet Muffin"",
+                        ""tintColor"": 16235040
                     },
                     {
                         ""contentId"": ""A312529868"",
