@@ -302,9 +302,17 @@ namespace AdvertisementService.Repository
                     ""pagination"": {
                         ""offset"": 1,
                         ""limit"": 10,
-                        ""total"": 6
+                        ""total"": 7
                     },
                     ""data"": [
+                        {
+                            ""contentId"": ""A591125054"",
+                            ""type"": ""image"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/420e155f-6dee-471f-a2c6-e8a96b6e9625.jpg"",
+                            ""resourceNumber"": ""A0037"",
+                            ""name"": ""Vergin Banner"",
+                            ""tintColor"": 12386560
+                        },
                         {
                             ""contentId"": ""A1158578529"",
                             ""type"": ""video"",
@@ -378,24 +386,16 @@ namespace AdvertisementService.Repository
                         ""pagination"": {
                             ""offset"": 1,
                             ""limit"": 10,
-                            ""total"": 7
+                            ""total"": 6
                         },
                         ""data"": [
                             {
-                                ""contentId"": ""A879983343"",
+                                ""contentId"": ""A591125054"",
                                 ""type"": ""image"",
-                                ""url"": ""https://routesme.blob.core.windows.net/advertisements/bdafcbcf-3c01-4867-9b30-162988881683.png"",
-                                ""resourceNumber"": ""A0010"",
-                                ""name"": ""Routes Insta Banner"",
-                                ""tintColor"": 2839179
-                            },
-                            {
-                                ""contentId"": ""A312529868"",
-                                ""type"": ""image"",
-                                ""url"": ""https://routesme.blob.core.windows.net/advertisements/43fe0241-0292-4aa4-b2fc-0646e02b6ea9.png"",
-                                ""resourceNumber"": ""A0011"",
-                                ""name"": ""Routes FB Banner"",
-                                ""tintColor"": 2839179
+                                ""url"": ""https://routesme.blob.core.windows.net/advertisements/420e155f-6dee-471f-a2c6-e8a96b6e9625.jpg"",
+                                ""resourceNumber"": ""A0037"",
+                                ""name"": ""Vergin Banner"",
+                                ""tintColor"": 12386560
                             },
                             {
                                 ""contentId"": ""A1848362256"",
@@ -468,24 +468,16 @@ namespace AdvertisementService.Repository
                 ""pagination"": {
                     ""offset"": 1,
                     ""limit"": 10,
-                    ""total"": 8
+                    ""total"": 7
                 },
                 ""data"": [
                     {
-                        ""contentId"": ""A879983343"",
+                        ""contentId"": ""A591125054"",
                         ""type"": ""image"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/bdafcbcf-3c01-4867-9b30-162988881683.png"",
-                        ""resourceNumber"": ""A0010"",
-                        ""name"": ""Routes Insta Banner"",
-                        ""tintColor"": 2839179
-                    },
-                    {
-                        ""contentId"": ""A312529868"",
-                        ""type"": ""image"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/43fe0241-0292-4aa4-b2fc-0646e02b6ea9.png"",
-                        ""resourceNumber"": ""A0011"",
-                        ""name"": ""Routes FB Banner"",
-                        ""tintColor"": 2839179
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/420e155f-6dee-471f-a2c6-e8a96b6e9625.jpg"",
+                        ""resourceNumber"": ""A0037"",
+                        ""name"": ""Vergin Banner"",
+                        ""tintColor"": 12386560
                     },
                     {
                         ""contentId"": ""A356727653"",
