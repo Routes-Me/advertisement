@@ -322,19 +322,19 @@ namespace AdvertisementService.Repository
                             ""tintColor"": 1457281
                         },
                         {
+                            ""contentId"": ""A23671579"",
+                            ""type"": ""video"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/9376782d-0dd2-43a5-98d3-9c31f6fa78d4.mp4"",
+                            ""resourceNumber"": ""A0038"",
+                            ""name"": ""Atyab"",
+                            ""tintColor"": 921102
+                        },
+                        {
                             ""contentId"": ""A1280908781"",
                             ""type"": ""video"",
                             ""url"": ""https://routesme.blob.core.windows.net/advertisements/e4204320-ce54-4b49-9000-9a1de24fb0ab.mp4"",
                             ""resourceNumber"": ""A0032"",
                             ""name"": ""AirportVideoAmerni"",
-                            ""tintColor"": 1589903
-                        },
-                        {
-                            ""contentId"": ""A713455306"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/a5bd55bb-e368-4975-886c-f6313bd2d75a.mp4"",
-                            ""resourceNumber"": ""A0033"",
-                            ""name"": ""Eid"",
                             ""tintColor"": 1589903
                         },
                         {
@@ -425,14 +425,6 @@ namespace AdvertisementService.Repository
                                 }
                             },
                             {
-                                ""contentId"": ""A713455306"",
-                                ""type"": ""video"",
-                                ""url"": ""https://routesme.blob.core.windows.net/advertisements/a5bd55bb-e368-4975-886c-f6313bd2d75a.mp4"",
-                                ""resourceNumber"": ""A0033"",
-                                ""name"": ""Eid"",
-                                ""tintColor"": 1589903
-                            },
-                            {
                                 ""contentId"": ""A390662335"",
                                 ""type"": ""video"",
                                 ""url"": ""https://routesme.blob.core.windows.net/advertisements/860f0d6d-2cfc-48e0-9c76-bfe3975436ae.mp4"",
@@ -513,14 +505,6 @@ namespace AdvertisementService.Repository
                             ""subtitle"": ""حمل تطبيق فلاي بوكينغ واحصل على أفضل الأسعار لتذاك"",
                             ""link"": ""http://links.routesme.com/A312529868""
                         }
-                    },
-                    {
-                        ""contentId"": ""A713455306"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/a5bd55bb-e368-4975-886c-f6313bd2d75a.mp4"",
-                        ""resourceNumber"": ""A0033"",
-                        ""name"": ""Eid"",
-                        ""tintColor"": 1589903
                     },
                     {
                         ""contentId"": ""A2137220545"",
