@@ -352,20 +352,6 @@ namespace AdvertisementService.Repository
                             }
                         },
                         {
-                            ""contentId"": ""A146001831"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/0b1511f0-d722-49ee-9011-b1550e72bbc4.mp4"",
-                            ""resourceNumber"": ""A0034"",
-                            ""name"": ""DarHamad"",
-                            ""tintColor"": 1248513,
-                            ""promotion"": {
-                                ""promotionId"": ""A1892560041"",
-                                ""title"": ""Scan the code and get the change to win Hair & Body spray from Dar Hamad"",
-                                ""subtitle"": ""امسح الكود وادخل السحب على عطر الشعر والجسم من دار"",
-                                ""link"": ""http://links.routesme.com/A1892560041""
-                            }
-                        },
-                        {
                             ""contentId"": ""A1403239033"",
                             ""type"": ""video"",
                             ""url"": ""https://routesme.blob.core.windows.net/advertisements/13338f71-f17e-4aad-b18d-3d9cf931f3bf.mp4"",
