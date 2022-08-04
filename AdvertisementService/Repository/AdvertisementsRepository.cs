@@ -506,6 +506,22 @@ namespace AdvertisementService.Repository
                         ""tintColor"": 12386560
                     },
                     {
+                        ""contentId"": ""A1603701752"",
+                        ""type"": ""image"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/9e5566a9-6ef0-424d-afb5-834b114ac692.jpg"",
+                        ""resourceNumber"": ""A0039"",
+                        ""name"": ""Virgin Banner Eng"",
+                        ""tintColor"": 16121857
+                    },
+                    {
+                        ""contentId"": ""A1036248277"",
+                        ""type"": ""image"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/d207ca4d-09fb-45b4-8051-a6eef042a8b7.jpg"",
+                        ""resourceNumber"": ""A0040"",
+                        ""name"": ""Virgin Banner Arb"",
+                        ""tintColor"": 16121857
+                    },
+                    {
                         ""contentId"": ""A356727653"",
                         ""type"": ""video"",
                         ""url"": ""https://routesme.blob.core.windows.net/advertisements/31ff985c-9352-436c-a4cb-1e560a5effa7.mp4"",
