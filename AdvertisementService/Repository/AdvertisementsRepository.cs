@@ -314,6 +314,38 @@ namespace AdvertisementService.Repository
                             ""tintColor"": 12386560
                         },
                         {
+                            ""contentId"": ""A1603701752"",
+                            ""type"": ""image"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/9e5566a9-6ef0-424d-afb5-834b114ac692.jpg"",
+                            ""resourceNumber"": ""A0039"",
+                            ""name"": ""Virgin Banner Eng"",
+                            ""tintColor"": 16121857
+                        },
+                        {
+                            ""contentId"": ""A1036248277"",
+                            ""type"": ""image"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/d207ca4d-09fb-45b4-8051-a6eef042a8b7.jpg"",
+                            ""resourceNumber"": ""A0040"",
+                            ""name"": ""Virgin Banner Arb"",
+                            ""tintColor"": 16121857
+                        },
+                        {
+                            ""contentId"": ""A468794802"",
+                            ""type"": ""video"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/707fdecd-56ba-4604-bb8c-34d10115157d.mp4"",
+                            ""resourceNumber"": ""A0041"",
+                            ""name"": ""Virgin Video Wifi"",
+                            ""tintColor"": 15271942
+                        },
+                        {
+                            ""contentId"": ""A2048824975"",
+                            ""type"": ""video"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/a1f2b50c-ff84-4e7f-a1e5-e53ce5c81249.mp4"",
+                            ""resourceNumber"": ""A0042"",
+                            ""name"": ""Virgin Video NewSim"",
+                            ""tintColor"": 15468295
+                        },
+                        {
                             ""contentId"": ""A1158578529"",
                             ""type"": ""video"",
                             ""url"": ""https://routesme.blob.core.windows.net/advertisements/988bda9a-a876-437f-8775-d91dde8ea600.mp4"",
