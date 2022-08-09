@@ -316,7 +316,7 @@ namespace AdvertisementService.Repository
                         {
                             ""contentId"": ""A1603701752"",
                             ""type"": ""image"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/9e5566a9-6ef0-424d-afb5-834b114ac692.jpg"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/VerginBEng.jpg"",
                             ""resourceNumber"": ""A0039"",
                             ""name"": ""Virgin Banner Eng"",
                             ""tintColor"": 16121857
@@ -324,42 +324,10 @@ namespace AdvertisementService.Repository
                         {
                             ""contentId"": ""A1036248277"",
                             ""type"": ""image"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/d207ca4d-09fb-45b4-8051-a6eef042a8b7.jpg"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/VerginBAr.jpg"",
                             ""resourceNumber"": ""A0040"",
                             ""name"": ""Virgin Banner Arb"",
                             ""tintColor"": 16121857
-                        },
-                        {
-                            ""contentId"": ""A468794802"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/707fdecd-56ba-4604-bb8c-34d10115157d.mp4"",
-                            ""resourceNumber"": ""A0041"",
-                            ""name"": ""Virgin Video Wifi"",
-                            ""tintColor"": 15271942
-                        },
-                        {
-                            ""contentId"": ""A2048824975"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/a1f2b50c-ff84-4e7f-a1e5-e53ce5c81249.mp4"",
-                            ""resourceNumber"": ""A0042"",
-                            ""name"": ""Virgin Video NewSim"",
-                            ""tintColor"": 15468295
-                        },
-                        {
-                            ""contentId"": ""A1158578529"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/988bda9a-a876-437f-8775-d91dde8ea600.mp4"",
-                            ""resourceNumber"": ""A0036"",
-                            ""name"": ""AirportTS"",
-                            ""tintColor"": 1457281
-                        },
-                        {
-                            ""contentId"": ""A23671579"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/9376782d-0dd2-43a5-98d3-9c31f6fa78d4.mp4"",
-                            ""resourceNumber"": ""A0038"",
-                            ""name"": ""Atyab"",
-                            ""tintColor"": 921102
                         },
                         {
                             ""contentId"": ""A1280908781"",
@@ -370,26 +338,60 @@ namespace AdvertisementService.Repository
                             ""tintColor"": 1589903
                         },
                         {
-                            ""contentId"": ""A1848362256"",
+                            ""contentId"": ""A23671579"",
                             ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/e235260f-a23b-4cca-90d2-1a73b43d0adf.mp4"",
-                            ""resourceNumber"": ""A0031"",
-                            ""name"": ""FlyBooking"",
-                            ""tintColor"": 15693114,
-                            ""promotion"": {
-                                ""promotionId"": ""A312529868"",
-                                ""title"": ""Download Flybooking and get the best rates for tickets and hotels."",
-                                ""subtitle"": ""حمل تطبيق فلاي بوكينغ واحصل على أفضل الأسعار لتذاك"",
-                                ""link"": ""http://links.routesme.com/A312529868""
-                            }
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/9376782d-0dd2-43a5-98d3-9c31f6fa78d4.mp4"",
+                            ""resourceNumber"": ""A0038"",
+                            ""name"": ""Atyab"",
+                            ""tintColor"": 921102
                         },
                         {
-                            ""contentId"": ""A1403239033"",
+                            ""contentId"": ""A468794802"",
                             ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/13338f71-f17e-4aad-b18d-3d9cf931f3bf.mp4"",
-                            ""resourceNumber"": ""A0028"",
-                            ""name"": ""Routes-Amerni"",
-                            ""tintColor"": 1326727
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/FreeWifi_Eng.mp4"",
+                            ""resourceNumber"": ""A0041"",
+                            ""name"": ""Virgin Video Wifi"",
+                            ""tintColor"": 15271942
+                        },
+                        {
+                            ""contentId"": ""A1481371500"",
+                            ""type"": ""video"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/dbcdb875-311c-406e-ac20-cd77833f0cb4.mp4"",
+                            ""resourceNumber"": ""A0043"",
+                            ""name"": ""Virgin Video Wifi Ar"",
+                            ""tintColor"": 12388360
+                        },
+                        {
+                            ""contentId"": ""A23671579"",
+                            ""type"": ""video"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/9376782d-0dd2-43a5-98d3-9c31f6fa78d4.mp4"",
+                            ""resourceNumber"": ""A0038"",
+                            ""name"": ""Atyab"",
+                            ""tintColor"": 921102
+                        },
+                        {
+                            ""contentId"": ""A913918025"",
+                            ""type"": ""video"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/d078c23a-7be3-4c59-b886-395b5ad5c443.mp4"",
+                            ""resourceNumber"": ""A0044"",
+                            ""name"": ""Virgin Video NewSim Ar"",
+                            ""tintColor"": 15009801
+                        },
+                        {
+                            ""contentId"": ""A23671579"",
+                            ""type"": ""video"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/9376782d-0dd2-43a5-98d3-9c31f6fa78d4.mp4"",
+                            ""resourceNumber"": ""A0038"",
+                            ""name"": ""Atyab"",
+                            ""tintColor"": 921102
+                        },
+                        {
+                            ""contentId"": ""A2048824975"",
+                            ""type"": ""video"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/Virgin%20Video%20NewSim%20Eng.mp4"",
+                            ""resourceNumber"": ""A0042"",
+                            ""name"": ""Virgin Video NewSim"",
+                            ""tintColor"": 15468295
                         }
                     ],
                     ""status"": true,
