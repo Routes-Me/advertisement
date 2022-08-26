@@ -340,7 +340,7 @@ namespace AdvertisementService.Repository
                         {
                             ""contentId"": ""A23671579"",
                             ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/9376782d-0dd2-43a5-98d3-9c31f6fa78d4.mp4"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/Atyab250822.mp4"",
                             ""resourceNumber"": ""A0038"",
                             ""name"": ""Atyab"",
                             ""tintColor"": 921102
@@ -364,7 +364,7 @@ namespace AdvertisementService.Repository
                         {
                             ""contentId"": ""A23671579"",
                             ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/9376782d-0dd2-43a5-98d3-9c31f6fa78d4.mp4"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/Atyab250822.mp4"",
                             ""resourceNumber"": ""A0038"",
                             ""name"": ""Atyab"",
                             ""tintColor"": 921102
@@ -380,7 +380,7 @@ namespace AdvertisementService.Repository
                         {
                             ""contentId"": ""A23671579"",
                             ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/9376782d-0dd2-43a5-98d3-9c31f6fa78d4.mp4"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/Atyab250822.mp4"",
                             ""resourceNumber"": ""A0038"",
                             ""name"": ""Atyab"",
                             ""tintColor"": 921102
