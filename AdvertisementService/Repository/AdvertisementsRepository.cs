@@ -306,14 +306,6 @@ namespace AdvertisementService.Repository
                     },
                     ""data"": [
                         {
-                            ""contentId"": ""A591125054"",
-                            ""type"": ""image"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/420e155f-6dee-471f-a2c6-e8a96b6e9625.jpg"",
-                            ""resourceNumber"": ""A0037"",
-                            ""name"": ""Vergin Banner"",
-                            ""tintColor"": 12386560
-                        },
-                        {
                             ""contentId"": ""A1603701752"",
                             ""type"": ""image"",
                             ""url"": ""https://routesme.blob.core.windows.net/advertisements/VerginBEng.jpg"",
@@ -410,14 +402,6 @@ namespace AdvertisementService.Repository
                     ""total"": 10
                 },
                 ""data"": [
-                    {
-                        ""contentId"": ""A591125054"",
-                        ""type"": ""image"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/420e155f-6dee-471f-a2c6-e8a96b6e9625.jpg"",
-                        ""resourceNumber"": ""A0037"",
-                        ""name"": ""Vergin Banner"",
-                        ""tintColor"": 12386560
-                    },
                     {
                         ""contentId"": ""A1603701752"",
                         ""type"": ""image"",
