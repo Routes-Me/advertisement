@@ -448,27 +448,6 @@ namespace AdvertisementService.Repository
                                 }
                             },
                             {
-                                ""contentId"": ""A356727653"",
-                                ""type"": ""video"",
-                                ""url"": ""https://routesme.blob.core.windows.net/advertisements/31ff985c-9352-436c-a4cb-1e560a5effa7.mp4"",
-                                ""resourceNumber"": ""A0024"",
-                                ""name"": ""Vaccination is protection"",
-                                ""promotion"": {
-                                    ""promotionId"": ""A356727653"",
-                                    ""title"": ""VACCINATION IS PROTECTION   -   ‏التــطعيم وقــايــة"",
-                                    ""subtitle"": ""Visit the website or scan the code  -  زورو الموقع"",
-                                    ""link"": ""http://links.routesme.com/A356727653""
-                                }
-                            },
-                            {
-                                ""contentId"": ""A390662335"",
-                                ""type"": ""video"",
-                                ""url"": ""https://routesme.blob.core.windows.net/advertisements/860f0d6d-2cfc-48e0-9c76-bfe3975436ae.mp4"",
-                                ""resourceNumber"": ""A0026"",
-                                ""name"": ""Routes_Covid"",
-                                ""tintColor"": 41974
-                            },
-                            {
                                 ""contentId"": ""A2137220545"",
                                 ""type"": ""video"",
                                 ""url"": ""https://routesme.blob.core.windows.net/advertisements/740de07d-5073-4966-bf43-7f026e8d59c9.mp4"",
@@ -524,25 +503,20 @@ namespace AdvertisementService.Repository
                         ""tintColor"": 16121857
                     },
                     {
-                        ""contentId"": ""A356727653"",
+                        ""contentId"": ""A468794802"",
                         ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/31ff985c-9352-436c-a4cb-1e560a5effa7.mp4"",
-                        ""resourceNumber"": ""A0024"",
-                        ""name"": ""Vaccination is protection"",
-                        ""promotion"": {
-                            ""promotionId"": ""A356727653"",
-                            ""title"": ""VACCINATION IS PROTECTION   -   ‏التــطعيم وقــايــة"",
-                            ""subtitle"": ""Visit the website or scan the code  -  زورو الموقع"",
-                            ""link"": ""http://links.routesme.com/A356727653""
-                        }
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/FreeWifi_Eng.mp4"",
+                        ""resourceNumber"": ""A0041"",
+                        ""name"": ""Virgin Video Wifi"",
+                        ""tintColor"": 15271942
                     },
                     {
-                        ""contentId"": ""A390662335"",
+                        ""contentId"": ""A1481371500"",
                         ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/860f0d6d-2cfc-48e0-9c76-bfe3975436ae.mp4"",
-                        ""resourceNumber"": ""A0026"",
-                        ""name"": ""Routes_Covid"",
-                        ""tintColor"": 41974
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/dbcdb875-311c-406e-ac20-cd77833f0cb4.mp4"",
+                        ""resourceNumber"": ""A0043"",
+                        ""name"": ""Virgin Video Wifi Ar"",
+                        ""tintColor"": 12388360
                     },
                     {
                         ""contentId"": ""A1848362256"",
@@ -558,6 +532,22 @@ namespace AdvertisementService.Repository
                             ""link"": ""http://links.routesme.com/A312529868""
                         }
                     },
+                    {
+                        ""contentId"": ""A913918025"",
+                        ""type"": ""video"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/d078c23a-7be3-4c59-b886-395b5ad5c443.mp4"",
+                        ""resourceNumber"": ""A0044"",
+                        ""name"": ""Virgin Video NewSim Ar"",
+                        ""tintColor"": 15009801
+                    },
+                    {
+                        ""contentId"": ""A2048824975"",
+                        ""type"": ""video"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/Virgin%20Video%20NewSim%20Eng.mp4"",
+                        ""resourceNumber"": ""A0042"",
+                        ""name"": ""Virgin Video NewSim"",
+                        ""tintColor"": 15468295
+                    }
                     {
                         ""contentId"": ""A2137220545"",
                         ""type"": ""video"",
