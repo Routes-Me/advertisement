@@ -479,7 +479,7 @@ namespace AdvertisementService.Repository
                         ""resourceNumber"": ""A0042"",
                         ""name"": ""Virgin Video NewSim"",
                         ""tintColor"": 15468295
-                    }
+                    },
                     {
                         ""contentId"": ""A2137220545"",
                         ""type"": ""video"",
