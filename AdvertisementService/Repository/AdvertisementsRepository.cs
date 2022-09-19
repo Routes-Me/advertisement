@@ -449,22 +449,6 @@ namespace AdvertisementService.Repository
                         }
                     },
                     {
-                        ""contentId"": ""A913918025"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/d078c23a-7be3-4c59-b886-395b5ad5c443.mp4"",
-                        ""resourceNumber"": ""A0044"",
-                        ""name"": ""Virgin Video NewSim Ar"",
-                        ""tintColor"": 15009801
-                    },
-                    {
-                        ""contentId"": ""A2048824975"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/Virgin%20Video%20NewSim%20Eng.mp4"",
-                        ""resourceNumber"": ""A0042"",
-                        ""name"": ""Virgin Video NewSim"",
-                        ""tintColor"": 15468295
-                    },
-                    {
                         ""contentId"": ""A2137220545"",
                         ""type"": ""video"",
                         ""url"": ""https://routesme.blob.core.windows.net/advertisements/740de07d-5073-4966-bf43-7f026e8d59c9.mp4"",
