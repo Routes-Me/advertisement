@@ -302,7 +302,7 @@ namespace AdvertisementService.Repository
                     ""pagination"": {
                         ""offset"": 1,
                         ""limit"": 15,
-                        ""total"": 11
+                        ""total"": 10
                     },
                     ""data"": [
                         {
@@ -399,7 +399,7 @@ namespace AdvertisementService.Repository
                 ""pagination"": {
                     ""offset"": 1,
                     ""limit"": 10,
-                    ""total"": 10
+                    ""total"": 7
                 },
                 ""data"": [
                     {
