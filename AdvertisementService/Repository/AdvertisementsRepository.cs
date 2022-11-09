@@ -13,9 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using RoutesSecurity;
-using System.Text;
 using Newtonsoft.Json;
-using Microsoft.Extensions.Azure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
@@ -399,7 +397,7 @@ namespace AdvertisementService.Repository
                 ""pagination"": {
                     ""offset"": 1,
                     ""limit"": 10,
-                    ""total"": 7
+                    ""total"": 8
                 },
                 ""data"": [
                     {
@@ -446,6 +444,18 @@ namespace AdvertisementService.Repository
                             ""title"": ""Download Flybooking and get the best rates for tickets and hotels."",
                             ""subtitle"": ""حمل تطبيق فلاي بوكينغ واحصل على أفضل الأسعار لتذاك"",
                             ""link"": ""http://links.routesme.com/A312529868""
+                        }
+                    },
+                    {
+                        ""contentId"": ""A346464550"",
+                        ""type"": ""video"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/76265b62-763c-4bd3-985d-0944c9da40c8.mp4"",
+                        ""resourceNumber"": ""A0045"",
+                        ""name"": ""CityCenter2"",
+                        ""tintColor"": 13703198,
+                        ""promotion"": {
+                            ""promotionId"": ""A1325106566"",
+                            ""link"": ""http://stage.links.routesme.com/A1325106566""
                         }
                     },
                     {
