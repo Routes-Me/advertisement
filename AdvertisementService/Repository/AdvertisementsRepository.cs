@@ -455,6 +455,8 @@ namespace AdvertisementService.Repository
                         ""tintColor"": 13703198,
                         ""promotion"": {
                             ""promotionId"": ""A1325106566"",
+                            ""title"": ""Deals: From 9th till 22 November 2022"",
+                            ""subtitle"": ""الصفقات: من 9 حتى 22 نوفمبر 2022"",
                             ""link"": ""http://stage.links.routesme.com/A1325106566""
                         }
                     },
