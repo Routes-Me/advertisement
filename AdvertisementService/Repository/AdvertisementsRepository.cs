@@ -449,7 +449,7 @@ namespace AdvertisementService.Repository
                     {
                         ""contentId"": ""A346464550"",
                         ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/76265b62-763c-4bd3-985d-0944c9da40c8.mp4"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/CityCenterV2Compressed.mp4"",
                         ""resourceNumber"": ""A0045"",
                         ""name"": ""CityCenter2"",
                         ""tintColor"": 13703198,
