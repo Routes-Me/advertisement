@@ -447,17 +447,31 @@ namespace AdvertisementService.Repository
                         }
                     },
                     {
-                        ""contentId"": ""A346464550"",
+                        ""contentId"": ""A1926494723"",
                         ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/CityCenterV2Compressed.mp4"",
-                        ""resourceNumber"": ""A0045"",
-                        ""name"": ""CityCenter2"",
-                        ""tintColor"": 13703198,
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/5532f3b4-e023-43b1-a2fe-73a09617853a.mp4"",
+                        ""resourceNumber"": ""A0046"",
+                        ""name"": ""City Center Eng"",
+                        ""tintColor"": 15409994,
                         ""promotion"": {
-                            ""promotionId"": ""A1325106566"",
-                            ""title"": ""Deals: From 9th till 22 November 2022"",
-                            ""subtitle"": ""الصفقات: من 9 حتى 22 نوفمبر 2022"",
-                            ""link"": ""http://links.routesme.com/A1325106566""
+                            ""promotionId"": ""A757653091"",
+                            ""title"": ""Download the City Centre App !!"",
+                            ""subtitle"": ""A new shopping experience "",
+                            ""link"": ""http://stage.links.routesme.com/A757653091""
+                        }
+                    },
+                    {
+                        ""contentId"": ""A1359041248"",
+                        ""type"": ""video"",
+                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/46bc3fca-d6de-432d-93b9-0aab8cffadef.mp4"",
+                        ""resourceNumber"": ""A0047"",
+                        ""name"": ""City Center Arb"",
+                        ""tintColor"": 15212590,
+                        ""promotion"": {
+                            ""promotionId"": ""A190199616"",
+                            ""title"": ""قم بتنزيل تطبيق City Center !!"",
+                            ""subtitle"": ""اكتشف تجربة تسوق جديدة"",
+                            ""link"": ""http://stage.links.routesme.com/A190199616""
                         }
                     },
                     {
