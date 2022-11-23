@@ -457,7 +457,7 @@ namespace AdvertisementService.Repository
                             ""promotionId"": ""A757653091"",
                             ""title"": ""Download the City Centre App !!"",
                             ""subtitle"": ""A new shopping experience "",
-                            ""link"": ""http://stage.links.routesme.com/A757653091""
+                            ""link"": ""http://links.routesme.com/A757653091""
                         }
                     },
                     {
@@ -471,7 +471,7 @@ namespace AdvertisementService.Repository
                             ""promotionId"": ""A190199616"",
                             ""title"": ""قم بتنزيل تطبيق City Center !!"",
                             ""subtitle"": ""اكتشف تجربة تسوق جديدة"",
-                            ""link"": ""http://stage.links.routesme.com/A190199616""
+                            ""link"": ""http://links.routesme.com/A190199616""
                         }
                     },
                     {
