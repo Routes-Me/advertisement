@@ -290,17 +290,16 @@ namespace AdvertisementService.Repository
 
         public dynamic GetContents(string advertisementId, Pagination pageInfo,string institutionId)
         {
-
-            if(!string.IsNullOrEmpty(institutionId))
-            {
-                int advertisementIdDecrypted = Obfuscation.Decode(institutionId);
-                if(advertisementIdDecrypted==32)
-                {
+            // if(!string.IsNullOrEmpty(institutionId))
+            // {
+            //     int advertisementIdDecrypted = Obfuscation.Decode(institutionId);
+            //     if(advertisementIdDecrypted==32)
+            //     {
                     return JObject.Parse(@"{
                     ""pagination"": {
                         ""offset"": 1,
                         ""limit"": 15,
-                        ""total"": 10
+                        ""total"": 6
                     },
                     ""data"": [
                         {
@@ -320,22 +319,6 @@ namespace AdvertisementService.Repository
                             ""tintColor"": 16121857
                         },
                         {
-                            ""contentId"": ""A1280908781"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/e4204320-ce54-4b49-9000-9a1de24fb0ab.mp4"",
-                            ""resourceNumber"": ""A0032"",
-                            ""name"": ""AirportVideoAmerni"",
-                            ""tintColor"": 1589903
-                        },
-                        {
-                            ""contentId"": ""A23671579"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/Atyab250822.mp4"",
-                            ""resourceNumber"": ""A0038"",
-                            ""name"": ""Atyab"",
-                            ""tintColor"": 921102
-                        },
-                        {
                             ""contentId"": ""A468794802"",
                             ""type"": ""video"",
                             ""url"": ""https://routesme.blob.core.windows.net/advertisements/FreeWifi_Eng.mp4"",
@@ -352,28 +335,12 @@ namespace AdvertisementService.Repository
                             ""tintColor"": 12388360
                         },
                         {
-                            ""contentId"": ""A23671579"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/Atyab250822.mp4"",
-                            ""resourceNumber"": ""A0038"",
-                            ""name"": ""Atyab"",
-                            ""tintColor"": 921102
-                        },
-                        {
                             ""contentId"": ""A913918025"",
                             ""type"": ""video"",
                             ""url"": ""https://routesme.blob.core.windows.net/advertisements/d078c23a-7be3-4c59-b886-395b5ad5c443.mp4"",
                             ""resourceNumber"": ""A0044"",
                             ""name"": ""Virgin Video NewSim Ar"",
                             ""tintColor"": 15009801
-                        },
-                        {
-                            ""contentId"": ""A23671579"",
-                            ""type"": ""video"",
-                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/Atyab250822.mp4"",
-                            ""resourceNumber"": ""A0038"",
-                            ""name"": ""Atyab"",
-                            ""tintColor"": 921102
                         },
                         {
                             ""contentId"": ""A2048824975"",
@@ -388,125 +355,8 @@ namespace AdvertisementService.Repository
                     ""message"": ""Contents retrived successfully."",
                     ""statusCode"": 200
                     }");
-                }
-            }
-            
-            
-            return JObject.Parse(@"
-            {
-                ""pagination"": {
-                    ""offset"": 1,
-                    ""limit"": 10,
-                    ""total"": 8
-                },
-                ""data"": [
-                    {
-                        ""contentId"": ""A1603701752"",
-                        ""type"": ""image"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/9e5566a9-6ef0-424d-afb5-834b114ac692.jpg"",
-                        ""resourceNumber"": ""A0039"",
-                        ""name"": ""Virgin Banner Eng"",
-                        ""tintColor"": 16121857
-                    },
-                    {
-                        ""contentId"": ""A1036248277"",
-                        ""type"": ""image"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/d207ca4d-09fb-45b4-8051-a6eef042a8b7.jpg"",
-                        ""resourceNumber"": ""A0040"",
-                        ""name"": ""Virgin Banner Arb"",
-                        ""tintColor"": 16121857
-                    },
-                    {
-                        ""contentId"": ""A468794802"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/FreeWifi_Eng.mp4"",
-                        ""resourceNumber"": ""A0041"",
-                        ""name"": ""Virgin Video Wifi"",
-                        ""tintColor"": 15271942
-                    },
-                    {
-                        ""contentId"": ""A1481371500"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/dbcdb875-311c-406e-ac20-cd77833f0cb4.mp4"",
-                        ""resourceNumber"": ""A0043"",
-                        ""name"": ""Virgin Video Wifi Ar"",
-                        ""tintColor"": 12388360
-                    },
-                    {
-                        ""contentId"": ""A1848362256"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/e235260f-a23b-4cca-90d2-1a73b43d0adf.mp4"",
-                        ""resourceNumber"": ""A0031"",
-                        ""name"": ""FlyBooking"",
-                        ""tintColor"": 15693114,
-                        ""promotion"": {
-                            ""promotionId"": ""A312529868"",
-                            ""title"": ""Download Flybooking and get the best rates for tickets and hotels."",
-                            ""subtitle"": ""حمل تطبيق فلاي بوكينغ واحصل على أفضل الأسعار لتذاك"",
-                            ""link"": ""http://links.routesme.com/A312529868""
-                        }
-                    },
-                    {
-                        ""contentId"": ""A1926494723"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/5532f3b4-e023-43b1-a2fe-73a09617853a.mp4"",
-                        ""resourceNumber"": ""A0046"",
-                        ""name"": ""City Center Eng"",
-                        ""tintColor"": 15409994,
-                        ""promotion"": {
-                            ""promotionId"": ""A757653091"",
-                            ""title"": ""Download the City Centre App !!"",
-                            ""subtitle"": ""A new shopping experience "",
-                            ""link"": ""http://links.routesme.com/A757653091""
-                        }
-                    },
-                    {
-                        ""contentId"": ""A1359041248"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/46bc3fca-d6de-432d-93b9-0aab8cffadef.mp4"",
-                        ""resourceNumber"": ""A0047"",
-                        ""name"": ""City Center Arb"",
-                        ""tintColor"": 15212590,
-                        ""promotion"": {
-                            ""promotionId"": ""A190199616"",
-                            ""title"": ""قم بتنزيل تطبيق City Center !!"",
-                            ""subtitle"": ""اكتشف تجربة تسوق جديدة"",
-                            ""link"": ""http://links.routesme.com/A190199616""
-                        }
-                    },
-                    {
-                        ""contentId"": ""A2137220545"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/740de07d-5073-4966-bf43-7f026e8d59c9.mp4"",
-                        ""resourceNumber"": ""A004"",
-                        ""name"": ""I Save 2"",
-                        ""tintColor"": 16743168,
-                        ""promotion"": {
-                            ""promotionId"": ""A1168841632"",
-                            ""title"": ""Get instant discounts, download now!"",
-                            ""subtitle"": ""احصل على خصومات فورية.. حمل التطبيق الآن"",
-                            ""link"": ""http://links.routesme.com/A1168841632""
-                        }
-                    },
-                    {
-                        ""contentId"": ""A1046511380"",
-                        ""type"": ""video"",
-                        ""url"": ""https://routesme.blob.core.windows.net/advertisements/1a256034-b605-49ed-bddd-cf1a14b99314.mp4"",
-                        ""resourceNumber"": ""A0019"",
-                        ""name"": ""Turkish Grill"",
-                        ""tintColor"": 14091268,
-                        ""promotion"": {
-                            ""promotionId"": ""A33934682"",
-                            ""title"": ""Order online now! Scan the code"",
-                            ""subtitle"": ""أطلب اونلاين الان..قم بنسخ الكود"",
-                            ""link"": ""http://links.routesme.com/A33934682""
-                        }
-                    }
-                ],
-                ""status"": true,
-                ""message"": ""Contents retrived successfully."",
-                ""statusCode"": 200
-            }");
+            //     }
+            // }
         }
 
         // public dynamic GetContents(string advertisementId, Pagination pageInfo,string institutionId)
