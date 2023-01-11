@@ -4,26 +4,24 @@ using AdvertisementService.Models;
 using AdvertisementService.Models.Common;
 using AdvertisementService.Models.DBModels;
 using AdvertisementService.Models.ResponseModel;
-using Microsoft.AspNetCore.Http;
-using Microsoft.CodeAnalysis;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using RoutesSecurity;
-using System.Text;
-using Newtonsoft.Json;
-using Microsoft.Extensions.Azure;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
-using System.Threading.Tasks;
-using RestSharp;
-using System.Net;
-using System.IO;
+using Microsoft.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using RestSharp;
+using RoutesSecurity;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace AdvertisementService.Repository
 {
@@ -555,6 +553,8 @@ namespace AdvertisementService.Repository
         public async Task<dynamic> InsertAdvertisementsAsync(PostAdvertisementsModel model)
         {
             AdvertisementsPostResponse response = new AdvertisementsPostResponse();
+            using var transaction = _context.Database.BeginTransaction();
+
             try
             {
                 string mediaReferenceName = string.Empty, ext = string.Empty;
@@ -586,7 +586,7 @@ namespace AdvertisementService.Repository
                     {
                         if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
                         {
-                            // videoMetadata = await _videoConversionRepository.ConvertVideoAsync(model.MediaUrl);
+                            videoMetadata = await _videoConversionRepository.ConvertVideoAsync(model.MediaUrl);
                             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
                             CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
                             if (!string.IsNullOrEmpty(videoMetadata.CompressedFile))
@@ -676,7 +676,7 @@ namespace AdvertisementService.Repository
                     _context.Broadcasts.Add(objBroadcasts);
                     _context.SaveChanges();
                 }
-
+                transaction.Commit();
                 response.status = true;
                 response.statusCode = StatusCodes.Status201Created;
                 response.message = CommonMessage.AdvertisementInsert;
@@ -685,12 +685,14 @@ namespace AdvertisementService.Repository
             }
             catch (Exception ex)
             {
+                transaction.Rollback();
                 return ReturnResponse.ExceptionResponse(ex);
             }
         }
 
         public async Task<dynamic> UpdateAdvertisementsAsync(PostAdvertisementsModel model)
         {
+            using var transaction = _context.Database.BeginTransaction();
             try
             {
                 string mediaReferenceName = string.Empty, ext = string.Empty;
@@ -773,7 +775,7 @@ namespace AdvertisementService.Repository
                     {
                         if (CloudStorageAccount.TryParse(_config.StorageConnection, out CloudStorageAccount storageAccount))
                         {
-                            // videoMetadata = await _videoConversionRepository.ConvertVideoAsync(model.MediaUrl);
+                            videoMetadata = await _videoConversionRepository.ConvertVideoAsync(model.MediaUrl);
                             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
                             CloudBlobContainer container = blobClient.GetContainerReference(_config.Container);
                             if (await container.ExistsAsync())
@@ -849,10 +851,12 @@ namespace AdvertisementService.Repository
                 advertisements.InvertedTintColor = model.InvertedTintColor;
                 _context.Advertisements.Update(advertisements);
                 _context.SaveChanges();
+                transaction.Commit();
                 return ReturnResponse.SuccessResponse(CommonMessage.AdvertisementUpdate, false);
             }
             catch (Exception ex)
             {
+                transaction.Rollback();
                 return ReturnResponse.ExceptionResponse(ex);
             }
         }
