@@ -114,7 +114,7 @@ namespace AdvertisementService.Helper.Repository
                 FileInfo fInfo = new FileInfo(originalFilePath);
                 // Length/1024 = kb
                 // kb/1024 = mb
-                var size = Convert.ToDecimal(Convert.ToDecimal((fInfo.Length / 1024)) / 1024).ToString("0.##");   //display size in mb
+                var size = Convert.ToDecimal(Convert.ToDecimal((fInfo.Length / 1024)) / 1024).ToString("0.####");   //display size in mb
                 fInfo.Delete();
                 return (float)Convert.ToDecimal(size);
             }
