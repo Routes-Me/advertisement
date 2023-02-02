@@ -349,6 +349,20 @@ namespace AdvertisementService.Repository
                             ""resourceNumber"": ""A0042"",
                             ""name"": ""Virgin Video NewSim"",
                             ""tintColor"": 15468295
+                        },
+                        {
+                            ""contentId"": ""A1715768901"",
+                            ""type"": ""image"",
+                            ""url"": ""https://routesme.blob.core.windows.net/advertisements/55652e10-a9db-45bf-baa6-8d889269cbc9.jpg"",
+                            ""resourceNumber"": ""A0012"",
+                            ""name"": ""0.0000000000"",
+                            ""tintColor"": 2711234,
+                            ""promotion"": {
+                                ""promotionId"": ""A1936757826"",
+                                ""title"": ""123"",
+                                ""subtitle"": ""test to test"",
+                                ""link"": ""http://stage.links.routesme.com/A1936757826""
+                            }
                         }
                     ],
                     ""status"": true,
